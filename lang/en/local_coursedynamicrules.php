@@ -28,3 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Course dynamic rules';
 $string['coursedynamicrules:notification'] = 'Send notification';
 $string['messageprovider:coursedynamicrules_notification'] = 'Course dynamic rules notification';
+$string['coursedynamicrules:manage'] = 'Manage course dynamic rules';
