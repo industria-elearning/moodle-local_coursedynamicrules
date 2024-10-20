@@ -65,7 +65,27 @@ class observer {
                 }
             }
 
-            // TODO If all conditions are met, execute the actions.
+            // If all conditions are met, execute the actions.
+            if ($conditionsmet) {
+                self::execute_actions($rule);
+            }
+        }
+    }
+
+    /**
+     * Executes the actions associated to the rule.
+     * @param stdClass $rule
+     */
+    private static function execute_actions($rule) {
+        global $DB;
+
+        // Get actions associated to the rule.
+        $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
+
+        foreach ($actions as $action) {
+            $actionclass = rule_loader::get_action_class($action->actiontype);
+            $actioninstance = new $actionclass($action, true);
+            $actioninstance->execute();
         }
     }
 
