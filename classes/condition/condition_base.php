@@ -27,7 +27,7 @@ use stdClass;
  */
 abstract class condition_base {
 
-    /** @var string type of the element, should be overridden by each condition type */
+    /** @var string type of the condition, should be overridden by each condition type */
     protected $type;
 
     /** @var condition_form|null */
@@ -132,19 +132,16 @@ abstract class condition_base {
      * @param \core\event\base $event information about the event obtained from the event handler
      * @return bool
      */
-    protected function is_instace_of_event($event) {
-        return true;
-    }
+    abstract protected function is_instace_of_event($event);
 
     /**
      * Validates the condition
+     * Use this function to validate each one of the parameters of the condition that must be fulfilled to return true
      *
      * @param \core\event\base $event information about the event obtained from the event handler
      *
      * @return bool
      */
-    public function validate($event) {
-        return true;
-    }
+    abstract public function validate($event);
 
 }
