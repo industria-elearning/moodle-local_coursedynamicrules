@@ -22,27 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
 
+require('../../config.php');
+require_once("lib.php");
 require_login();
 
 
-$courseid = required_param('courseid', PARAM_INT);
+// $courseid = required_param('courseid', PARAM_INT);
 $type = required_param('type', PARAM_ALPHA);
 
 $url = new moodle_url('/local/coursedynamicrules/editcondition.php', ['id' => $courseid, 'type' => $type]);
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
-}
-
-require_login($course);
-
-$PAGE->set_course($course);
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('admin');
-
 echo $OUTPUT->header();
+
+$itemobj = local_coursedynamicrules\rule_loader::get_condition_class($type);
+$itemobj->build_editform([]);
+// $itemobj->get_data();
+$itemobj->show_editform();
 echo $OUTPUT->footer();

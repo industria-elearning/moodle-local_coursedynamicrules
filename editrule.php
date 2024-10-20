@@ -48,20 +48,14 @@ $editconditionurl = new moodle_url('/local/coursedynamicrules/editcondition.php'
 $options = [
     [
         'value' => '',
-        'name' => 'Select condition',
+        'name' => 'Select condition...',
         'selected' => true,
         'optgroup' => false,
         'ignore' => 'data-ignore',
     ],
     [
-        'value' => 'acpg',
+        'value' => 'passgrade',
         'name' => 'Activity completion with passing grade',
-        'selected' => false,
-        'optgroup' => false,
-    ],
-    [
-        'value' => 'amc',
-        'name' => 'Activity mark as complete',
         'selected' => false,
         'optgroup' => false,
     ],
@@ -84,29 +78,9 @@ $singleselectcontext = [
         [
             'name' => 'sesskey',
             'value' => sesskey(),
-        ]
-    ],
-    'options' => [
-        [
-            'value' => '',
-            'name' => 'Select condition',
-            'selected' => true,
-            'optgroup' => false,
-            'ignore' => 'data-ignore',
-        ],
-        [
-            'value' => 'acpg',
-            'name' => 'Activity completion with passing grade',
-            'selected' => false,
-            'optgroup' => false,
-        ],
-        [
-            'value' => 'amc',
-            'name' => 'Activity mark as complete',
-            'selected' => false,
-            'optgroup' => false,
         ],
     ],
+    'options' => $options,
 ];
 
 echo $OUTPUT->render_from_template('core/single_select', $singleselectcontext);
