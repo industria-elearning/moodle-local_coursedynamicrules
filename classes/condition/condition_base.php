@@ -30,16 +30,24 @@ abstract class condition_base {
     /** @var string type of the element, should be overridden by each condition type */
     protected $type;
 
-    /** @var condition_form */
+    /** @var condition_form|null */
     protected $conditionform;
 
-    /** @var  \stdClass */
+    /** @var  \stdClass|null condition data that represents the condition record on the database */
     protected $condition;
+
+    /** @var  \stdClass|null condition parameters stored in the database */
+    protected $params;
 
     /**
      * constructor
+     * @param stdClass|null $condition condition data that represents the condition record on the database
      */
-    public function __construct() {
+    public function __construct($condition = null) {
+        $this->condition = $condition;
+        if ($condition && $condition->params) {
+            $this->params = json_decode($condition->params, true);
+        }
     }
 
     /**
@@ -116,6 +124,27 @@ abstract class condition_base {
      */
     public function get_display_name_postfix($condition) {
         return '';
+    }
+
+    /**
+     * Validate if the event is instanceof the event type for this condition
+     *
+     * @param \core\event\base $event information about the event obtained from the event handler
+     * @return bool
+     */
+    protected function is_instace_of_event($event) {
+        return true;
+    }
+
+    /**
+     * Validates the condition
+     *
+     * @param \core\event\base $event information about the event obtained from the event handler
+     *
+     * @return bool
+     */
+    public function validate($event) {
+        return true;
     }
 
 }
