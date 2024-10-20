@@ -21,6 +21,17 @@
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Extends the navigation tree with the course dynamic rules menu item.
+ *
+ * @param navigation_node $navigation the navigation tree
+ * @param stdClass $course the course
+ * @param stdClass $context the context
+ */
 function local_coursedynamicrules_extend_navigation_course($navigation, $course, $context) {
     if (has_capability('local/coursedynamicrules:manage', $context)) {
         $url = new moodle_url('/local/coursedynamicrules/rules.php', ['id' => $course->id]);
@@ -28,3 +39,4 @@ function local_coursedynamicrules_extend_navigation_course($navigation, $course,
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
     }
 }
+
