@@ -40,6 +40,71 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
     //
     // You will also have to create the db/install.xml file by using the XMLDB Editor.
     // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
+    if ($oldversion < 2024102000) {
+
+        // Define table cdr_rule to be created.
+        $table = new xmldb_table('cdr_rule');
+
+        // Adding fields to table cdr_rule.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('active', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '16', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '16', null, null, null, null);
+
+        // Adding keys to table cdr_rule.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+
+        // Conditionally launch create table for cdr_rule.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table cdr_condition to be created.
+        $table = new xmldb_table('cdr_condition');
+
+        // Adding fields to table cdr_condition.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('ruleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('conditiontype', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('eventname', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('params', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table cdr_condition.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ruleid', XMLDB_KEY_FOREIGN, ['ruleid'], 'cdr_rule', ['id']);
+
+        // Conditionally launch create table for cdr_condition.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table cdr_action to be created.
+        $table = new xmldb_table('cdr_action');
+
+        // Adding fields to table cdr_action.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('ruleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('actiontype', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('params', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table cdr_action.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ruleid', XMLDB_KEY_FOREIGN, ['ruleid'], 'cdr_rule', ['id']);
+
+        // Conditionally launch create table for cdr_action.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Coursedynamicrules savepoint reached.
+        upgrade_plugin_savepoint(true, 2024102000, 'local', 'coursedynamicrules');
+    }
 
     return true;
 }
