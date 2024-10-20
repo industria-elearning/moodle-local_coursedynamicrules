@@ -59,4 +59,37 @@ class rule_loader {
 
         return $conditionclass;
     }
+
+    /**
+     * Load the action type class
+     *
+     * @package    local_coursedynamicrules
+     * @copyright  2024 Industria Elearning <info@industriaelearning.com>
+     * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     *
+     * @param string $type example: passgrade
+     * @return string class defintion of action. Example: local_coursedynamicrules\action\passgrade\passgrade_action
+     * @throws moodle_exception For invalid type
+     */
+    public static function get_action_class($type) {
+        global $CFG;
+
+        // Get the class of item-type.
+        $type = clean_param($type, PARAM_ALPHA);
+
+        // Example: local_coursedynamicrules\condition\sendnotification\sendnotification_action.
+        $conditionclass = "\\local_coursedynamicrules\\action\\{$type}\\{$type}_action";
+        $conditionclasspath = "{$CFG->dirroot}/local/coursedynamicrules/classes/action/{$type}/{$type}_action.php";
+
+        // Get the instance of item-class.
+        if (!class_exists($conditionclass) && file_exists($conditionclasspath)) {
+            require_once($conditionclasspath);
+        }
+
+        if (!class_exists($conditionclass)) {
+            throw new moodle_exception('typemissing', 'local_coursedynamicrules');
+        }
+
+        return $conditionclass;
+    }
 }
