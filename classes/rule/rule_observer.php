@@ -14,19 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules;
+namespace local_coursedynamicrules\rule;
 
 use local_coursedynamicrules\condition\condition_base;
+use local_coursedynamicrules\rule\rule_class_loader;
 use stdClass;
 
 /**
- * Class observer
+ * Observer class to handle events for conditions and actions
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class observer {
+class rule_observer {
 
     /**
      * Dynamic handler for events
@@ -52,7 +53,7 @@ class observer {
 
             // Validate each condition associated to the rule.
             foreach ($conditions as $condition) {
-                $conditionclass = rule_loader::get_condition_class($condition->conditiontype);
+                $conditionclass = rule_class_loader::get_condition_class($condition->conditiontype);
 
                 /** @var condition_base $conditioninstance */
                 $conditioninstance = new $conditionclass($condition);
@@ -83,7 +84,7 @@ class observer {
         $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
 
         foreach ($actions as $action) {
-            $actionclass = rule_loader::get_action_class($action->actiontype);
+            $actionclass = rule_class_loader::get_action_class($action->actiontype);
             $actioninstance = new $actionclass($action, true);
             $actioninstance->execute();
         }
