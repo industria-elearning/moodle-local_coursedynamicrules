@@ -16,6 +16,9 @@
 
 namespace local_coursedynamicrules;
 
+use local_coursedynamicrules\condition\condition_base;
+use stdClass;
+
 /**
  * Class observer
  *
@@ -26,41 +29,44 @@ namespace local_coursedynamicrules;
 class observer {
 
     /**
-     * Trigger when course module completion updated
-     * @param \core\event\course_module_completion_updated
+     * Dynamic handler for events
+     * @param \core\event\base $event
      */
-    public static function course_module_completion_updated(\core\event\course_module_completion_updated $event) {
+    public static function handle_event($event) {
         global $DB;
         $eventdata = $event->get_data();
-        $otherdata = $eventdata['other'];
         $courseid = $eventdata["courseid"];
-        $cmid = $eventdata["contextinstanceid"];
-        $userid = $eventdata["userid"];
-        // User that receive the grade.
-        $relateduserid = $eventdata["relateduserid"];
-        $cmcompletionid = $eventdata["objectid"];
 
-        $completionstate = $otherdata['completionstate'];
-        $course = $DB->get_record('course', ['id' => $courseid]);
+        if (!$courseid) {
+            return;
+        }
 
-        $modinfo = get_fast_modinfo($courseid, $relateduserid);
-        $cminfo = $modinfo->get_cm($cmid);
-        $completioninfo = new \completion_info($course);
-        // $completionstate = $completioninfo->get_core_completion_state($cminfo, $relateduserid);
+        // Get active rules for the course.
+        $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
 
-        if ($completionstate == COMPLETION_COMPLETE_PASS) {
-            $message = new \core\message\message();
-            $message->component = 'local_coursedynamicrules'; // Your plugin's name
-            $message->name = 'coursedynamicrules_notification'; // Your notification name from message.php
-            $message->userfrom = $message->userfrom = \core_user::get_support_user(); // TODO: Validate when use $user variable, example when grade assign
-            $message->userto = $relateduserid;
-            $message->subject = 'message subject 2';
-            $message->fullmessage = 'message body';
-            $message->fullmessageformat = FORMAT_HTML;
-            $message->fullmessagehtml = '<p>message body</p>';
-            $message->smallmessage = 'small message';
-            $messageid = message_send($message);
+        foreach ($rules as $rule) {
+            // Get conditions to the rule.
+            $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
 
+            $conditionsmet = false;
+
+            // Validate each condition associated to the rule.
+            foreach ($conditions as $condition) {
+                $conditionclass = rule_loader::get_condition_class($condition->conditiontype);
+
+                /** @var condition_base $conditioninstance */
+                $conditioninstance = new $conditionclass($condition);
+
+                $conditionsmet = $conditioninstance->validate($event);
+                // Verify if the condition is met.
+                if (!$conditionsmet) {
+                    // If any condition is not met, the rule is not executed.
+                    break;
+                }
+            }
+
+            // TODO If all conditions are met, execute the actions.
         }
     }
+
 }
