@@ -44,9 +44,49 @@ class passgrade_condition extends condition_base {
 
     }
 
-        /**
-         * Saves the condition after it has been edited (or created)
-         */
+    /**
+     * Validate if the event is instanceof the event type for this condition
+     *
+     * @param \core\event\course_module_completion_updated $event information about the event obtained from the event handler
+     *
+     * @return bool
+     */
+    protected function is_instace_of_event($event) {
+        return $event instanceof \core\event\course_module_completion_updated;
+    }
+
+    /**
+     * Validates the condition
+     *
+     * @param \core\event\course_module_completion_updated $event information about the event obtained from the event handler
+     *
+     * @return bool
+     */
+    public function validate($event) {
+        global $DB;
+        if (!$this->is_instace_of_event($event) || $this->condition->conditiontype !== $this->type) {
+            return false;
+        }
+        $eventdata = $event->get_data();
+        $otherdata = $eventdata['other'];
+        $courseid = $eventdata["courseid"];
+        $cmid = $eventdata["contextinstanceid"];
+        $relateduserid = $eventdata["relateduserid"];
+        $completionstate = $otherdata['completionstate'];
+
+        $modinfo = get_fast_modinfo($courseid, $relateduserid);
+        $cminfo = $modinfo->get_cm($cmid);
+
+        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
+            return false;
+        }
+
+        return $completionstate == COMPLETION_COMPLETE_PASS;
+    }
+
+    /**
+     * Saves the condition after it has been edited (or created)
+     */
     public function save_condition() {
     }
 }
