@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules;
+namespace local_coursedynamicrules\rule;
 
 use moodle_exception;
 
 /**
- * Class rule_loader
- * This class is used to load the rule condition and act class
+ * Class rule_class_loader
+ * This class is used to load the rule condition and action class dynamically
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_loader {
+class rule_class_loader {
     /**
      * load the condition type class
      *
