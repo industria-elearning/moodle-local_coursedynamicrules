@@ -16,7 +16,6 @@
 
 namespace local_coursedynamicrules;
 
-use condition_base;
 use moodle_exception;
 
 /**
@@ -36,7 +35,7 @@ class rule_loader {
      * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
      *
      * @param string $type example: passgrade
-     * @return condition_base the instance of condition class
+     * @return string class defintion of condition. Example: local_coursedynamicrules\condition\passgrade\passgrade_condition
      * @throws moodle_exception For invalid type
      */
     public static function get_condition_class($type) {
@@ -58,6 +57,6 @@ class rule_loader {
             throw new moodle_exception('typemissing', 'local_coursedynamicrules');
         }
 
-        return new $conditionclass();
+        return $conditionclass;
     }
 }
