@@ -41,7 +41,9 @@ $string['rule:addedsuccessfully'] = 'Rule added successfully';
 $string['rule:edit'] = 'Edit rule';
 $string['condition:add'] = 'Add conditions';
 $string['condition:edit'] = 'Edit conditions';
-
-
-
+$string['condition:passgrade'] = 'Activity completion with passing grade';
+$string['allcourseactivitymodules'] = 'All course activity modules';
+$string['searchcourseactivitymodules'] = 'Search course activity modules';
+$string['condition:passgrade:description'] = 'Users who have completed the course activity module \'{$a}\' with a passing grade';
+$string['invalidruleid'] = 'Invalid rule id';
 
