@@ -36,10 +36,38 @@ class passgrade_form extends condition_form {
      */
     public function definition() {
         $mform = $this->_form;
+        $customdata = $this->_customdata;
+        $courseid = $customdata['courseid'];
+        $ruleid = $customdata['ruleid'];
 
-        $mform->addElement('text', 'passgrade', 'Pass grade', []);
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = $modinfo->get_cms();
+        $options = [];
+        foreach ($cms as $cm) {
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
+        }
+
+        $attributes = [
+            'multiple' => false,
+            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'coursemodule',
+            get_string('searchcourseactivitymodules',
+            'local_coursedynamicrules'),
+            $options,
+            $attributes
+        );
+        $mform->setType('coursemodule', PARAM_INT);
+
+        $mform->addElement('hidden', 'type', $this->type);
+        $mform->addElement('hidden', 'ruleid', $ruleid);
+        $mform->setType('type', PARAM_ALPHA);
+        $mform->setType('ruleid', PARAM_INT);
 
         parent::definition();
-        // $this->set_data([]);
     }
 }
