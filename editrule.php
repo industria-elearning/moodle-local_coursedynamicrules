@@ -22,13 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require('../../config.php');
 
-require_login();
+$courseid = required_param('courseid', PARAM_INT);
 
-$courseid = required_param('id', PARAM_INT);
+$url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
+$rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
-$url = new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $courseid]);
 $PAGE->set_url($url);
 
 if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
@@ -43,46 +44,19 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
 echo $OUTPUT->header();
-
-$editconditionurl = new moodle_url('/local/coursedynamicrules/editcondition.php');
-$options = [
-    [
-        'value' => '',
-        'name' => 'Select condition...',
-        'selected' => true,
-        'optgroup' => false,
-        'ignore' => 'data-ignore',
-    ],
-    [
-        'value' => 'passgrade',
-        'name' => 'Activity completion with passing grade',
-        'selected' => false,
-        'optgroup' => false,
-    ],
-];
-// $singleselect = new single_select($editconditionurl, 'type', $options);
-// $singleselect->export_for_template();
-$singleselectcontext = [
-    'name' => 'type',
-    'label' => 'Select condition',
-    'action' => $editconditionurl->out(false),
-    'method' => 'get',
-    'formid' => html_writer::random_id('single_select_f'),
-    'id' => html_writer::random_id('single_select'),
-    'classes' => 'singleselect',
-    'params' => [
-        [
-            'name' => 'courseid',
-            'value' => $courseid,
-        ],
-        [
-            'name' => 'sesskey',
-            'value' => sesskey(),
-        ],
-    ],
-    'options' => $options,
-];
-
-echo $OUTPUT->render_from_template('core/single_select', $singleselectcontext);
+$ruleform = new local_coursedynamicrules\rule\rule_form($url, ['courseid' => $courseid]);
+if ($ruleform->is_cancelled()) {
+    redirect($rulesurl);
+} else if ($data = $ruleform->get_data()) {
+    $DB->insert_record('cdr_rule', $data);
+    redirect(
+        $rulesurl,
+        get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
+} else {
+    $ruleform->display();
+}
 
 echo $OUTPUT->footer();
