@@ -26,9 +26,11 @@ require('../../config.php');
 
 require_login();
 
-$courseid = required_param('id', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
-$url = new moodle_url('/local/coursedynamicrules/rules.php', ['id' => $courseid]);
+$url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
+
 $PAGE->set_url($url);
 
 if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
@@ -42,18 +44,57 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-// Mock de datos.
-$mockdata = [
-    ['Rule 1', 'Completed module 1', 'Send notification', '2024-10-15'],
-    ['Rule 2', 'Completed module 2', 'Send reminder', '2024-10-12'],
-    ['Rule 3', 'Completed module 3', 'Unlock certificate', '2024-10-14'],
-    ['Rule 4', 'Completed module 4', 'Send notification', '2024-10-15'],
-];
+$rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
 
 $table = new html_table();
-$table->head = ['Name', 'Conditions', 'Actions', 'Creation Date'];
-$table->data = $mockdata;
-$addrulebutton = new single_button(new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $courseid]), 'Add rule', 'get', true);
+$table->head[] = get_string('rule:name', 'local_coursedynamicrules');
+$table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
+$table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
+
+foreach ($rules as $rule) {
+    $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
+    $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
+    $conditionstext = '';
+    $actionstext = '';
+
+    $conditionsurl = new moodle_url(
+        '/local/coursedynamicrules/conditions.php',
+        ['courseid' => $courseid, 'ruleid' => $rule->id]
+    );
+
+
+    if (empty($conditions)) {
+        $conditionstext = html_writer::link(
+            $conditionsurl,
+            get_string('condition:add', 'local_coursedynamicrules')
+        );
+    } else {
+        $conditionstext = '';
+        foreach ($conditions as $condition) {
+            $conditionstext .= '<p>' . $condition->name . '</p>';
+        }
+        $editlink = html_writer::link(
+            $conditionsurl,
+            $OUTPUT->pix_icon('t/edit', get_string('condition:edit', 'local_coursedynamicrules'))
+        );
+
+        $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
+    }
+
+    $table->data[] = [
+        $rule->name,
+        $conditionstext,
+        $actionstext,
+    ];
+
+}
+
+$addrulebutton = new single_button(
+    $editruleurl,
+    get_string('rule:add', 'local_coursedynamicrules'),
+    'get',
+    true
+);
 
 echo $OUTPUT->header();
 
