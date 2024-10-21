@@ -30,3 +30,18 @@ $string['coursedynamicrules:notification'] = 'Send notification';
 $string['messageprovider:coursedynamicrules_notification'] = 'Course dynamic rules notification';
 $string['coursedynamicrules:manage'] = 'Manage course dynamic rules';
 $string['typemissing'] = 'Missing value "type"';
+$string['rule:name'] = 'Name';
+$string['rule:description'] = 'Description';
+$string['rule:conditions'] = 'Conditions';
+$string['rule:actions'] = 'Actions';
+$string['rule:active'] = 'Active';
+$string['rule:active_help'] = 'Enable or disable the rule';
+$string['rule:add'] = 'Add rule';
+$string['rule:addedsuccessfully'] = 'Rule added successfully';
+$string['rule:edit'] = 'Edit rule';
+$string['condition:add'] = 'Add conditions';
+$string['condition:edit'] = 'Edit conditions';
+
+
+
+
