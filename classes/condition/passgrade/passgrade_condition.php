@@ -55,8 +55,6 @@ class passgrade_condition extends condition_base {
     public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
     $ajaxformdata=null) {
         global $DB, $CFG;
-        $customdata = [];
-        // $editconditionurl = new moodle_url('/local/coursedynamicrules/editcondition.php', []);
 
         $this->conditionform = new passgrade_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
 
@@ -104,7 +102,48 @@ class passgrade_condition extends condition_base {
 
     /**
      * Saves the condition after it has been edited (or created)
+     * @param object $formdata
      */
-    public function save_condition() {
+    public function save_condition($formdata) {
+        global $DB;
+        $params = [
+            'cmid' => $formdata->coursemodule,
+        ];
+
+        $condition = new stdClass();
+        $condition->ruleid = $formdata->ruleid;
+        $condition->conditiontype = $this->type;
+        $condition->params = json_encode($params);
+
+        $this->set_data($condition);
+
+        $DB->insert_record('cdr_condition', $condition);
+    }
+
+    /**
+     * Returns the header of the condition to visualization
+     *
+     * @return string
+     */
+    public function get_header() {
+        return get_string('condition:passgrade', 'local_coursedynamicrules');
+    }
+
+    /**
+     * Returns the description of the condition to visualization
+     *
+     * @return string
+     */
+    public function get_description() {
+        $courseid = $this->condition->courseid;
+        $cmid = $this->params['cmid'];
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = $modinfo->get_cms();
+        $cminfo = $cms[$cmid];
+
+        if (!$cminfo) {
+            return '';
+        }
+        return get_string('condition:passgrade:description', 'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name);
     }
 }
