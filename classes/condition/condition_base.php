@@ -36,7 +36,7 @@ abstract class condition_base {
     /** @var  \stdClass|null condition data that represents the condition record on the database */
     protected $condition;
 
-    /** @var  \stdClass|null condition parameters stored in the database */
+    /** @var  array|null condition parameters stored in the database */
     protected $params;
 
     /**
@@ -44,10 +44,7 @@ abstract class condition_base {
      * @param stdClass|null $condition condition data that represents the condition record on the database
      */
     public function __construct($condition = null) {
-        $this->condition = $condition;
-        if ($condition && $condition->params) {
-            $this->params = json_decode($condition->params, true);
-        }
+        $this->set_data($condition);
     }
 
     /**
@@ -71,25 +68,22 @@ abstract class condition_base {
     /**
      * Gets submitted data from the edit form and saves it in $this->condition
      *
-     * @return bool
+     * @return mixed
      */
     public function get_data() {
-        if ($this->condition !== null) {
-            return true;
-        }
-        if ($this->condition = $this->conditionform->get_data()) {
-            return true;
-        }
-        return false;
+        return $this->conditionform->get_data();
     }
 
     /**
-     * Set the condition data (to be used by data generators).
+     * Set the condition data
      *
      * @param stdClass $conditiondata the condition data to set
      */
-    public function set_data($conditiondata) {
-        $this->condition = $conditiondata;
+    public function set_data($condition) {
+        $this->condition = $condition;
+        if ($condition && $condition->params) {
+            $this->params = json_decode($condition->params, true);
+        }
     }
 
     /**
@@ -119,8 +113,9 @@ abstract class condition_base {
 
     /**
      * Saves the condition after it has been edited (or created)
+     * @param object $formdata
      */
-    abstract public function save_condition();
+    abstract public function save_condition($formdata);
 
     /**
      * Returns the formatted name of the condition for the complete form or response view
@@ -161,5 +156,19 @@ abstract class condition_base {
      * @return bool
      */
     abstract public function validate($event);
+
+    /**
+     * Returns the header of the condition to visualization
+     *
+     * @return string
+     */
+    abstract public function get_header();
+
+    /**
+     * Returns the description of the condition to visualization
+     *
+     * @return string
+     */
+    abstract public function get_description();
 
 }
