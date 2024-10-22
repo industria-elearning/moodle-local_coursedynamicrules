@@ -66,7 +66,7 @@ abstract class condition_base {
     }
 
     /**
-     * Gets submitted data from the edit form and saves it in $this->condition
+     * Gets submitted data from the edit form
      *
      * @return mixed
      */
