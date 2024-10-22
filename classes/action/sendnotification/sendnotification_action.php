@@ -29,13 +29,19 @@ class sendnotification_action extends \local_coursedynamicrules\action\action_ba
     /** @var string type of the action, should be overridden by each action type */
     protected $type = 'sendnotification';
 
+    /** @var string related user id to the event */
+    protected $relateduserid;
+
     /**
      * Executes the action
      *
      * @return mixed
      */
     public function execute() {
-        $userto = $this->params['userto'];
+        if (!$this->relateduserid) {
+            return;
+        }
+        $userto = $this->relateduserid;
         $messagesubject = $this->params['messagesubject'];
         $messagebody = $this->params['messagebody'];
         $messagesmallmessage = $this->params['messagesmallmessage'];
@@ -149,5 +155,13 @@ class sendnotification_action extends \local_coursedynamicrules\action\action_ba
     public function get_description() {
         $messagesubject = $this->params['messagesubject'];
         return get_string('sendnotification_description', 'local_coursedynamicrules', $messagesubject);
+    }
+
+    /**
+     * Sets extra data for the action
+     * @param array $data
+     */
+    public function set_extra_data($data) {
+        $this->relateduserid = $data['relateduserid'];
     }
 }

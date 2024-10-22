@@ -120,6 +120,13 @@ abstract class action_base {
      * @param object $formdata
      */
     abstract public function save_action($formdata);
+
+    /**
+     * Sets extra data for the action
+     * @param array $data
+     */
+    public function set_extra_data($data) {
+    }
 }
 
 
