@@ -46,4 +46,11 @@ $string['allcourseactivitymodules'] = 'All course activity modules';
 $string['searchcourseactivitymodules'] = 'Search course activity modules';
 $string['condition:passgrade:description'] = 'Users who have completed the course activity module \'{$a}\' with a passing grade';
 $string['invalidruleid'] = 'Invalid rule id';
+$string['deletecondition'] = 'Delete condition';
+$string['messagesubject'] = 'Subject';
+$string['messagebody'] = 'Body';
+$string['sendnotification'] = 'Send notification';
+$string['sendnotification_description'] = 'Send notification \'{$a}\' to users';
+$string['addactions'] = 'Add actions';
+$string['editactions'] = 'Edit actions';
 
