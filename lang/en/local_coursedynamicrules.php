@@ -53,4 +53,5 @@ $string['sendnotification'] = 'Send notification';
 $string['sendnotification_description'] = 'Send notification \'{$a}\' to users';
 $string['addactions'] = 'Add actions';
 $string['editactions'] = 'Edit actions';
+$string['backtolistrules'] = 'Back to list rules';
 
