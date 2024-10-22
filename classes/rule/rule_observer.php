@@ -16,6 +16,7 @@
 
 namespace local_coursedynamicrules\rule;
 
+use local_coursedynamicrules\action\action_base;
 use local_coursedynamicrules\condition\condition_base;
 use local_coursedynamicrules\rule\rule_class_loader;
 use stdClass;
@@ -37,6 +38,7 @@ class rule_observer {
         global $DB;
         $eventdata = $event->get_data();
         $courseid = $eventdata["courseid"];
+        $relateduserid = $eventdata["relateduserid"];
 
         if (!$courseid) {
             return;
@@ -68,7 +70,7 @@ class rule_observer {
 
             // If all conditions are met, execute the actions.
             if ($conditionsmet) {
-                self::execute_actions($rule);
+                self::execute_actions($rule, $relateduserid);
             }
         }
     }
@@ -76,8 +78,9 @@ class rule_observer {
     /**
      * Executes the actions associated to the rule.
      * @param stdClass $rule
+     * @param int $relateduserid user id related to the event
      */
-    private static function execute_actions($rule) {
+    private static function execute_actions($rule, $relateduserid) {
         global $DB;
 
         // Get actions associated to the rule.
@@ -85,7 +88,9 @@ class rule_observer {
 
         foreach ($actions as $action) {
             $actionclass = rule_class_loader::get_action_class($action->actiontype);
-            $actioninstance = new $actionclass($action, true);
+            /**  @var action_base $actioninstance */
+            $actioninstance = new $actionclass($action);
+            $actioninstance->set_extra_data(['relateduserid' => $relateduserid]);
             $actioninstance->execute();
         }
     }
