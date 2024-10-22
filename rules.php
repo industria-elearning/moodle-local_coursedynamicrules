@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\rule\rule_class_loader;
+
 require('../../config.php');
 
 require_login();
@@ -43,6 +45,7 @@ $PAGE->set_course($course);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
+echo $OUTPUT->header();
 
 $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
 
@@ -50,6 +53,7 @@ $table = new html_table();
 $table->head[] = get_string('rule:name', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
+$table->size = ['20%', '40%', '40%'];
 
 foreach ($rules as $rule) {
     $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
@@ -59,6 +63,10 @@ foreach ($rules as $rule) {
 
     $conditionsurl = new moodle_url(
         '/local/coursedynamicrules/conditions.php',
+        ['courseid' => $courseid, 'ruleid' => $rule->id]
+    );
+    $actionsurl = new moodle_url(
+        '/local/coursedynamicrules/actions.php',
         ['courseid' => $courseid, 'ruleid' => $rule->id]
     );
 
@@ -71,7 +79,17 @@ foreach ($rules as $rule) {
     } else {
         $conditionstext = '';
         foreach ($conditions as $condition) {
-            $conditionstext .= '<p>' . $condition->name . '</p>';
+            $condition->courseid = $courseid;
+            $conditionclass = rule_class_loader::get_condition_class($condition->conditiontype);
+            /** @var \local_coursedynamicrules\condition\condition_base $conditioninstance */
+            $conditioninstance = new $conditionclass($condition);
+
+            $header = $conditioninstance->get_header();
+            $description = $conditioninstance->get_description();
+
+            if (!empty($header) && !empty($description)) {
+                $conditionstext .= '<p>' . $conditioninstance->get_description() . '</p>';
+            }
         }
         $editlink = html_writer::link(
             $conditionsurl,
@@ -81,10 +99,39 @@ foreach ($rules as $rule) {
         $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
 
+    if (empty($actions)) {
+        $actionstext = html_writer::link(
+            $actionsurl,
+            get_string('addactions', 'local_coursedynamicrules')
+        );
+    } else {
+        $actionstext = '';
+        foreach ($actions as $action) {
+            $action->courseid = $courseid;
+            $actionclass = rule_class_loader::get_action_class($action->actiontype);
+            /** @var \local_coursedynamicrules\action\action_base $actioninstance */
+            $actioninstance = new $actionclass($action);
+
+            $header = $actioninstance->get_header();
+            $description = $actioninstance->get_description();
+
+            if (!empty($header) && !empty($description)) {
+
+                $actionstext .= '<p>' . $actioninstance->get_description() . '</p>';
+            }
+        }
+        $editlink = html_writer::link(
+            $actionsurl,
+            $OUTPUT->pix_icon('t/edit', get_string('editactions', 'local_coursedynamicrules'))
+        );
+
+        $actionstext = html_writer::div($actionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
+    }
+
     $table->data[] = [
-        $rule->name,
-        $conditionstext,
-        $actionstext,
+        new html_table_cell($rule->name),
+        new html_table_cell($conditionstext),
+        new html_table_cell($actionstext),
     ];
 
 }
@@ -95,8 +142,6 @@ $addrulebutton = new single_button(
     'get',
     true
 );
-
-echo $OUTPUT->header();
 
 echo html_writer::div($OUTPUT->render($addrulebutton), 'my-3');
 echo html_writer::table($table);
