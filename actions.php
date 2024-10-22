@@ -78,6 +78,7 @@ echo $OUTPUT->header();
 
 $actionoptions = load_action_options();
 
+echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
 echo html_writer::start_div('d-flex');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $actionoptions]);
 echo html_writer::start_div('col-8');

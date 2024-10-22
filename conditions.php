@@ -48,7 +48,7 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) { 
+if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
 
@@ -78,9 +78,10 @@ echo $OUTPUT->header();
 
 $conditionoptions = load_condition_options();
 
-echo html_writer::start_div('d-flex');
+echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
+echo html_writer::start_div('d-flex h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $conditionoptions]);
-echo html_writer::start_div('col-8');
+echo html_writer::start_div('col-8 h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $conditionsfortemplate]);
 if (!empty($type)) {
     $conditionclass = rule_class_loader::get_condition_class($type);
