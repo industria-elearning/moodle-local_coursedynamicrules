@@ -26,12 +26,12 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class action_base {
-    /** @var string type of the action, should be overridden by each condition type */
+    /** @var string type of the action, should be overridden by each action type */
     protected $type;
-
+    /** @var action_form|null */
+    protected $actionform;
     /** @var  \stdClass|null action data that represents the action record on the database */
     protected $action;
-
     /** @var  \stdClass|null action parameters stored in the database */
     protected $params;
 
@@ -47,9 +47,79 @@ abstract class action_base {
     }
 
     /**
+     * Displays the form for editing an action
+     *
+     * this function only can used after the call of build_editform()
+     */
+    public function show_editform() {
+        $this->actionform->display();
+    }
+
+    /**
      * Executes the action
      *
      * @return mixed
      */
     abstract public function execute();
+
+    /**
+     * Creates and returns an instance of the form for editing the action
+     *
+     * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
+     *              current url. If a moodle_url object then outputs params as hidden variables.
+     * @param mixed $customdata if your form defintion method needs access to data such as $course
+     *              $cm, etc. to construct the form definition then pass it in this array. You can
+     *              use globals for somethings.
+     * @param string $method if you set this to anything other than 'post' then _GET and _POST will
+     *               be merged and used as incoming data to the form.
+     * @param string $target target frame for form submission. You will rarely use this. Don't use
+     *               it if you don't need to as the target attribute is deprecated in xhtml strict.
+     * @param mixed $attributes you can pass a string of html attributes here or an array.
+     *               Special attribute 'data-random-ids' will randomise generated elements ids. This
+     *               is necessary when there are several forms on the same page.
+     *               Special attribute 'data-double-submit-protection' set to 'off' will turn off
+     *               double-submit protection JavaScript - this may be necessary if your form sends
+     *               downloadable files in response to a submit button, and can't call
+     *               \core_form\util::form_download_complete();
+     * @param bool $editable
+     * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
+     */
+    abstract public function build_editform(
+        $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null);
+
+    /**
+     * Checks if the editing form was cancelled
+     *
+     * @return bool
+     */
+    abstract public function is_cancelled();
+
+    /**
+     * Gets submitted data from the edit form
+     *
+     * @return mixed
+     */
+    abstract public function get_data();
+
+    /**
+     * Returns the header of the action to visualization
+     *
+     * @return string
+     */
+    abstract public function get_header();
+
+    /**
+     * Returns the description of the action to visualization
+     *
+     * @return string
+     */
+    abstract public function get_description();
+
+    /**
+     * Saves the action after it has been edited (or created)
+     * @param object $formdata
+     */
+    abstract public function save_action($formdata);
 }
+
+
