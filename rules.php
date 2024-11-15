@@ -53,7 +53,8 @@ $table = new html_table();
 $table->head[] = get_string('rule:name', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
-$table->size = ['20%', '40%', '40%'];
+$table->head[] = '';
+$table->size = ['20%', '38%', '38%', '4%'];
 
 foreach ($rules as $rule) {
     $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
@@ -121,11 +122,25 @@ foreach ($rules as $rule) {
 
         $actionstext = html_writer::div($actionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
+    $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $rule->id, 'courseid' => $courseid]);
+    $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);  
+    $editrulelink = html_writer::link(
+        $editruleurl,
+        $OUTPUT->pix_icon('t/edit', get_string('rule:edit', 'local_coursedynamicrules')),
+    );
+    $deleterulelink = html_writer::link(
+        $deleteruleurl,
+        $OUTPUT->pix_icon('t/delete', get_string('rule:delete', 'local_coursedynamicrules')),
+    );
+
+    $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
+
 
     $table->data[] = [
         new html_table_cell($rule->name),
         new html_table_cell($conditionstext),
         new html_table_cell($actionstext),
+        new html_table_cell($ruletext),
     ];
 
 }
