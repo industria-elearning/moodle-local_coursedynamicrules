@@ -59,15 +59,20 @@ $actionsfortemplate = [];
 foreach ($actions as $action) {
     $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
 
-
     $header = $actioninstance->get_header();
     $description = $actioninstance->get_description();
+
+    $deleteurl = new moodle_url(
+        '/local/coursedynamicrules/deleteaction.php',
+        ['id' => $action->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
+    );
 
     if (!empty($header) && !empty($description)) {
         $actionsfortemplate[] = [
             'id' => $action->id,
             'header' => $actioninstance->get_header(),
             'description' => $actioninstance->get_description(),
+            'deleteurl' => $deleteurl->out(false),
         ];
     }
 }
