@@ -58,7 +58,7 @@ $config = get_config('local_coursedynamicrules');
 $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
 $description = $actioninstance->get_description();
 
-if ($delete === md5($config->confirmdelete)) {
+if ($delete === md5($config->confirmdeleteaction)) {
     require_sesskey();
     // Delete rule.
     $DB->delete_records('cdr_action', ['id' => $id]);
@@ -76,9 +76,9 @@ $strdeleteactioncheck = get_string("deleteactioncheck", "local_coursedynamicrule
 $message = "{$strdeleteactioncheck}<br /><br />{$description}";
 
 // Generate ramdom token for validation delete action.
-$confirmdelete = time() . md5(mt_rand(100000000, mt_getrandmax()));
-set_config('confirmdelete', $confirmdelete, 'local_coursedynamicrules');
-$hashdelete = md5($confirmdelete);
+$confirmdeleteaction = time() . md5(mt_rand(100000000, mt_getrandmax()));
+set_config('confirmdeleteaction', $confirmdeleteaction, 'local_coursedynamicrules');
+$hashdelete = md5($confirmdeleteaction);
 
 $continueurl = new moodle_url(
     '/local/coursedynamicrules/deleteaction.php',

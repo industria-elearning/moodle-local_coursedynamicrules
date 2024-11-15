@@ -49,7 +49,7 @@ if (!$rule) {
 }
 $config = get_config('local_coursedynamicrules');
 
-if ($delete === md5($config->confirmdelete)) {
+if ($delete === md5($config->confirmdeleterule)) {
     require_sesskey();
 
     // Delete rule.
@@ -70,13 +70,13 @@ $strdeleterulecheck = get_string("deleterulecheck", "local_coursedynamicrules");
 $message = "{$strdeleterulecheck}<br /><br />{$rule->name}";
 
 // Generate ramdom token for validation delete action.
-$confirmdelete = time() . md5(mt_rand(100000000, mt_getrandmax()));
-set_config('confirmdelete', $confirmdelete, 'local_coursedynamicrules');
+$confirmdeleterule = time() . md5(mt_rand(100000000, mt_getrandmax()));
+set_config('confirmdeleterule', $confirmdeleterule, 'local_coursedynamicrules');
 
 
 $continueurl = new moodle_url(
     '/local/coursedynamicrules/deleterule.php',
-    ['id' => $rule->id, 'delete' => md5($confirmdelete), 'courseid' => $courseid]
+    ['id' => $rule->id, 'delete' => md5($confirmdeleterule), 'courseid' => $courseid]
 );
 
 $continuebutton = new single_button(
