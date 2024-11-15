@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\rule;
+namespace local_coursedynamicrules\form;
 
 /**
  * Class rule_form
@@ -24,7 +24,6 @@ namespace local_coursedynamicrules\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_form extends \moodleform {
-
     /**
      * Defines the form.
      */

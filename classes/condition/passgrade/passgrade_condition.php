@@ -16,7 +16,8 @@
 
 namespace local_coursedynamicrules\condition\passgrade;
 
-use local_coursedynamicrules\condition\condition_base;
+use local_coursedynamicrules\core\condition;
+use local_coursedynamicrules\form\conditions\passgrade_form;
 use stdClass;
 
 /**
@@ -26,7 +27,7 @@ use stdClass;
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class passgrade_condition extends condition_base {
+class passgrade_condition extends condition {
     /** @var string type of condition */
     protected $type = "passgrade";
 
@@ -61,36 +62,22 @@ class passgrade_condition extends condition_base {
     }
 
     /**
-     * Validate if the event is instanceof the event type for this condition
+     * Evaluate the condition and return true if the condition is met
      *
-     * @param \core\event\course_module_completion_updated $event information about the event obtained from the event handler
-     *
+     * @param object $context Context of the rule
      * @return bool
      */
-    protected function is_instace_of_event($event) {
-        return $event instanceof \core\event\course_module_completion_updated;
-    }
-
-    /**
-     * Validates the condition
-     *
-     * @param \core\event\course_module_completion_updated $event information about the event obtained from the event handler
-     *
-     * @return bool
-     */
-    public function validate($event) {
+    public function evaluate($context) {
         global $DB;
-        if (!$this->is_instace_of_event($event) || $this->condition->conditiontype !== $this->type) {
+        if ($this->params->cmid != $context->cmid) {
             return false;
         }
-        $eventdata = $event->get_data();
-        $otherdata = $eventdata['other'];
-        $courseid = $eventdata["courseid"];
-        $cmid = $eventdata["contextinstanceid"];
-        $relateduserid = $eventdata["relateduserid"];
-        $completionstate = $otherdata['completionstate'];
+        $courseid = $context->courseid;
+        $cmid = $context->cmid;
+        $userid = $context->userid;
+        $completionstate = $context->completionstate;
 
-        $modinfo = get_fast_modinfo($courseid, $relateduserid);
+        $modinfo = get_fast_modinfo($courseid, $userid);
         $cminfo = $modinfo->get_cm($cmid);
 
         if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
@@ -135,8 +122,8 @@ class passgrade_condition extends condition_base {
      * @return string
      */
     public function get_description() {
-        $courseid = $this->condition->courseid;
-        $cmid = $this->params['cmid'];
+        $courseid = $this->courseid;
+        $cmid = $this->params->cmid;
         $modinfo = get_fast_modinfo($courseid);
         $cms = $modinfo->get_cms();
         $cminfo = $cms[$cmid];

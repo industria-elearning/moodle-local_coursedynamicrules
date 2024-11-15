@@ -24,7 +24,7 @@
 
 // TODO Refactor this file.
 
-use local_coursedynamicrules\rule\rule_class_loader;
+use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
@@ -57,10 +57,8 @@ $actions = $DB->get_records('cdr_action', ['ruleid' => $ruleid]);
 
 $actionsfortemplate = [];
 foreach ($actions as $action) {
-    $action->courseid = $courseid;
-    $actionclass = rule_class_loader::get_action_class($action->actiontype);
-    /** @var \local_coursedynamicrules\action\action_base $actioninstance */
-    $actioninstance = new $actionclass($action);
+    $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
+
 
     $header = $actioninstance->get_header();
     $description = $actioninstance->get_description();
@@ -84,10 +82,11 @@ echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', [
 echo html_writer::start_div('col-8');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $actionsfortemplate]);
 if (!empty($type)) {
-    $actionclass = rule_class_loader::get_action_class($type);
-
-    /** @var \local_coursedynamicrules\action\action_base $actioninstance */
-    $actioninstance = new $actionclass();
+    $actionrecord = (object) [
+        'actiontype' => $type,
+        'params' => json_encode([]),
+    ];
+    $actioninstance = rule_component_loader::create_action_instance($actionrecord);
     $customdata = [
         'courseid' => $courseid,
         'ruleid' => $ruleid,
@@ -122,7 +121,9 @@ function load_actions($dir = 'local/coursedynamicrules/classes/action') {
     $filtered = [];
 
     foreach ($actiontypes as $actiontype) {
-        if (rule_class_loader::get_action_class($actiontype)) {
+        $conditionclass = "\\local_coursedynamicrules\\action\\{$actiontype}\\{$actiontype}_action";
+
+        if (class_exists($conditionclass)) {
             $filtered[] = $actiontype;
         }
     }

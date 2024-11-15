@@ -16,6 +16,8 @@
 
 namespace local_coursedynamicrules\action\sendnotification;
 
+use local_coursedynamicrules\core\action;
+use local_coursedynamicrules\form\actions\sendnotification_form;
 use stdClass;
 
 /**
@@ -25,32 +27,63 @@ use stdClass;
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sendnotification_action extends \local_coursedynamicrules\action\action_base {
+class sendnotification_action extends action {
     /** @var string type of the action, should be overridden by each action type */
     protected $type = 'sendnotification';
 
     /** @var string related user id to the event */
-    protected $relateduserid;
 
     /**
      * Executes the action
+     * @param object $rulecontext Context of the rule
      *
      * @return mixed
      */
-    public function execute() {
-        if (!$this->relateduserid) {
-            return;
-        }
-        $userto = $this->relateduserid;
-        $messagesubject = $this->params['messagesubject'];
-        $messagebody = $this->params['messagebody'];
-        $messagesmallmessage = $this->params['messagesmallmessage'];
+    public function execute($rulecontext) {
+        global $DB;
+
+        $userid = $rulecontext->userid;
+        $courseid = $rulecontext->courseid;
+        $cmid = $rulecontext->cmid;
+
+        $messagesubject = $this->params->messagesubject;
+        $messagebody = $this->params->messagebody;
+        $messagesmallmessage = $this->params->messagesmallmessage;
+
+        $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+
+        $modinfo = get_fast_modinfo($courseid, $userid);
+        $cminfo = $modinfo->get_cm($cmid);
+
+        $coursefullname = $modinfo->course->fullname;
+        $modulename = $cminfo->modname;
+        $moduleinstancename = $cminfo->name;
+
+        // 'courseid' => $courseid,
+        // 'cmid' => $cmid,
+        // 'userid' => $userid,
+        // 'completionstate' => $completionstate,
+
+        // {$a->coursename}
+        // {$a->fullname}
+        // {$a->firstname}
+        // {$a->lastname}
+        // {$a->modulename}
+        // {$a->moduleinstancename}
+
+        // $message = $instance->customtext1;
+        // $key = ['{$a->coursename}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
+        // $value = [$a->coursename, $a->profileurl, fullname($user), $user->email];
+        $key = ['{$a->coursename}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}', '{$a->modulename}', '{$a->moduleinstancename}'];
+        $value = [$coursefullname, fullname($user), $user->firstname, $user->lastname, $modulename, $moduleinstancename];
+        $messagebody = str_replace($key, $value, $messagebody);
 
         $message = new \core\message\message();
-        $message->component = 'local_coursedynamicrules'; // Your plugin's name
-        $message->name = 'coursedynamicrules_notification'; // Your notification name from message.php
+        $message->component = 'local_coursedynamicrules';
+        // Notification name from message.php.
+        $message->name = 'coursedynamicrules_notification';
         $message->userfrom = $message->userfrom = \core_user::get_support_user();
-        $message->userto = $userto;
+        $message->userto = $userid;
         $message->subject = $messagesubject;
         $message->fullmessage = html_to_text($messagebody);
         $message->fullmessageformat = FORMAT_HTML;
@@ -132,7 +165,6 @@ class sendnotification_action extends \local_coursedynamicrules\action\action_ba
      * @param stdClass $actiondata the action data to set
      */
     public function set_data($action) {
-        $this->action = $action;
         if ($action && $action->params) {
             $this->params = json_decode($action->params, true);
         }
@@ -153,15 +185,7 @@ class sendnotification_action extends \local_coursedynamicrules\action\action_ba
      * @return string
      */
     public function get_description() {
-        $messagesubject = $this->params['messagesubject'];
+        $messagesubject = $this->params->messagesubject;
         return get_string('sendnotification_description', 'local_coursedynamicrules', $messagesubject);
-    }
-
-    /**
-     * Sets extra data for the action
-     * @param array $data
-     */
-    public function set_extra_data($data) {
-        $this->relateduserid = $data['relateduserid'];
     }
 }
