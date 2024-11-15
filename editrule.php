@@ -22,41 +22,65 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ require('../../config.php');
 
-require('../../config.php');
+ $ruleid = optional_param('id', 0, PARAM_INT);
+ $courseid = required_param('courseid', PARAM_INT);
 
-$courseid = required_param('courseid', PARAM_INT);
+ $url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid, 'id' => $ruleid]);
+ $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
-$url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
-$rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+ $PAGE->set_url($url);
 
-$PAGE->set_url($url);
-
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
+if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
     exit;
 }
 
-require_login($course);
+ require_login($course);
+//  require_capability('local/coursedynamicrules:editrules', context_course::instance($courseid));
 
-$PAGE->set_course($course);
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('admin');
+ $PAGE->set_course($course);
+ $PAGE->set_title($course->shortname);
+ $PAGE->set_heading($course->fullname);
+ $PAGE->set_pagelayout('admin');
 
-echo $OUTPUT->header();
-$ruleform = new local_coursedynamicrules\form\rule_form($url, ['courseid' => $courseid]);
+ echo $OUTPUT->header();
+
+ $rule = new stdClass();
+if ($ruleid) {
+    $pagetitle = get_string('editrule', 'local_coursedynamicrules');
+    $rule = $DB->get_record('cdr_rule', ['id' => $ruleid]);
+} else {
+    $pagetitle = get_string('createrule', 'local_coursedynamicrules');
+}
+
+ $PAGE->set_title($pagetitle);
+ $PAGE->set_heading($pagetitle);
+
+ $ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 'courseid' => $courseid]);
+
 if ($ruleform->is_cancelled()) {
     redirect($rulesurl);
 } else if ($data = $ruleform->get_data()) {
-    $DB->insert_record('cdr_rule', $data);
-    redirect(
-        $rulesurl,
-        get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
-        null,
-        \core\output\notification::NOTIFY_SUCCESS
-    );
-} else {
-    $ruleform->display();
+    if (empty($data->id)) {
+        $DB->insert_record('cdr_rule', $data);
+        redirect(
+            $rulesurl,
+            get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+    } else {
+        $DB->update_record('cdr_rule', $data);
+        redirect(
+            $rulesurl,
+            get_string('rule:updatedsuccessfully', 'local_coursedynamicrules'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+    }
 }
 
-echo $OUTPUT->footer();
+ $ruleform->display();
+ echo $OUTPUT->footer();
+

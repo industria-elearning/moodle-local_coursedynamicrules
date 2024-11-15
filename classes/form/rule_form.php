@@ -32,20 +32,26 @@ class rule_form extends \moodleform {
         $customdata = $this->_customdata;
 
         $courseid = $customdata['courseid'];
+        $rule = $customdata['rule'];
 
         $mform->addElement('text', 'name', get_string('rule:name', 'local_coursedynamicrules'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->setDefault('name', $rule->name);
 
         $mform->addElement('textarea', 'description', get_string('rule:description', 'local_coursedynamicrules'));
         $mform->setType('description', PARAM_RAW);
+        $mform->setDefault('description', $rule->description);
 
         $mform->addElement('checkbox', 'active', get_string('rule:active', 'local_coursedynamicrules'));
-        $mform->setDefault('active', 0);
+        $mform->setDefault('active', $rule->active ?? 0);
         $mform->addHelpButton('active', 'rule:active', 'local_coursedynamicrules');
 
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('hidden', 'id', $rule->id);
+        $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }

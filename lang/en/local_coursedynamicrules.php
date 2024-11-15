@@ -39,6 +39,7 @@ $string['rule:active_help'] = 'Enable or disable the rule';
 $string['rule:add'] = 'Add rule';
 $string['rule:addedsuccessfully'] = 'Rule added successfully';
 $string['rule:edit'] = 'Edit rule';
+$string['rule:delete'] = 'Delete rule';
 $string['condition:add'] = 'Add conditions';
 $string['condition:edit'] = 'Edit conditions';
 $string['condition:passgrade'] = 'Activity completion with passing grade';
@@ -71,4 +72,12 @@ $string['firstname'] = 'User firstname';
 $string['lastname'] = 'User lastname';
 $string['modulename'] = 'Course activity module name';
 $string['moduleinstancename'] = 'Course activity module instance name';
+$string['deletingrule'] = 'Deleting rule \'{$a}\'';
+$string['deleterulecheck'] = 'Are you absolutely sure you want to completely delete this rule?';
+$string['deletedrule'] = 'rule \'{$a}\' has been completely deleted';
+$string['rule:updatedsuccessfully'] = 'Rule updated successfully';
+$string['createrule'] = 'Create Rule';
+$string['editrule'] = 'Edit Rule';
+$string['local_coursedynamicrules:editrules'] = 'Edit Course Dynamic Rules';
+
 
