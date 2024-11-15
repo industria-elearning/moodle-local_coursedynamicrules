@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_coursedynamicrules\rule\rule_class_loader;
+use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
@@ -79,10 +79,7 @@ foreach ($rules as $rule) {
     } else {
         $conditionstext = '';
         foreach ($conditions as $condition) {
-            $condition->courseid = $courseid;
-            $conditionclass = rule_class_loader::get_condition_class($condition->conditiontype);
-            /** @var \local_coursedynamicrules\condition\condition_base $conditioninstance */
-            $conditioninstance = new $conditionclass($condition);
+            $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
 
             $header = $conditioninstance->get_header();
             $description = $conditioninstance->get_description();
@@ -107,10 +104,7 @@ foreach ($rules as $rule) {
     } else {
         $actionstext = '';
         foreach ($actions as $action) {
-            $action->courseid = $courseid;
-            $actionclass = rule_class_loader::get_action_class($action->actiontype);
-            /** @var \local_coursedynamicrules\action\action_base $actioninstance */
-            $actioninstance = new $actionclass($action);
+            $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
 
             $header = $actioninstance->get_header();
             $description = $actioninstance->get_description();

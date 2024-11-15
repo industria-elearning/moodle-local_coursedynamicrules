@@ -14,25 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition;
-
-use moodleform;
+namespace local_coursedynamicrules\form\actions;
 
 /**
- * Class rule_condition_form
+ * Class action_form
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_form  extends moodleform {
-
+class action_form extends \moodleform {
     /**
      * Add elements to form.
      */
     public function definition() {
         $mform = $this->_form;
-        $condition = $this->_customdata['condition'];
+        $condition = $this->_customdata['action'];
 
         $this->add_action_buttons();
     }

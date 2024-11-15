@@ -14,80 +14,54 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition;
+namespace local_coursedynamicrules\core;
 
-use stdClass;
+use local_coursedynamicrules\form\actions\action_form;
 
 /**
- * Class condition_base
+ * Class action
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class condition_base {
+abstract class action {
 
-    /** @var string type of the condition, should be overridden by each condition type */
+    /** @var action_form|null */
+    protected $actionform;
+
+    /** @var string Type of the action example: sendnotification */
     protected $type;
 
-    /** @var condition_form|null */
-    protected $conditionform;
-
-    /** @var  \stdClass|null condition data that represents the condition record on the database */
-    protected $condition;
-
-    /** @var  array|null condition parameters stored in the database */
+    /** @var object Parameters of the action stored in DB */
     protected $params;
 
     /**
-     * constructor
-     * @param stdClass|null $condition condition data that represents the condition record on the database
+     * Action constructor.
+     * @param object $record Record of the action stored in DB
      */
-    public function __construct($condition = null) {
-        $this->set_data($condition);
+    public function __construct($record) {
+        $this->type = $record->actiontype;
+        $this->params = json_decode($record->params);
     }
 
     /**
-     * Displays the form for editing an condition
+     * Displays the form for editing an action
      *
      * this function only can used after the call of build_editform()
      */
     public function show_editform() {
-        $this->conditionform->display();
+        $this->actionform->display();
     }
 
     /**
-     * Checks if the editing form was cancelled
-     *
-     * @return bool
+     * Execute the action
+     * @param object $context Context of the rule
      */
-    public function is_cancelled() {
-        return $this->conditionform->is_cancelled();
-    }
+    abstract public function execute($context);
 
     /**
-     * Gets submitted data from the edit form
-     *
-     * @return mixed
-     */
-    public function get_data() {
-        return $this->conditionform->get_data();
-    }
-
-    /**
-     * Set the condition data
-     *
-     * @param stdClass $conditiondata the condition data to set
-     */
-    public function set_data($condition) {
-        $this->condition = $condition;
-        if ($condition && $condition->params) {
-            $this->params = json_decode($condition->params, true);
-        }
-    }
-
-    /**
-     * Creates and returns an instance of the form for editing the item
+     * Creates and returns an instance of the form for editing the action
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
      *              current url. If a moodle_url object then outputs params as hidden variables.
@@ -112,63 +86,36 @@ abstract class condition_base {
         $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null);
 
     /**
-     * Saves the condition after it has been edited (or created)
-     * @param object $formdata
-     */
-    abstract public function save_condition($formdata);
-
-    /**
-     * Returns the formatted name of the condition for the complete form or response view
-     *
-     * @param stdClass $condition
-     * @param bool $withpostfix
-     * @return string
-     */
-    public function get_display_name($condition, $withpostfix = true) {
-        return format_text($condition->name, FORMAT_HTML, ['noclean' => true, 'para' => false]) .
-                ($withpostfix ? $this->get_display_name_postfix($condition) : '');
-    }
-
-    /**
-     * Returns the postfix to be appended to the display name that is based on other settings
-     *
-     * @param stdClass $condition
-     * @return string
-     */
-    public function get_display_name_postfix($condition) {
-        return '';
-    }
-
-    /**
-     * Validate if the event is instanceof the event type for this condition
-     *
-     * @param \core\event\base $event information about the event obtained from the event handler
-     * @return bool
-     */
-    abstract protected function is_instace_of_event($event);
-
-    /**
-     * Validates the condition
-     * Use this function to validate each one of the parameters of the condition that must be fulfilled to return true
-     *
-     * @param \core\event\base $event information about the event obtained from the event handler
+     * Checks if the editing form was cancelled
      *
      * @return bool
      */
-    abstract public function validate($event);
+    abstract public function is_cancelled();
 
     /**
-     * Returns the header of the condition to visualization
+     * Gets submitted data from the edit form
+     *
+     * @return mixed
+     */
+    abstract public function get_data();
+
+    /**
+     * Returns the header of the action to visualization
      *
      * @return string
      */
     abstract public function get_header();
 
     /**
-     * Returns the description of the condition to visualization
+     * Returns the description of the action to visualization
      *
      * @return string
      */
     abstract public function get_description();
 
+    /**
+     * Saves the action after it has been edited (or created)
+     * @param object $formdata
+     */
+    abstract public function save_action($formdata);
 }

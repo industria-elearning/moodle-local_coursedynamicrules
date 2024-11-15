@@ -14,20 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\action\sendnotification;
-use local_coursedynamicrules\action\action_form;
+namespace local_coursedynamicrules\form\conditions;
+
 
 /**
- * Class sendnotification_form
+ * TODO describe file passgrade_form
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sendnotification_form extends action_form {
-    /** @var string type of action */
-    protected $type = "sendnotification";
+class passgrade_form extends condition_form {
 
+    /** @var string type of condition */
+    protected $type = "passgrade";
     /**
      * Form definition
      *
@@ -36,15 +36,31 @@ class sendnotification_form extends action_form {
     public function definition() {
         $mform = $this->_form;
         $customdata = $this->_customdata;
+        $courseid = $customdata['courseid'];
         $ruleid = $customdata['ruleid'];
 
-        $mform->addElement('text', 'messagesubject', get_string('messagesubject', 'local_coursedynamicrules'));
-        $mform->setType('messagesubject', PARAM_TEXT);
-        $mform->addRule('messagesubject', null, 'required', null, 'client');
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = $modinfo->get_cms();
+        $options = [];
+        foreach ($cms as $cm) {
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
+        }
 
-        $mform->addElement('textarea', 'messagebody', get_string('messagebody', 'local_coursedynamicrules'));
-        $mform->setType('messagebody', PARAM_TEXT);
-        $mform->addRule('messagebody', null, 'required', null, 'client');
+        $attributes = [
+            'multiple' => false,
+            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'coursemodule',
+            get_string('searchcourseactivitymodules',
+            'local_coursedynamicrules'),
+            $options,
+            $attributes
+        );
+        $mform->setType('coursemodule', PARAM_INT);
 
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);

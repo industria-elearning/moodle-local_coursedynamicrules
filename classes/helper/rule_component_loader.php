@@ -14,35 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\rule;
+namespace local_coursedynamicrules\helper;
 
+use local_coursedynamicrules\core\action;
+use local_coursedynamicrules\core\condition;
 use moodle_exception;
 
+
 /**
- * Class rule_class_loader
- * This class is used to load the rule condition and action class dynamically
+ * Class rule_component_loader
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_class_loader {
+class rule_component_loader {
     /**
-     * load the condition type class
+     * Create instance of condition
      *
-     * @package    local_coursedynamicrules
-     * @copyright  2024 Industria Elearning <info@industriaelearning.com>
-     * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-     *
-     * @param string $type example: passgrade
-     * @return string class defintion of condition. Example: local_coursedynamicrules\condition\passgrade\passgrade_condition
+     * @param object $conditionrecord record of condition stored in DB
+     * @param int $courseid course id
+     * @return condition instance of condition. Example: insyace of local_coursedynamicrules\condition\passgrade\passgrade_condition
      * @throws moodle_exception For invalid type
      */
-    public static function get_condition_class($type) {
+    public static function create_condition_instance($conditionrecord, $courseid = null) {
         global $CFG;
 
-        // Get the class of item-type.
-        $type = clean_param($type, PARAM_ALPHA);
+        // Type of condition, example: passgrade.
+        $type = clean_param($conditionrecord->conditiontype, PARAM_ALPHA);
 
         // Example: local_coursedynamicrules\condition\passgrade\passgrade_condition.
         $conditionclass = "\\local_coursedynamicrules\\condition\\{$type}\\{$type}_condition";
@@ -57,31 +56,27 @@ class rule_class_loader {
             throw new moodle_exception('typemissing', 'local_coursedynamicrules');
         }
 
-        return $conditionclass;
+        return new $conditionclass($conditionrecord, $courseid);
     }
 
     /**
-     * Load the action type class
+     * Create instance of action
      *
-     * @package    local_coursedynamicrules
-     * @copyright  2024 Industria Elearning <info@industriaelearning.com>
-     * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-     *
-     * @param string $type example: passgrade
-     * @return string class defintion of action. Example: local_coursedynamicrules\action\passgrade\passgrade_action
+     * @param object $actionrecord record of action stored in DB
+     * @param int $courseid course id
+     * @return action instance of action. Example: instace of local_coursedynamicrules\condition\sendnotification\sendnotification_action.
      * @throws moodle_exception For invalid type
      */
-    public static function get_action_class($type) {
+    public static function create_action_instance($actionrecord, $courseid = null) {
         global $CFG;
 
-        // Get the class of item-type.
-        $type = clean_param($type, PARAM_ALPHA);
+        // Type of condition, example: sendnotification.
+        $type = clean_param($actionrecord->actiontype, PARAM_ALPHA);
 
         // Example: local_coursedynamicrules\condition\sendnotification\sendnotification_action.
         $conditionclass = "\\local_coursedynamicrules\\action\\{$type}\\{$type}_action";
         $conditionclasspath = "{$CFG->dirroot}/local/coursedynamicrules/classes/action/{$type}/{$type}_action.php";
 
-        // Get the instance of item-class.
         if (!class_exists($conditionclass) && file_exists($conditionclasspath)) {
             require_once($conditionclasspath);
         }
@@ -90,6 +85,6 @@ class rule_class_loader {
             throw new moodle_exception('typemissing', 'local_coursedynamicrules');
         }
 
-        return $conditionclass;
+        return new $conditionclass($actionrecord, $courseid);
     }
 }

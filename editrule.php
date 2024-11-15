@@ -44,7 +44,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
 echo $OUTPUT->header();
-$ruleform = new local_coursedynamicrules\rule\rule_form($url, ['courseid' => $courseid]);
+$ruleform = new local_coursedynamicrules\form\rule_form($url, ['courseid' => $courseid]);
 if ($ruleform->is_cancelled()) {
     redirect($rulesurl);
 } else if ($data = $ruleform->get_data()) {

@@ -24,7 +24,7 @@
 
 // TODO Refactor this file.
 
-use local_coursedynamicrules\rule\rule_class_loader;
+use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
@@ -57,19 +57,16 @@ $conditions = $DB->get_records('cdr_condition', ['ruleid' => $ruleid]);
 
 $conditionsfortemplate = [];
 foreach ($conditions as $condition) {
-    $condition->courseid = $courseid;
-    $conditionclass = rule_class_loader::get_condition_class($condition->conditiontype);
-    /** @var \local_coursedynamicrules\condition\condition_base $conditioninstance */
-    $conditioninstance = new $conditionclass($condition);
+    $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
 
     $header = $conditioninstance->get_header();
     $description = $conditioninstance->get_description();
 
     if (!empty($header) && !empty($description)) {
         $conditionsfortemplate[] = [
-        'id' => $condition->id,
-        'header' => $conditioninstance->get_header(),
-        'description' => $conditioninstance->get_description(),
+            'id' => $condition->id,
+            'header' => $header,
+            'description' => $description,
         ];
     }
 }
@@ -84,10 +81,12 @@ echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', [
 echo html_writer::start_div('col-8 h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $conditionsfortemplate]);
 if (!empty($type)) {
-    $conditionclass = rule_class_loader::get_condition_class($type);
+    $conditionrecord = (object) [
+        'conditiontype' => $type,
+        'params' => json_encode([]),
+    ];
+    $conditioninstance = rule_component_loader::create_condition_instance($conditionrecord);
 
-    /** @var \local_coursedynamicrules\condition\condition_base $conditioninstance */
-    $conditioninstance = new $conditionclass();
     $customdata = [
         'courseid' => $courseid,
         'ruleid' => $ruleid,
@@ -122,7 +121,8 @@ function load_conditions($dir = 'local/coursedynamicrules/classes/condition') {
     $filtered = [];
 
     foreach ($conditiontypes as $conditiontype) {
-        if (rule_class_loader::get_condition_class($conditiontype)) {
+        $conditionclass = "\\local_coursedynamicrules\\condition\\{$conditiontype}\\{$conditiontype}_condition";
+        if (class_exists($conditionclass)) {
             $filtered[] = $conditiontype;
         }
     }
