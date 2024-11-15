@@ -63,10 +63,19 @@ foreach ($conditions as $condition) {
     $description = $conditioninstance->get_description();
 
     if (!empty($header) && !empty($description)) {
+        $deleteurl = new moodle_url(
+            '/local/coursedynamicrules/deletecondition.php', 
+            ['id' => $condition->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
+        );
+        $editurl = new moodle_url(
+            '/local/coursedynamicrules/editcondition.php', 
+            ['id' => $condition->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
+        );
         $conditionsfortemplate[] = [
             'id' => $condition->id,
             'header' => $header,
             'description' => $description,
+            'deleteurl' => $deleteurl->out(false),
         ];
     }
 }

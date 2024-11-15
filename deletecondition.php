@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\helper\rule_component_loader;
+
 require('../../config.php');
 
 require_login();
@@ -30,11 +32,15 @@ require_login();
 $id = required_param('id', PARAM_INT); // Rule ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 $courseid = required_param('courseid', PARAM_INT);
+$ruleid = required_param('ruleid', PARAM_INT);
 
 require_login();
 
-$url = new moodle_url('/local/coursedynamicrules/deleterule.php', ['delete' => $delete, 'courseid' => $courseid]);
-$rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+$url = new moodle_url(
+    '/local/coursedynamicrules/deletecondition.php',
+    ['id' => $id, 'delete' => $delete, 'courseid' => $courseid, 'ruleid' => $ruleid]
+);
+$conditionsurl = new moodle_url('/local/coursedynamicrules/conditions.php', ['courseid' => $courseid, 'ruleid' => $ruleid]);
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -42,48 +48,48 @@ $PAGE->set_context(context_system::instance());
 echo $OUTPUT->header();
 
 
-$rule = $DB->get_record('cdr_rule', ['id' => $id]);
+$condition = $DB->get_record('cdr_condition', ['id' => $id]);
 
-if (!$rule) {
+if (!$condition) {
     exit;
 }
 $config = get_config('local_coursedynamicrules');
 
+$conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
+$description = $conditioninstance->get_description();
+
 if ($delete === md5($config->confirmdelete)) {
     require_sesskey();
-
     // Delete rule.
-    $DB->delete_records('cdr_rule', ['id' => $id]);
-    $DB->delete_records('cdr_condition', ['ruleid' => $id]);
-    $DB->delete_records('cdr_action', ['ruleid' => $id]);
+    $DB->delete_records('cdr_condition', ['id' => $id]);
 
     echo $OUTPUT->notification(
-        get_string("deletedrule", "local_coursedynamicrules", $rule->name),
+        get_string("deletedcondition", "local_coursedynamicrules", $description),
         'notifysuccess',
         false
     );
-    echo $OUTPUT->continue_button($rulesurl);
+    echo $OUTPUT->continue_button($conditionsurl);
     exit; // We must exit here!!!
 }
 
-$strdeleterulecheck = get_string("deleterulecheck", "local_coursedynamicrules");
-$message = "{$strdeleterulecheck}<br /><br />{$rule->name}";
+$strdeleteconditioncheck = get_string("deleteconditioncheck", "local_coursedynamicrules");
+$message = "{$strdeleteconditioncheck}<br /><br />{$description}";
 
 // Generate ramdom token for validation delete action.
 $confirmdelete = time() . md5(mt_rand(100000000, mt_getrandmax()));
 set_config('confirmdelete', $confirmdelete, 'local_coursedynamicrules');
-
+$hashdelete = md5($confirmdelete);
 
 $continueurl = new moodle_url(
-    '/local/coursedynamicrules/deleterule.php',
-    ['id' => $rule->id, 'delete' => md5($confirmdelete), 'courseid' => $courseid]
+    '/local/coursedynamicrules/deletecondition.php',
+    ['id' => $id, 'delete' => $hashdelete, 'courseid' => $courseid, 'ruleid' => $ruleid]
 );
 
 $continuebutton = new single_button(
     $continueurl,
     get_string('delete'), 'post', false, ['data-action' => 'delete']
 );
-echo $OUTPUT->confirm($message, $continuebutton, $rulesurl);
+echo $OUTPUT->confirm($message, $continuebutton, $conditionsurl);
 
 // In the following script, we need to use setTimeout as disabling the
 // button in the event listener script prevent the click to be taken into account.
