@@ -69,13 +69,10 @@ class passgrade_condition extends condition {
      */
     public function evaluate($context) {
         global $DB;
-        if ($this->params->cmid != $context->cmid) {
-            return false;
-        }
         $courseid = $context->courseid;
-        $cmid = $context->cmid;
         $userid = $context->userid;
         $completionstate = $context->completionstate;
+        $cmid = $this->params->cmid;
 
         $modinfo = get_fast_modinfo($courseid, $userid);
         $cminfo = $modinfo->get_cm($cmid);

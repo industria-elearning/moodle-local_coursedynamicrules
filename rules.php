@@ -35,7 +35,7 @@ $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['course
 
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
+if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
     exit;
 }
 
