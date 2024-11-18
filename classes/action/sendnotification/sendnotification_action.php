@@ -44,38 +44,16 @@ class sendnotification_action extends action {
 
         $userid = $rulecontext->userid;
         $courseid = $rulecontext->courseid;
-        $cmid = $rulecontext->cmid;
 
         $messagesubject = $this->params->messagesubject;
         $messagebody = $this->params->messagebody;
         $messagesmallmessage = $this->params->messagesmallmessage;
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
-        $modinfo = get_fast_modinfo($courseid, $userid);
-        $cminfo = $modinfo->get_cm($cmid);
-
-        $coursefullname = $modinfo->course->fullname;
-        $modulename = $cminfo->modname;
-        $moduleinstancename = $cminfo->name;
-
-        // 'courseid' => $courseid,
-        // 'cmid' => $cmid,
-        // 'userid' => $userid,
-        // 'completionstate' => $completionstate,
-
-        // {$a->coursename}
-        // {$a->fullname}
-        // {$a->firstname}
-        // {$a->lastname}
-        // {$a->modulename}
-        // {$a->moduleinstancename}
-
-        // $message = $instance->customtext1;
-        // $key = ['{$a->coursename}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
-        // $value = [$a->coursename, $a->profileurl, fullname($user), $user->email];
-        $key = ['{$a->coursename}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}', '{$a->modulename}', '{$a->moduleinstancename}'];
-        $value = [$coursefullname, fullname($user), $user->firstname, $user->lastname, $modulename, $moduleinstancename];
+        $key = ['{$a->coursename}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}'];
+        $value = [$course->fullname, fullname($user), $user->firstname, $user->lastname];
         $messagebody = str_replace($key, $value, $messagebody);
 
         $message = new \core\message\message();
