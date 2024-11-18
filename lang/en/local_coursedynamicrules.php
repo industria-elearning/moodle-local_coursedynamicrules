@@ -46,6 +46,7 @@ $string['condition:passgrade'] = 'Activity completion with passing grade';
 $string['allcourseactivitymodules'] = 'All course activity modules';
 $string['searchcourseactivitymodules'] = 'Search course activity modules';
 $string['condition:passgrade:description'] = 'Users who have completed the course activity module \'{$a}\' with a passing grade';
+$string['nocompleteactivity_description'] = 'Users who have not completed the course activity module \'{$a->moddescription}\' after {$a->expectedcompletiondate}';
 $string['invalidruleid'] = 'Invalid rule id';
 $string['deletecondition'] = 'Delete condition';
 $string['messagesubject'] = 'Subject';
@@ -84,5 +85,11 @@ $string['rule:updatedsuccessfully'] = 'Rule updated successfully';
 $string['createrule'] = 'Create Rule';
 $string['editrule'] = 'Edit Rule';
 $string['local_coursedynamicrules:editrules'] = 'Edit Course Dynamic Rules';
+$string['completiondate'] = 'Completion date';
+$string['before'] = 'Before';
+$string['after'] = 'After';
+$string['condition:no_complete_activity'] = 'Activity not completed';
+$string['no_complete_activity_task'] = 'No complete activity task';
+$string['expectedcompletiondate'] = 'Expected completion date';
 
 
