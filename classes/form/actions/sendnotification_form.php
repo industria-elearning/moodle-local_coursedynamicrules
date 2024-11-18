@@ -54,8 +54,6 @@ class sendnotification_form extends action_form {
                 <li>{$a->fullname} - ' . get_string('fullname', 'local_coursedynamicrules') . '</li>
                 <li>{$a->firstname} - ' . get_string('firstname', 'local_coursedynamicrules') . '</li>
                 <li>{$a->lastname} - ' . get_string('lastname', 'local_coursedynamicrules') . '</li>
-                <li>{$a->modulename} - ' . get_string('modulename', 'local_coursedynamicrules') . '</li>
-                <li>{$a->moduleinstancename} - ' . get_string('moduleinstancename', 'local_coursedynamicrules') . '</li>
             </ul>
         </div>';
 
