@@ -41,7 +41,7 @@ class rule_component_loader {
         global $CFG;
 
         // Type of condition, example: passgrade.
-        $type = clean_param($conditionrecord->conditiontype, PARAM_ALPHA);
+        $type = clean_param($conditionrecord->conditiontype, PARAM_TEXT);
 
         // Example: local_coursedynamicrules\condition\passgrade\passgrade_condition.
         $conditionclass = "\\local_coursedynamicrules\\condition\\{$type}\\{$type}_condition";
@@ -71,7 +71,7 @@ class rule_component_loader {
         global $CFG;
 
         // Type of condition, example: sendnotification.
-        $type = clean_param($actionrecord->actiontype, PARAM_ALPHA);
+        $type = clean_param($actionrecord->actiontype, PARAM_TEXT);
 
         // Example: local_coursedynamicrules\condition\sendnotification\sendnotification_action.
         $conditionclass = "\\local_coursedynamicrules\\action\\{$type}\\{$type}_action";

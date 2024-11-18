@@ -30,7 +30,7 @@ require('../../config.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $ruleid = required_param('ruleid', PARAM_INT);
-$type = optional_param('type', '', PARAM_ALPHA);
+$type = optional_param('type', '', PARAM_TEXT);
 
 $url = new moodle_url('/local/coursedynamicrules/conditions.php', ['courseid' => $courseid, 'ruleid' => $ruleid]);
 $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
@@ -64,7 +64,7 @@ foreach ($conditions as $condition) {
 
     if (!empty($header) && !empty($description)) {
         $deleteurl = new moodle_url(
-            '/local/coursedynamicrules/deletecondition.php', 
+            '/local/coursedynamicrules/deletecondition.php',
             ['id' => $condition->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
         );
         $conditionsfortemplate[] = [
