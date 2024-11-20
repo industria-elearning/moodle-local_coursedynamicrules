@@ -37,8 +37,8 @@ if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) 
 }
 
  require_login($course);
-//  require_capability('local/coursedynamicrules:editrules', context_course::instance($courseid));
 
+// TODO add require captability.
  $PAGE->set_course($course);
  $PAGE->set_title($course->shortname);
  $PAGE->set_heading($course->fullname);
