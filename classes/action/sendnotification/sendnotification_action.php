@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\action\sendnotification;
 
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\form\actions\sendnotification_form;
+use moodle_url;
 use stdClass;
 
 /**
@@ -51,9 +52,11 @@ class sendnotification_action extends action {
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+        $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+        $courselink = '<a href="'.$courseurl->out(false).'">'.$courseurl->out(false).'</a>';
 
-        $key = ['{$a->coursename}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}'];
-        $value = [$course->fullname, fullname($user), $user->firstname, $user->lastname];
+        $key = ['{$a->coursename}', '{$a->courselink}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}'];
+        $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
         $messagebody = str_replace($key, $value, $messagebody);
 
         $message = new \core\message\message();
