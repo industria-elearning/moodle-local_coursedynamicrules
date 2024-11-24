@@ -68,6 +68,7 @@ $string['editactions'] = 'Edit actions';
 $string['backtolistrules'] = 'Back to list rules';
 $string['availableplaceholders'] = 'Available placeholders';
 $string['coursename'] = 'Course name';
+$string['courselink'] = 'Course link';
 $string['fullname'] = 'User fullname';
 $string['firstname'] = 'User firstname';
 $string['lastname'] = 'User lastname';

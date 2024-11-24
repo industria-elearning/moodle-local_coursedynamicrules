@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 $messageproviders = [
-    // Notify teacher that a student has submitted a quiz attempt.
     'coursedynamicrules_notification' => [
         'defaults' => [
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
