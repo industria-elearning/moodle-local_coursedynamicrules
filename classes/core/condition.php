@@ -48,6 +48,20 @@ abstract class condition {
     }
 
     /**
+     * Return type of this condition
+     */
+    public function get_type() {
+        return $this->type;
+    }
+
+    /**
+     * Return params of this condition
+     */
+    public function get_params() {
+        return $this->params;
+    }
+
+    /**
      * Set the data of the condition
      * @param object $record Record that represents data stored in DB
      */
