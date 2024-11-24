@@ -70,6 +70,14 @@ class rule {
     }
 
     /**
+     * Get conditions for this rule
+     * @return condition[]
+     */
+    public function get_conditions() {
+        return $this->conditions;
+    }
+
+    /**
      * Validate if all conditions of the rule are true
      * @param object $rulecontext Necesary information to evaluate the conditions of the rule
      * @return bool
@@ -118,7 +126,7 @@ class rule {
      */
     public function set_active($active) {
         global $DB;
-        $this->active = $active;
+        $this->active = $active ? 1 : 0;
         $DB->set_field('cdr_rule', 'active', $this->active, ['id' => $this->id]);
 
     }
