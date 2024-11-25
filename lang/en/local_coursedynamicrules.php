@@ -51,9 +51,7 @@ $string['invalidruleid'] = 'Invalid rule id';
 $string['deletecondition'] = 'Delete condition';
 $string['messagesubject'] = 'Subject';
 $string['messagebody'] = 'Body';
-$string['messagebody_help'] = 'Message body may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
-
-The following placeholders may be included in the message:
+$string['messagebody_help'] = 'The following placeholders may be included in the message:
 
 * Course name {$a->coursename}
 * User fullname {$a->fullname}
