@@ -32,28 +32,27 @@ $courseid = required_param('courseid', PARAM_INT);
 $ruleid = required_param('ruleid', PARAM_INT);
 $type = optional_param('type', '', PARAM_TEXT);
 
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
+
+require_login($course);
+require_capability('local/coursedynamicrules:managecondition', $context);
+
 $url = new moodle_url('/local/coursedynamicrules/conditions.php', ['courseid' => $courseid, 'ruleid' => $ruleid]);
 $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
-$PAGE->set_url($url);
-
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
-}
-
-require_login($course);
-
-$PAGE->set_course($course);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_course($course);
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
 if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
 
 $conditions = $DB->get_records('cdr_condition', ['ruleid' => $ruleid]);
-
 
 $conditionsfortemplate = [];
 foreach ($conditions as $condition) {
