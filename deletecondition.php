@@ -26,15 +26,17 @@ use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
-require_login();
-
 
 $id = required_param('id', PARAM_INT); // Rule ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 $courseid = required_param('courseid', PARAM_INT);
 $ruleid = required_param('ruleid', PARAM_INT);
 
-require_login();
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
+
+require_login($course);
+require_capability('local/coursedynamicrules:deletecondition', $context);
 
 $url = new moodle_url(
     '/local/coursedynamicrules/deletecondition.php',
@@ -42,17 +44,17 @@ $url = new moodle_url(
 );
 $conditionsurl = new moodle_url('/local/coursedynamicrules/conditions.php', ['courseid' => $courseid, 'ruleid' => $ruleid]);
 
+$PAGE->set_title($course->shortname);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_course($course);
 $PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
+$condition = $DB->get_record('cdr_condition', ['id' => $id], '*', MUST_EXIST);
 
-$condition = $DB->get_record('cdr_condition', ['id' => $id]);
-
-if (!$condition) {
-    exit;
-}
 $config = get_config('local_coursedynamicrules');
 
 $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
