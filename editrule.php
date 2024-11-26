@@ -42,12 +42,6 @@ $PAGE->set_course($course);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_course($course);
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
@@ -71,7 +65,7 @@ if ($ruleform->is_cancelled()) {
         $DB->insert_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('ruleaddedsuccessfully', 'local_coursedynamicrules'),
+            get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -79,7 +73,7 @@ if ($ruleform->is_cancelled()) {
         $DB->update_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('ruleupdatedsuccessfully', 'local_coursedynamicrules'),
+            get_string('rule:updatedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
