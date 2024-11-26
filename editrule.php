@@ -27,7 +27,6 @@ require('../../config.php');
 $ruleid = optional_param('id', 0, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
 
-
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $context = context_course::instance($courseid);
 
