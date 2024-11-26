@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_coursedynamicrules\core\rule;
-
 require('../../config.php');
 
 $ruleid = optional_param('id', 0, PARAM_INT);
@@ -47,13 +45,6 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$licensestatus = rule::validate_licence_status();
-if (!$licensestatus->success) {
-    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
-    echo $OUTPUT->footer();
-    die();
-}
-
 $rule = new stdClass();
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');
@@ -74,7 +65,7 @@ if ($ruleform->is_cancelled()) {
         $DB->insert_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('ruleaddedsuccessfully', 'local_coursedynamicrules'),
+            get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -82,15 +73,12 @@ if ($ruleform->is_cancelled()) {
         $DB->update_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('ruleupdatedsuccessfully', 'local_coursedynamicrules'),
+            get_string('rule:updatedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
     }
 }
-
-$heading = $ruleid ? get_string('editrule', 'local_coursedynamicrules') : get_string('createrule', 'local_coursedynamicrules');
-echo $OUTPUT->heading($heading);
 
 $ruleform->display();
 echo $OUTPUT->footer();
