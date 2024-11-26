@@ -22,31 +22,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- require('../../config.php');
+require('../../config.php');
 
- $ruleid = optional_param('id', 0, PARAM_INT);
- $courseid = required_param('courseid', PARAM_INT);
+$ruleid = optional_param('id', 0, PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
- $url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid, 'id' => $ruleid]);
- $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
 
- $PAGE->set_url($url);
+require_login($course);
+require_capability('local/coursedynamicrules:updaterule', $context);
 
-if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
-}
+$url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid, 'id' => $ruleid]);
+$rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
- require_login($course);
-//  require_capability('local/coursedynamicrules:editrules', context_course::instance($courseid));
+$PAGE->set_title($course->shortname);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_course($course);
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
- $PAGE->set_course($course);
- $PAGE->set_title($course->shortname);
- $PAGE->set_heading($course->fullname);
- $PAGE->set_pagelayout('admin');
+echo $OUTPUT->header();
 
- echo $OUTPUT->header();
-
- $rule = new stdClass();
+$rule = new stdClass();
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');
     $rule = $DB->get_record('cdr_rule', ['id' => $ruleid]);
@@ -54,10 +53,10 @@ if ($ruleid) {
     $pagetitle = get_string('createrule', 'local_coursedynamicrules');
 }
 
- $PAGE->set_title($pagetitle);
- $PAGE->set_heading($pagetitle);
+$PAGE->set_title($pagetitle);
+$PAGE->set_heading($pagetitle);
 
- $ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 'courseid' => $courseid]);
+$ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 'courseid' => $courseid]);
 
 if ($ruleform->is_cancelled()) {
     redirect($rulesurl);
@@ -81,6 +80,6 @@ if ($ruleform->is_cancelled()) {
     }
 }
 
- $ruleform->display();
- echo $OUTPUT->footer();
+$ruleform->display();
+echo $OUTPUT->footer();
 
