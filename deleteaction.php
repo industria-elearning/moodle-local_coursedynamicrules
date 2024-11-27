@@ -70,6 +70,7 @@ if ($delete === md5($config->confirmdeleteaction)) {
         false
     );
     echo $OUTPUT->continue_button($actionsurl);
+    echo $OUTPUT->footer();
     exit; // We must exit here!!!
 }
 

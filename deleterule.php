@@ -67,6 +67,8 @@ if ($delete === md5($config->confirmdeleterule)) {
         false
     );
     echo $OUTPUT->continue_button($rulesurl);
+    echo $OUTPUT->footer();
+
     exit; // We must exit here!!!
 }
 

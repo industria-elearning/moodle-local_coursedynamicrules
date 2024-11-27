@@ -71,6 +71,7 @@ if ($delete === md5($config->confirmdeletecondition)) {
         false
     );
     echo $OUTPUT->continue_button($conditionsurl);
+    echo $OUTPUT->footer();
     exit; // We must exit here!!!
 }
 
