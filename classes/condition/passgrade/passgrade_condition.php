@@ -16,6 +16,7 @@
 
 namespace local_coursedynamicrules\condition\passgrade;
 
+use completion_info;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\form\conditions\passgrade_form;
 use stdClass;
@@ -71,17 +72,26 @@ class passgrade_condition extends condition {
         global $DB;
         $courseid = $context->courseid;
         $userid = $context->userid;
-        $completionstate = $context->completionstate;
         $cmid = $this->params->cmid;
 
         $modinfo = get_fast_modinfo($courseid, $userid);
-        $cminfo = $modinfo->get_cm($cmid);
+        // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.
+        $cminfo = $modinfo->cms[$cmid];
+        if (!$cminfo || $cminfo->deletioninprogress) {
+            return false;
+        }
 
         if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
             return false;
         }
 
-        return $completionstate == COMPLETION_COMPLETE_PASS;
+        $completion = new completion_info($modinfo->get_course());
+
+        $completiondata = $completion->get_data(
+            (object)['id' => $cmid], false, $userid
+        );
+
+        return $completiondata->completionstate == COMPLETION_COMPLETE_PASS;
     }
 
     /**
