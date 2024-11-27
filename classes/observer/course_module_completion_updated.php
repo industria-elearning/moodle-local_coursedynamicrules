@@ -16,7 +16,7 @@
 
 namespace local_coursedynamicrules\observer;
 
-use local_coursedynamicrules\helper\rule_component_loader;
+use local_coursedynamicrules\core\rule;
 
 /**
  * Class course_module_completion_updated
@@ -33,63 +33,23 @@ class course_module_completion_updated {
     public static function observe(\core\event\course_module_completion_updated $event) {
         global $DB;
         $eventdata = $event->get_data();
-        $otherdata = $eventdata['other'];
 
         $courseid = $eventdata["courseid"];
-        $cmid = $eventdata["contextinstanceid"];
-        $completionstate = $otherdata['completionstate'];
+
         // User that completed the module.
         $userid = $eventdata["relateduserid"];
 
-        $rulecontext = (object) [
-            'courseid' => $courseid,
-            'cmid' => $cmid,
-            'userid' => $userid,
-            'completionstate' => $completionstate,
-        ];
+        $user = $DB->get_record('user', ['id' => $userid]);
+
+        // Make array to pass to rule class in second param.
+        $users = [$user];
 
         // Get active rules for the course.
         $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
 
         foreach ($rules as $rule) {
-            // Get conditions to the rule.
-            $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
-
-            $conditionsmet = false;
-
-            // Validate each condition associated to the rule.
-            foreach ($conditions as $condition) {
-                $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
-
-                $conditionsmet = $conditioninstance->evaluate($rulecontext);
-                // Verify if the condition is met.
-                if (!$conditionsmet) {
-                    // If any condition is not met, the rule is not executed.
-                    break;
-                }
-            }
-
-            // If all conditions are met, execute the actions.
-            if ($conditionsmet) {
-                self::execute_actions($rule, $rulecontext);
-            }
-        }
-    }
-
-    /**
-     * Executes the actions associated to the rule.
-     * @param object $rule
-     * @param object $rulecontext
-     */
-    private static function execute_actions($rule, $rulecontext) {
-        global $DB;
-
-        // Get actions associated to the rule.
-        $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
-
-        foreach ($actions as $action) {
-            $actioninstance = rule_component_loader::create_action_instance($action, $rulecontext->courseid);
-            $actioninstance->execute($rulecontext);
+            $ruleinstance = new rule($rule, $users);
+            $ruleinstance->execute();
         }
     }
 }
