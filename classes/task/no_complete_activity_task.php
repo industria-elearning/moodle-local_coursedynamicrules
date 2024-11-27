@@ -53,7 +53,8 @@ class no_complete_activity_task extends \core\task\scheduled_task {
         );
 
         foreach ($rules as $rule) {
-            $ruleinstance = new rule($rule);
+            $users = enrol_get_course_users($rule->courseid);
+            $ruleinstance = new rule($rule, $users);
             $conditions = $ruleinstance->get_conditions();
 
             if ($this->is_time_to_execute_rule($ruleinstance) && !empty($conditions)) {
