@@ -36,7 +36,6 @@ require_login($course);
 require_capability('local/coursedynamicrules:managerule', $context);
 
 $url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
-$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
 
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
@@ -54,7 +53,6 @@ $table->head[] = get_string('rule:name', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
 $table->head[] = '';
-$table->size = ['20%', '38%', '38%', '4%'];
 
 foreach ($rules as $rule) {
     $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
@@ -145,6 +143,7 @@ foreach ($rules as $rule) {
 
 }
 
+$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
 $addrulebutton = new single_button(
     $editruleurl,
     get_string('rule:add', 'local_coursedynamicrules'),
