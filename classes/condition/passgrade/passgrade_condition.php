@@ -120,7 +120,7 @@ class passgrade_condition extends condition {
      * @return string
      */
     public function get_header() {
-        return get_string('condition:passgrade', 'local_coursedynamicrules');
+        return get_string('passgrade', 'local_coursedynamicrules');
     }
 
     /**
@@ -138,6 +138,6 @@ class passgrade_condition extends condition {
         if (!$cminfo) {
             return '';
         }
-        return get_string('condition:passgrade:description', 'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name);
+        return get_string('passgrade_description', 'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name);
     }
 }

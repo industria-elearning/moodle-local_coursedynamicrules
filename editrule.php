@@ -71,7 +71,7 @@ if ($ruleform->is_cancelled()) {
         $DB->insert_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
+            get_string('ruleaddedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -79,7 +79,7 @@ if ($ruleform->is_cancelled()) {
         $DB->update_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('rule:updatedsuccessfully', 'local_coursedynamicrules'),
+            get_string('ruleupdatedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
