@@ -24,10 +24,25 @@ namespace local_coursedynamicrules\form\conditions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class condition_form  extends \moodleform {
+    /** @var string type of condition */
+    protected $type;
+
+    /** @var int $courseid*/
+    protected $courseid;
+
+    /** @var int $ruleid */
+    protected $ruleid;
+
     /**
      * Add elements to form.
      */
     public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('hidden', 'type', $this->type);
+        $mform->addElement('hidden', 'courseid', $this->courseid);
+        $mform->addElement('hidden', 'ruleid', $this->ruleid);
+        $mform->setType('type', PARAM_ALPHA);
+        $mform->setType('ruleid', PARAM_INT);
         $this->add_action_buttons();
     }
 }

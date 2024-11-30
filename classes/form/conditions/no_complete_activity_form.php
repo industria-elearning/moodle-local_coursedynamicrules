@@ -26,6 +26,7 @@ namespace local_coursedynamicrules\form\conditions;
 class no_complete_activity_form extends condition_form {
     /** @var string type of condition */
     protected $type = "no_complete_activity";
+
     /**
      * Form definition
      *
@@ -34,10 +35,10 @@ class no_complete_activity_form extends condition_form {
     public function definition() {
         $mform = $this->_form;
         $customdata = $this->_customdata;
-        $courseid = $customdata['courseid'];
-        $ruleid = $customdata['ruleid'];
+        $this->courseid = $customdata['courseid'];
+        $this->ruleid = $customdata['ruleid'];
 
-        $modinfo = get_fast_modinfo($courseid);
+        $modinfo = get_fast_modinfo($this->courseid);
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
@@ -65,11 +66,6 @@ class no_complete_activity_form extends condition_form {
             'expectedcompletiondate',
             get_string('expectedcompletiondate', 'local_coursedynamicrules')
         );
-
-        $mform->addElement('hidden', 'type', $this->type);
-        $mform->addElement('hidden', 'ruleid', $ruleid);
-        $mform->setType('type', PARAM_ALPHA);
-        $mform->setType('ruleid', PARAM_INT);
 
         parent::definition();
     }
