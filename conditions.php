@@ -155,7 +155,7 @@ function load_condition_options() {
         );
         $conditionoptions[] = [
             'type' => $conditiontype,
-            'visualname' => get_string('condition:' .$conditiontype, 'local_coursedynamicrules'),
+            'visualname' => get_string($conditiontype, 'local_coursedynamicrules'),
             'action' => $url->out(false),
         ];
     }
