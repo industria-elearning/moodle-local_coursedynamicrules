@@ -131,7 +131,7 @@ class no_complete_activity_condition extends condition {
      * @return string
      */
     public function get_header() {
-        return get_string('condition:no_complete_activity', 'local_coursedynamicrules');
+        return get_string('no_complete_activity', 'local_coursedynamicrules');
     }
 
     /**
@@ -153,7 +153,7 @@ class no_complete_activity_condition extends condition {
             'moddescription' => ucfirst($cminfo->modname) . " - " . $cminfo->name,
             'expectedcompletiondate' => userdate($this->params->expectedcompletiondate),
         ];
-        $description = get_string('nocompleteactivity_description', 'local_coursedynamicrules', $options);
+        $description = get_string('no_complete_activity_description', 'local_coursedynamicrules', $options);
 
         return $description;
     }
