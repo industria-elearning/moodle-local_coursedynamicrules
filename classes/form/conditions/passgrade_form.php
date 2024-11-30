@@ -43,7 +43,8 @@ class passgrade_form extends condition_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            // Get only course modules that require passgrade.
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $cm->completionpassgrade) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }
