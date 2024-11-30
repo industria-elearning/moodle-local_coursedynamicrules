@@ -48,7 +48,7 @@ $string['name'] = 'Name';
 $string['description'] = 'Description';
 $string['conditions'] = 'Conditions';
 $string['actions'] = 'Actions';
-$string['active'] = 'Active';
+$string['ruleactive'] = 'Active';
 $string['ruleactive_help'] = 'Enable or disable the rule';
 $string['ruleadd'] = 'Add rule';
 $string['ruleaddedsuccessfully'] = 'Rule added successfully';
@@ -111,4 +111,15 @@ $string['per'] = 'per';
 $string['frequencylimit'] = 'Frequency limit';
 $string['freqtextbefore'] = 'This rule will only execute ';
 
+$string['grade'] = 'Grade';
+$string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
+$string['gradegreaterthanorequal'] = 'must be &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'Minimum grade (inclusive)';
+$string['gradelessthan'] = 'must be <';
+$string['gradelessthan_help'] = 'Maximum grade (exclusive)';
+$string['enablegradelessthan'] = 'Enable grade less than';
+$string['errornegativegrade'] = 'The grade must be 0 or greater.';
+$string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
 
+// $string['option_min'] = 'must be &#x2265;';
+// $string['option_max'] = 'must be <';
