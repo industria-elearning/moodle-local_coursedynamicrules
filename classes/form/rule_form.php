@@ -43,9 +43,9 @@ class rule_form extends \moodleform {
         $mform->setType('description', PARAM_RAW);
         $mform->setDefault('description', $rule->description);
 
-        $mform->addElement('checkbox', 'active', get_string('active', 'local_coursedynamicrules'));
+        $mform->addElement('checkbox', 'active', get_string('ruleactive', 'local_coursedynamicrules'));
         $mform->setDefault('active', $rule->active ?? 0);
-        $mform->addHelpButton('active', 'active', 'local_coursedynamicrules');
+        $mform->addHelpButton('active', 'ruleactive', 'local_coursedynamicrules');
 
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->setType('courseid', PARAM_INT);
