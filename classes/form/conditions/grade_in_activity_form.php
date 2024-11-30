@@ -25,7 +25,7 @@ namespace local_coursedynamicrules\form\conditions;
  */
 class grade_in_activity_form extends condition_form {
     /** @var string type of condition */
-    protected $type = "grade_in_activity";
+    protected $type = "no_complete_activity";
 
     /**
      * Form definition
@@ -89,7 +89,5 @@ class grade_in_activity_form extends condition_form {
         $mform->addHelpButton('gradelessgroup', 'gradelessthan', 'local_coursedynamicrules');
         $mform->disabledIf('gradelessthan', 'enablegradelessthan', 'notchecked');
         $mform->setType('gradelessthan', PARAM_FLOAT);
-
-        parent::definition();
     }
 }
