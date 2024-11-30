@@ -48,7 +48,7 @@ $string['name'] = 'Name';
 $string['description'] = 'Description';
 $string['conditions'] = 'Conditions';
 $string['actions'] = 'Actions';
-$string['ruleactive'] = 'Active';
+$string['active'] = 'Active';
 $string['ruleactive_help'] = 'Enable or disable the rule';
 $string['ruleadd'] = 'Add rule';
 $string['ruleaddedsuccessfully'] = 'Rule added successfully';
@@ -104,23 +104,5 @@ $string['no_complete_activity_task'] = 'No complete activity task';
 $string['expectedcompletiondate'] = 'Expected completion date';
 $string['grade_in_activity'] = 'Grade in activity';
 $string['grade_in_activity_description'] = 'Users who have receive a grade for course activity module \'{$a}\'';
-$string['grade'] = 'Grade';
-$string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
-$string['gradegreaterthanorequal'] = 'must be &#x2265;';
-$string['gradegreaterthanorequal_help'] = 'Minimum grade (inclusive)';
-$string['gradelessthan'] = 'must be <';
-$string['gradelessthan_help'] = 'Maximum grade (exclusive)';
-$string['enablegradelessthan'] = 'Enable grade less than';
-$string['errornegativegrade'] = 'The grade must be 0 or greater.';
-$string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
-$string['enableactivity'] = 'Enable activity';
-$string['enableactivity_description'] = 'Enable activities \'{$a}\'';
-$string['errorgradeoutofrange'] = 'The value must be between {$a->min} and {$a->max}.';
-$string['notification_action_info'] = 'This action will send a notification to users who meet the rule conditions criteria.';
-$string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <strong>Datacurso Message Hub</strong> plugins let you send notifications via WhatsApp and SMS using providers like Twilio.
-<br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Click here to purchase and enable them now!</a>';
-$string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
-You can enable/disable it from <a href="{$a}" target="_blank">Notification settings</a> and search <strong>Course dynamic rules notification</strong>.
-<br>
-<a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
+
+
