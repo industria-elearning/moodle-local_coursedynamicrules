@@ -104,7 +104,6 @@ $string['no_complete_activity_task'] = 'No complete activity task';
 $string['expectedcompletiondate'] = 'Expected completion date';
 $string['grade_in_activity'] = 'Grade in activity';
 $string['grade_in_activity_description'] = 'Users who have receive a grade for course activity module \'{$a}\'';
-
 $string['grade'] = 'Grade';
 $string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
 $string['gradegreaterthanorequal'] = 'must be &#x2265;';
@@ -114,6 +113,5 @@ $string['gradelessthan_help'] = 'Maximum grade (exclusive)';
 $string['enablegradelessthan'] = 'Enable grade less than';
 $string['errornegativegrade'] = 'The grade must be 0 or greater.';
 $string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
-
-// $string['option_min'] = 'must be &#x2265;';
-// $string['option_max'] = 'must be <';
+$string['enableactivity'] = 'Enable activity';
+$string['enableactivity_description'] = 'Enable activities \'{$a}\'';
