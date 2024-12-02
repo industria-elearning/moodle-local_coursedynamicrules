@@ -74,17 +74,17 @@ class rule_component_loader {
         $type = clean_param($actionrecord->actiontype, PARAM_TEXT);
 
         // Example: local_coursedynamicrules\condition\sendnotification\sendnotification_action.
-        $conditionclass = "\\local_coursedynamicrules\\action\\{$type}\\{$type}_action";
-        $conditionclasspath = "{$CFG->dirroot}/local/coursedynamicrules/classes/action/{$type}/{$type}_action.php";
+        $actionclass = "\\local_coursedynamicrules\\action\\{$type}\\{$type}_action";
+        $actionclasspath = "{$CFG->dirroot}/local/coursedynamicrules/classes/action/{$type}/{$type}_action.php";
 
-        if (!class_exists($conditionclass) && file_exists($conditionclasspath)) {
-            require_once($conditionclasspath);
+        if (!class_exists($actionclass) && file_exists($actionclasspath)) {
+            require_once($actionclasspath);
         }
 
-        if (!class_exists($conditionclass)) {
+        if (!class_exists($actionclass)) {
             throw new moodle_exception('typemissing', 'local_coursedynamicrules');
         }
 
-        return new $conditionclass($actionrecord, $courseid);
+        return new $actionclass($actionrecord, $courseid);
     }
 }
