@@ -17,6 +17,7 @@
 namespace local_coursedynamicrules\core;
 
 use local_coursedynamicrules\form\actions\action_form;
+use stdClass;
 
 /**
  * Class action
@@ -36,13 +37,34 @@ abstract class action {
     /** @var object Parameters of the action stored in DB */
     protected $params;
 
+    /** @var int course id */
+    protected $courseid;
+
     /**
      * Action constructor.
      * @param object $record Record of the action stored in DB
      */
-    public function __construct($record) {
-        $this->type = $record->actiontype;
+    public function __construct($record, $courseid = null) {
         $this->params = json_decode($record->params);
+        $this->courseid = $courseid;
+    }
+
+    /**
+     * Returns the header of the action to visualization
+     *
+     * @return string
+     */
+    public function get_header() {
+        return get_string($this->type, 'local_coursedynamicrules');
+    }
+
+    /**
+     * Returns the description of the action to visualization
+     *
+     * @return string
+     */
+    public function get_description() {
+        return get_string($this->type . '_description', 'local_coursedynamicrules');
     }
 
     /**
@@ -52,6 +74,35 @@ abstract class action {
      */
     public function show_editform() {
         $this->actionform->display();
+    }
+
+    /**
+     * Checks if the editing form was cancelled
+     *
+     * @return bool
+     */
+    public function is_cancelled() {
+        return $this->actionform->is_cancelled();
+    }
+
+    /**
+     * Gets submitted data from the edit form
+     *
+     * @return mixed
+     */
+    public function get_data() {
+        return $this->actionform->get_data();
+    }
+
+    /**
+     * Set the action data
+     *
+     * @param stdClass $actiondata the action data to set
+     */
+    public function set_data($action) {
+        if ($action && $action->params) {
+            $this->params = json_decode($action->params, true);
+        }
     }
 
     /**
@@ -85,33 +136,6 @@ abstract class action {
     abstract public function build_editform(
         $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null);
 
-    /**
-     * Checks if the editing form was cancelled
-     *
-     * @return bool
-     */
-    abstract public function is_cancelled();
-
-    /**
-     * Gets submitted data from the edit form
-     *
-     * @return mixed
-     */
-    abstract public function get_data();
-
-    /**
-     * Returns the header of the action to visualization
-     *
-     * @return string
-     */
-    abstract public function get_header();
-
-    /**
-     * Returns the description of the action to visualization
-     *
-     * @return string
-     */
-    abstract public function get_description();
 
     /**
      * Saves the action after it has been edited (or created)
