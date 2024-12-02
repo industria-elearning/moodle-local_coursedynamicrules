@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\condition\grade_in_activity;
 
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
+use stdClass;
 
 /**
  * Class grade_in_activity_condition
@@ -36,7 +37,59 @@ class grade_in_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
-        return true;
+        global $DB;
+        $courseid = $context->courseid;
+        $userid = $context->userid;
+        $cmid = $this->params->cmid;
+        $gradegreaterthanorequal = $this->params->gradegreaterthanorequal;
+        $gradelessthan = $this->params->gradelessthan;
+
+        if (!isset($gradegreaterthanorequal) && !isset($gradelessthan)) {
+            return false;
+        }
+
+        $cminfo = get_coursemodule_from_id(null, $cmid, $courseid);
+        if (!$cminfo || $cminfo->deletioninprogress) {
+            return false;
+        }
+
+        // Indicate when require grade is enable.
+        // See get_moduleinfo_data funtion.
+        $completionusegrade = isset($cminfo->completiongradeitemnumber);
+
+        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC || !$completionusegrade) {
+            return false;
+        }
+
+        $gradeinfo = $DB->get_record_sql(
+            "SELECT gg.finalgrade, gg.itemid
+            FROM
+                {grade_grades} gg
+                JOIN {grade_items} gi ON gg.itemid = gi.id
+            WHERE
+                gi.itemtype = 'mod'
+                AND gi.itemmodule = 'quiz'
+                AND gi.iteminstance = :cminstance
+                AND gg.userid = :userid",
+            ['cminstance' => $cminfo->instance, 'userid' => $userid]
+        );
+
+        if (!$gradeinfo) {
+            return false;
+        }
+
+        $hasgraderequire = false;
+
+        if ($gradegreaterthanorequal &&  $gradeinfo->finalgrade >= $gradegreaterthanorequal) {
+            $hasgraderequire = true;
+        }
+
+        if ($gradelessthan &&  $gradeinfo->finalgrade < $gradelessthan) {
+            $hasgraderequire = true;
+        }
+
+        return $hasgraderequire;
+
     }
 
     /**
@@ -116,6 +169,21 @@ class grade_in_activity_condition extends condition {
      * @param object $formdata
      */
     public function save_condition($formdata) {
+        global $DB;
 
+        $params = [
+            'cmid' => $formdata->coursemodule,
+            'gradelessthan' => $formdata->gradelessthan,
+            'gradegreaterthanorequal' => $formdata->gradegreaterthanorequal,
+        ];
+
+        $condition = new stdClass();
+        $condition->ruleid = $formdata->ruleid;
+        $condition->conditiontype = $this->type;
+        $condition->params = json_encode($params);
+
+        $this->set_data($condition);
+
+        $DB->insert_record('cdr_condition', $condition);
     }
 }
