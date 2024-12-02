@@ -98,7 +98,15 @@ class sendnotification_action extends action {
      */
     public function build_editform(
         $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null) {
-            $this->actionform = new sendnotification_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+            $this->actionform = new sendnotification_form(
+                $action,
+                $customdata,
+                $method,
+                $target,
+                $attributes,
+                $editable,
+                $ajaxformdata
+            );
     }
 
     /**
@@ -120,44 +128,6 @@ class sendnotification_action extends action {
         $this->set_data($action);
 
         $DB->insert_record('cdr_action', $action);
-    }
-
-    /**
-     * Checks if the editing form was cancelled
-     *
-     * @return bool
-     */
-    public function is_cancelled() {
-        return $this->actionform->is_cancelled();
-    }
-
-    /**
-     * Gets submitted data from the edit form
-     *
-     * @return mixed
-     */
-    public function get_data() {
-        return $this->actionform->get_data();
-    }
-
-    /**
-     * Set the action data
-     *
-     * @param stdClass $actiondata the action data to set
-     */
-    public function set_data($action) {
-        if ($action && $action->params) {
-            $this->params = json_decode($action->params, true);
-        }
-    }
-
-    /**
-     * Returns the header of the action to visualization
-     *
-     * @return string
-     */
-    public function get_header() {
-        return get_string('sendnotification', 'local_coursedynamicrules');
     }
 
     /**

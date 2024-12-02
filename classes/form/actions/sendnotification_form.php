@@ -62,7 +62,7 @@ class sendnotification_form extends action_form {
 
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);
-        $mform->setType('type', PARAM_ALPHA);
+        $mform->setType('type', PARAM_TEXT);
         $mform->setType('ruleid', PARAM_INT);
 
         parent::definition();
