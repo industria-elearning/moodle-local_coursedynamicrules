@@ -90,6 +90,9 @@ class rule {
      * @return bool
      */
     public function evaluate_conditions($rulecontext) {
+        if (empty($this->conditions)) {
+            return false;
+        }
         foreach ($this->conditions as $condition) {
             if (!$condition->evaluate($rulecontext)) {
                 return false;
