@@ -30,6 +30,10 @@ $observers = [
         'eventname' => '\core\event\course_module_completion_updated',
         'callback' => '\local_coursedynamicrules\observer\course_module_completion_updated::observe',
     ],
+    [
+        'eventname' => '\core\event\user_graded',
+        'callback' => '\local_coursedynamicrules\observer\user_graded::observe',
+    ],
 ];
 
 
