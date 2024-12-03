@@ -55,7 +55,7 @@ class sendnotification_action extends action {
         $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
         $courselink = '<a href="'.$courseurl->out(false).'">'.$courseurl->out(false).'</a>';
 
-        $key = ['{$a->coursename}', '{$a->courselink}', '{$a->fullname}', '{$a->firstname}', '{$a->lastname}'];
+        $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
         $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
         $messagebody = str_replace($key, $value, $messagebody);
 
@@ -117,7 +117,7 @@ class sendnotification_action extends action {
         global $DB;
         $params = [
             'messagesubject' => $formdata->messagesubject,
-            'messagebody' => $formdata->messagebody,
+            'messagebody' => format_text($formdata->messagebody['text'], FORMAT_HTML),
         ];
 
         $action = new stdClass();
