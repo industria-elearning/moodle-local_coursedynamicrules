@@ -23,6 +23,7 @@
  */
 
 use local_coursedynamicrules\helper\rule_component_loader;
+use local_kopere_dashboard\util\html;
 
 require('../../config.php');
 
@@ -91,7 +92,7 @@ foreach ($rules as $rule) {
             $conditionsurl,
             $OUTPUT->pix_icon('t/edit', get_string('editconditions', 'local_coursedynamicrules'))
         );
-
+        $conditionstext = html_writer::div($conditionstext);
         $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
 
@@ -117,7 +118,7 @@ foreach ($rules as $rule) {
             $actionsurl,
             $OUTPUT->pix_icon('t/edit', get_string('editactions', 'local_coursedynamicrules'))
         );
-
+        $actionstext = html_writer::div($actionstext);
         $actionstext = html_writer::div($actionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
     $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $rule->id, 'courseid' => $courseid]);
