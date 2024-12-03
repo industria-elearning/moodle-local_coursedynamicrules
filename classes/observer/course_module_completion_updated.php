@@ -16,7 +16,7 @@
 
 namespace local_coursedynamicrules\observer;
 
-use local_coursedynamicrules\core\rule;
+use local_coursedynamicrules\task\rule_task;
 
 /**
  * Class course_module_completion_updated
@@ -26,6 +26,11 @@ use local_coursedynamicrules\core\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_completion_updated {
+    /** @var array $conditions list of conditions to include in the executions for this event observer */
+    private static $conditiontypes = [
+        'passgrade',
+        'no_complete_activity',
+    ];
     /**
      * The definition of the event.
      *
@@ -39,17 +44,12 @@ class course_module_completion_updated {
         // User that completed the module.
         $userid = $eventdata["relateduserid"];
 
-        $user = $DB->get_record('user', ['id' => $userid]);
+        $task = rule_task::instance((object)[
+            'courseid' => $courseid,
+            'userid' => $userid,
+            'conditiontypes' => self::$conditiontypes,
+        ]);
 
-        // Make array to pass to rule class in second param.
-        $users = [$user];
-
-        // Get active rules for the course.
-        $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
-
-        foreach ($rules as $rule) {
-            $ruleinstance = new rule($rule, $users);
-            $ruleinstance->execute();
-        }
+        \core\task\manager::queue_adhoc_task($task);
     }
 }
