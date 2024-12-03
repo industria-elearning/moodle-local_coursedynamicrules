@@ -47,9 +47,9 @@ class user_graded {
             $userid = $eventdata["relateduserid"];
 
             $task = rule_task::instance((object)[
-            'courseid' => $courseid,
-            'userid' => $userid,
-            'conditiontypes' => self::$conditiontypes,
+                'courseid' => $courseid,
+                'userid' => $userid,
+                'conditiontypes' => self::$conditiontypes,
             ]);
 
             \core\task\manager::queue_adhoc_task($task);
