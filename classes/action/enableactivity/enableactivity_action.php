@@ -39,23 +39,25 @@ class enableactivity_action extends action {
     public function execute($context) {
         global $DB;
         $userid = $context->userid;
-        $cmid = $context->coursemodule;
+        $cmids = $this->params->coursemodules;
 
-        $cm = $DB->get_record('course_modules', ['id' => $cmid]);
+        foreach ($cmids as $cmid) {
+            $cm = $DB->get_record('course_modules', ['id' => $cmid]);
+            $availability = json_decode($cm->availability);
+            $availability->c[0]->userids[] = $userid;
 
-        $availability = json_decode($cm->availability, true);
+            $DB->set_field(
+                'course_modules',
+                'availability',
+                json_encode($availability),
+                [
+                    'id' => $cmid,
+                ]
+            );
 
-        $availability->userids[] = $userid;
+        }
 
-        $DB->set_field(
-            'course_modules',
-            'availability',
-            json_encode($availability),
-            [
-                'id' => $cmid,
-            ]
-        );
-        rebuild_course_cache($cm->course, true);
+        rebuild_course_cache($this->courseid, true);
     }
 
     /**
@@ -129,7 +131,7 @@ class enableactivity_action extends action {
                 'userids' => [],
             ];
             $availability = tree::get_root_json(
-                [ $availabilityoptions],
+                [$availabilityoptions],
                 tree::OP_AND,
                 false
             );
