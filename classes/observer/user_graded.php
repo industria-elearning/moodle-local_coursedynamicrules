@@ -38,16 +38,21 @@ class user_graded {
     public static function observe(\core\event\user_graded $event) {
         $eventdata = $event->get_data();
 
-        $courseid = $eventdata["courseid"];
-        // User that completed the module.
-        $userid = $eventdata["relateduserid"];
+        $gradeitemtype = $event->get_grade()->grade_item->itemtype;
+        // This validation is because this event is also triggered with the course grade.
+        if ($gradeitemtype == 'mod') {
 
-        $task = rule_task::instance((object)[
+            $courseid = $eventdata["courseid"];
+            // User that completed the module.
+            $userid = $eventdata["relateduserid"];
+
+            $task = rule_task::instance((object)[
             'courseid' => $courseid,
             'userid' => $userid,
             'conditiontypes' => self::$conditiontypes,
-        ]);
+            ]);
 
-        \core\task\manager::queue_adhoc_task($task);
+            \core\task\manager::queue_adhoc_task($task);
+        }
     }
 }
