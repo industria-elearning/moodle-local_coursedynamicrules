@@ -48,8 +48,10 @@ class rule {
      * Rule constructor.
      * @param object $rule
      * @param array $users List of users to validate this rule
+     * @param array $conditiontypes list of conditions to include in the executions
+     * of rules if not pass all conditions for each rule of the course are added
      */
-    public function __construct($rule, $users) {
+    public function __construct($rule, $users, $conditiontypes=[]) {
         global $DB;
         $this->id = $rule->id;
         $this->courseid = $rule->courseid;
@@ -61,6 +63,10 @@ class rule {
         $actions = $DB->get_records('cdr_action', ['ruleid' => $this->id]);
 
         foreach ($conditions as $conditionrecord) {
+            if (!empty($conditiontypes) && !in_array($conditionrecord->conditiontype, $conditiontypes)) {
+                // Skip condition.
+                continue;
+            }
             $this->conditions[] = rule_component_loader::create_condition_instance($conditionrecord, $this->courseid);
         }
 
