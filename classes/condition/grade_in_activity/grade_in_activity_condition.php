@@ -16,6 +16,8 @@
 
 namespace local_coursedynamicrules\condition\grade_in_activity;
 
+use core_grades\component_gradeitems;
+use grade_item;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
 use stdClass;
@@ -41,7 +43,7 @@ class grade_in_activity_condition extends condition {
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
-        $gradegreaterthanorequal = $this->params->gradegreaterthanorequal;
+        $gradeitemsconditions = $this->params->gradeitemsconditions;
         $gradelessthan = $this->params->gradelessthan;
 
         if (!isset($gradegreaterthanorequal) && !isset($gradelessthan)) {
@@ -53,39 +55,38 @@ class grade_in_activity_condition extends condition {
             return false;
         }
 
-        // Indicate when require grade is enable.
-        // See get_moduleinfo_data funtion.
-        $completionusegrade = isset($cminfo->completiongradeitemnumber);
-
-        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC || !$completionusegrade) {
-            return false;
-        }
-
-        $gradeinfo = $DB->get_record_sql(
-            "SELECT gg.finalgrade, gg.itemid
-            FROM
-                {grade_grades} gg
-                JOIN {grade_items} gi ON gg.itemid = gi.id
-            WHERE
-                gi.itemtype = 'mod'
-                AND gi.itemmodule = 'quiz'
-                AND gi.iteminstance = :cminstance
-                AND gg.userid = :userid",
-            ['cminstance' => $cminfo->instance, 'userid' => $userid]
-        );
-
-        if (!$gradeinfo) {
+        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
             return false;
         }
 
         $hasgraderequire = false;
 
-        if ($gradegreaterthanorequal &&  $gradeinfo->finalgrade >= $gradegreaterthanorequal) {
-            $hasgraderequire = true;
-        }
+        $gradeitemsgrade = $DB->get_records_sql(
+            "SELECT gg.finalgrade, gi.id AS gradeitemid, gi.itemmodule, gi.iteminstance, gi.itemnumber
+            FROM
+                {grade_grades} gg
+                JOIN {grade_items} gi ON gg.itemid = gi.id
+            WHERE
+                gi.itemtype = 'mod'
+                AND gi.itemmodule = :modname
+                AND gi.iteminstance = :cminstance
+                AND gg.userid = :userid",
+            ['modname' => $cminfo->modname, 'cminstance' => $cminfo->instance, 'userid' => $userid]
+        );
 
-        if ($gradelessthan &&  $gradeinfo->finalgrade < $gradelessthan) {
-            $hasgraderequire = true;
+        foreach ($gradeitemsgrade as $gradeinfo) {
+            $component = $cminfo->modname;
+            $itemnumber = $gradeinfo->itemnumber;
+            $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
+            $scalefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'scale');
+            if ($gradegreaterthanorequal &&  $gradeinfo->finalgrade >= $gradegreaterthanorequal) {
+                $hasgraderequire = true;
+            }
+
+            if ($gradelessthan &&  $gradeinfo->finalgrade < $gradelessthan) {
+                $hasgraderequire = true;
+            }
+
         }
 
         return $hasgraderequire;
