@@ -42,11 +42,7 @@ class grade_in_activity_form extends condition_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            // Indicate when require grade is enable.
-            // See get_moduleinfo_data funtion.
-            $completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
-
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $completionusegrade) {
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }
