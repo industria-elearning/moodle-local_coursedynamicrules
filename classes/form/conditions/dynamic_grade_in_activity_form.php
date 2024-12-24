@@ -44,6 +44,13 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         $cmid = $this->optional_param('coursemodule', 0, PARAM_INT);
         $courseid = $this->optional_param('courseid', 0, PARAM_INT);
 
+        $attr = $mform->getAttributes();
+        $attr['id'] = 'dynamic_grade_in_activity_form';
+        $attr['novalidate'] = true;
+        $attr['class'] .= ' needs-validation';
+
+        $mform->setAttributes($attr);
+
         $modinfo = get_fast_modinfo($courseid);
         $cms = $modinfo->get_cms();
         $filteredcms = [];
@@ -92,6 +99,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         }
     }
 
+
     /**
      * Adds grade elements to the form.
      *
@@ -115,6 +123,71 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             ]
         );
 
+        $decimals = $gradeitem->get_decimals();
+        $grademin = format_float($gradeitem->grademin, $decimals);
+        $grademax = format_float($gradeitem->grademax, $decimals);
+
+        // Load the scale for the grade item.
+        $scale = $gradeitem->load_scale();
+
+        $attributes = [
+            'data-cmid' => $cm->id,
+            'data-gradeitem' => $gradeitem->id,
+            'data-grademin' => $grademin,
+            'data-grademax' => $grademax,
+        ];
+
+        if ($scale) {
+            $options = [];
+            foreach ($scale->scale_items as $i => $name) {
+                $options[$i + 1] = $name;
+            }
+
+            $identifier = 'gradegte_' . $gradeitem->id;
+            $attributes['data-condition'] = 'gradegte';
+            $attributes['id'] = $identifier;
+            $elementgradegte = $mform->createElement(
+                'select',
+                $identifier,
+                '',
+                $options,
+                $attributes
+            );
+
+            $identifier = 'gradelt_' . $gradeitem->id;
+            $attributes['id'] = $identifier;
+            $attributes['data-condition'] = 'gradelt';
+            $elementgradelt = $mform->createElement(
+                'select',
+                $identifier,
+                '',
+                $options,
+                $attributes
+            );
+        } else {
+
+            $identifier = 'gradegte_' . $gradeitem->id;
+            $attributes['id'] = $identifier;
+            $attributes['data-condition'] = 'gradegte';
+            $elementgradegte = $mform->createElement(
+                'text',
+                $identifier,
+                '',
+                $attributes
+            );
+
+            $identifier = 'gradelt_' . $gradeitem->id;
+            $attributes['id'] = $identifier;
+            $attributes['data-condition'] = 'gradelt';
+            $elementgradelt = $mform->createElement(
+                'text',
+                $identifier,
+                '',
+                $attributes
+            );
+
+        }
+
         // Create elements for "grade greater than or equal" condition.
         $gradegreatergroup = [];
         $gradegreatergroup[] = $mform->createElement(
@@ -123,15 +196,13 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             '',
             get_string('gradegreaterthanorequal', 'local_coursedynamicrules'),
         );
-        $gradegreatergroup[] = $mform->createElement(
-            'text', 'gradegte_' . $gradeitem->id,
-            '',
-            ['data-cmid' => $cm->id, 'data-condition' => 'gradegte', 'data-gradeitem' => $gradeitem->id]
-        );
+        $gradegreatergroup[] = $elementgradegte;
+        $groupstring = $optiongroup['groupstring'];
+        $groupstring .= ' (' . $grademin . ' - ' . $grademax . ')';
         $mform->addGroup(
             $gradegreatergroup,
             'gradegtegroup_' . $gradeitem->id,
-            $optiongroup['groupstring'],
+            $groupstring,
             ' ',
             false
         );
@@ -147,11 +218,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             '',
             get_string('gradelessthan', 'local_coursedynamicrules'),
         );
-        $gradelessgroup[] = $mform->createElement(
-            'text', 'gradelt_' . $gradeitem->id,
-            '',
-            ['data-cmid' => $cm->id, 'data-condition' => 'gradelt', 'data-gradeitem' => $gradeitem->id]
-        );
+        $gradelessgroup[] = $elementgradelt;
         $mform->addGroup($gradelessgroup, 'gradeltgroup_' . $gradeitem->id, '', ' ', false);
         $mform->addHelpButton('gradeltgroup_' . $gradeitem->id, 'gradelessthan', 'local_coursedynamicrules');
         $mform->disabledIf('gradelt_' . $gradeitem->id, 'enablegradelt_' . $gradeitem->id, 'notchecked');
