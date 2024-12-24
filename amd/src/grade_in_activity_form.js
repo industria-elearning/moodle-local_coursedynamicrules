@@ -79,7 +79,6 @@ function handleSubmitForm() {
     const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
     gradeInActivityForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        e.stopPropagation();
         const formIsValid = formValidation();
         if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
             gradeInActivityForm.submit();
