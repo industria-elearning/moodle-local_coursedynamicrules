@@ -56,10 +56,53 @@ function createDynamicForm(container) {
  */
 function handleLoadForm(dynamicForm) {
     const loadPromise = new Pending(' local_coursedynamicrules/grade_in_activity_form:load');
-
-    dynamicForm.load()
+    const courseId = document.querySelector('[name=courseid]').value;
+    dynamicForm.load({courseid: courseId})
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
+
+            document.querySelector('[name=gradeitems]').value = JSON.stringify({});
+
+            const cmId = document.querySelector('[name=coursemodule]').value;
+
+            document.querySelector('[name=cmid]').value = cmId;
+            const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+            cmConditionInputs.forEach((input) => {
+                const gradeItems = document.querySelector('[name=gradeitems]').value;
+                const gradeItemsObject = JSON.parse(gradeItems);
+
+                const condition = input.dataset.condition;
+                const gradeItem = input.dataset.gradeitem;
+                const value = input.value;
+                const gradeItemKey = `${condition}_${gradeItem}`;
+                gradeItemsObject[gradeItemKey] = {
+                    gradeitem: gradeItem,
+                    condition: condition,
+                    value: value,
+                };
+
+                document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
+
+                input.addEventListener('change', (e) => {
+                    const gradeItems = document.querySelector('[name=gradeitems]').value;
+                    const gradeItemsObject = JSON.parse(gradeItems);
+
+                    const condition = e.target.dataset.condition;
+                    const gradeItem = e.target.dataset.gradeitem;
+                    const value = e.target.value;
+                    const gradeItemKey = `${condition}_${gradeItem}`;
+
+                    gradeItemsObject[gradeItemKey] = {
+                        gradeitem: gradeItem,
+                        condition: condition,
+                        value: value,
+                    };
+
+                    document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
+                });
+            });
+
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
@@ -95,9 +138,52 @@ function attachCourseModuleChangeListener(dynamicForm) {
 function handleCourseModuleChange(dynamicForm, courseModuleValue) {
     const updatePromise = new Pending('local_coursedynamicrules/grade_in_activity_form:update');
 
-    dynamicForm.load({coursemodule: courseModuleValue})
+    const courseId = document.querySelector('[name=courseid]').value;
+    dynamicForm.load({coursemodule: courseModuleValue, courseid: courseId})
     .then(() => {
         attachCourseModuleChangeListener(dynamicForm);
+
+        document.querySelector('[name=cmid]').value = courseModuleValue;
+
+        document.querySelector('[name=gradeitems]').value = JSON.stringify({});
+
+        const cmId = document.querySelector('[name=coursemodule]').value;
+        const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+        cmConditionInputs.forEach((input) => {
+            const gradeItems = document.querySelector('[name=gradeitems]').value;
+            const gradeItemsObject = JSON.parse(gradeItems);
+
+            const condition = input.dataset.condition;
+            const gradeItem = input.dataset.gradeitem;
+            const value = input.value;
+            const gradeItemKey = `${condition}_${gradeItem}`;
+            gradeItemsObject[gradeItemKey] = {
+                gradeitem: gradeItem,
+                condition: condition,
+                value: value,
+            };
+
+            document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
+
+            input.addEventListener('change', (e) => {
+                const gradeItems = document.querySelector('[name=gradeitems]').value;
+                const gradeItemsObject = JSON.parse(gradeItems);
+
+                const condition = e.target.dataset.condition;
+                const gradeItem = e.target.dataset.gradeitem;
+                const value = e.target.value;
+                const gradeItemKey = `${condition}_${gradeItem}`;
+
+                gradeItemsObject[gradeItemKey] = {
+                    gradeitem: gradeItem,
+                    condition: condition,
+                    value: value,
+                };
+
+                document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
+            });
+        });
         return updatePromise.resolve();
     })
     .catch(Notification.exception);
