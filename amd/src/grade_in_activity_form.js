@@ -61,6 +61,7 @@ function handleLoadForm(dynamicForm) {
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
 
+            // Handle gradeitems dynamics conditions.
             document.querySelector('[name=gradeitems]').value = JSON.stringify({});
 
             const cmId = document.querySelector('[name=coursemodule]').value;
@@ -101,6 +102,34 @@ function handleLoadForm(dynamicForm) {
 
                     document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
                 });
+            });
+
+            // Handle inputs validation and submission.
+            const gradeInActivityForm = document.getElementById('grade_in_activity_form');
+            const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
+            gradeInActivityForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cmId = document.querySelector('[name=coursemodule]').value;
+                const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+                cmConditionInputs.forEach((input) => {
+                    // eslint-disable-next-line no-console
+                    console.log(input.value);
+
+                    if (input.value > 4) {
+                        const id = input.id;
+                        const invalidFeedback = document.querySelector(`.invalid-feedback#${id}`);
+                        invalidFeedback.textContent = 'The grade must be between 0 and 4.';
+                        input.setCustomValidity('The grade must be between 0 and 4.');
+                    }
+                });
+
+                dynamicGradeInActivityForm.classList.add('was-validated');
+
+                if (dynamicGradeInActivityForm.checkValidity()) {
+                    gradeInActivityForm.submit();
+                    return;
+                }
             });
 
             return loadPromise.resolve();
@@ -157,11 +186,13 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
             const condition = input.dataset.condition;
             const gradeItem = input.dataset.gradeitem;
             const value = input.value;
+            const disabled = input.getAttribute('disabled') === 'disabled';
             const gradeItemKey = `${condition}_${gradeItem}`;
             gradeItemsObject[gradeItemKey] = {
                 gradeitem: gradeItem,
                 condition: condition,
                 value: value,
+                disabled: disabled,
             };
 
             document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
@@ -175,10 +206,13 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
                 const value = e.target.value;
                 const gradeItemKey = `${condition}_${gradeItem}`;
 
+                const disabled = e.target.getAttribute('disabled') === 'disabled';
+
                 gradeItemsObject[gradeItemKey] = {
                     gradeitem: gradeItem,
                     condition: condition,
                     value: value,
+                    disabled: disabled,
                 };
 
                 document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);

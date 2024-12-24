@@ -186,8 +186,9 @@ class grade_in_activity_condition extends condition {
         $gradeitemsconditions = [];
         foreach ($gradeitems as $gradeitemkey => $gradeitem) {
             $value = clean_param($gradeitem['value'], PARAM_FLOAT);
+            $disabled = $gradeitem['disabled'];
 
-            if (!empty($value)) {
+            if (!empty($value) && !$disabled) {
                 $gradeitemkey = clean_param($gradeitemkey, PARAM_RAW);
                 $gradeitemid = clean_param($gradeitem['gradeitem'], PARAM_INT);
                 $gradeitemcondition = clean_param($gradeitem['condition'], PARAM_TEXT);

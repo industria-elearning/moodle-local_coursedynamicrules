@@ -115,6 +115,8 @@ $string['errornegativegrade'] = 'La calificación debe ser 0 o mayor.';
 $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calificación máxima para la actividad.';
 $string['enableactivity'] = 'Habilitar actividad';
 $string['enableactivity_description'] = 'Habilitar actividades \'{$a}\'';
+$string['errorgradeoutofrange'] = 'El valor debe estar entre {$a->min} y {$a->max}.';
+
 
 
 
