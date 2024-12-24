@@ -1,3 +1,4 @@
+/* eslint-disable */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +25,8 @@
 import DynamicForm from 'core_form/dynamicform';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {get_string as getString} from "core/str";
+
 
 /**
  * Initializes the dynamic form handling.
@@ -57,11 +60,57 @@ function createDynamicForm(container) {
 function handleLoadForm(dynamicForm) {
     const loadPromise = new Pending(' local_coursedynamicrules/grade_in_activity_form:load');
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({courseid: courseId})
+    dynamicForm.load({ courseid: courseId })
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
             updateGradeItems();
+
+            // Handle inputs validation and submission.
+            const gradeInActivityForm = document.getElementById('grade_in_activity_form');
+            const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
+
+            let formIsValid = true;
+            gradeInActivityForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cmId = document.querySelector('[name=coursemodule]').value;
+                const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+                cmConditionInputs.forEach((input) => {
+                    const gradeMin = input.dataset.grademin;
+                    const gradeMax = input.dataset.grademax;
+                    let invalidFeedback = input.nextElementSibling;
+
+                    if (input.disabled) {
+                        return;
+                    }
+                    if (!invalidFeedback || !invalidFeedback.classList.contains('invalid-feedback')) {
+                        invalidFeedback = document.createElement('span');
+                        invalidFeedback.className = 'invalid-feedback';
+                        input.after(invalidFeedback);
+                    }
+
+                    console.log({value: input.value, gradeMin, gradeMax});
+
+                    if (input.value > gradeMax || input.value < gradeMin) {
+                        input.classList.add('is-invalid');
+                        formIsValid = false;
+                        getString('errorgradeoutofrange', 'local_coursedynamicrules', {
+                            min: gradeMin,
+                            max: gradeMax,
+                        }).then(function(content) {
+                            invalidFeedback.textContent = content;
+                            return;
+                        }).catch(function() {
+                            notification.exception(new Error('Failed to load string: restore'));
+                        });
+                    }
+                });
+
+                // if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
+                //     gradeInActivityForm.submit();
+                // }
+            });
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
@@ -98,14 +147,14 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
     const updatePromise = new Pending('local_coursedynamicrules/grade_in_activity_form:update');
 
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({coursemodule: courseModuleValue, courseid: courseId})
-    .then(() => {
-        attachCourseModuleChangeListener(dynamicForm);
-        resetGradeItems();
-        updateGradeItems(dynamicForm);
-        return updatePromise.resolve();
-    })
-    .catch(Notification.exception);
+    dynamicForm.load({ coursemodule: courseModuleValue, courseid: courseId })
+        .then(() => {
+            attachCourseModuleChangeListener(dynamicForm);
+            resetGradeItems();
+            updateGradeItems(dynamicForm);
+            return updatePromise.resolve();
+        })
+        .catch(Notification.exception);
 }
 
 /**
