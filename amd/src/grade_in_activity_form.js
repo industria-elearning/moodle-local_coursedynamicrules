@@ -65,55 +65,75 @@ function handleLoadForm(dynamicForm) {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
             updateGradeItems();
-
-            // Handle inputs validation and submission.
-            const gradeInActivityForm = document.getElementById('grade_in_activity_form');
-            const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
-
-            let formIsValid = true;
-            gradeInActivityForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const cmId = document.querySelector('[name=coursemodule]').value;
-                const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
-
-                cmConditionInputs.forEach((input) => {
-                    const gradeMin = input.dataset.grademin;
-                    const gradeMax = input.dataset.grademax;
-                    let invalidFeedback = input.nextElementSibling;
-
-                    if (input.disabled) {
-                        return;
-                    }
-                    if (!invalidFeedback || !invalidFeedback.classList.contains('invalid-feedback')) {
-                        invalidFeedback = document.createElement('span');
-                        invalidFeedback.className = 'invalid-feedback';
-                        input.after(invalidFeedback);
-                    }
-
-                    console.log({value: input.value, gradeMin, gradeMax});
-
-                    if (input.value > gradeMax || input.value < gradeMin) {
-                        input.classList.add('is-invalid');
-                        formIsValid = false;
-                        getString('errorgradeoutofrange', 'local_coursedynamicrules', {
-                            min: gradeMin,
-                            max: gradeMax,
-                        }).then(function(content) {
-                            invalidFeedback.textContent = content;
-                            return;
-                        }).catch(function() {
-                            notification.exception(new Error('Failed to load string: restore'));
-                        });
-                    }
-                });
-
-                // if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
-                //     gradeInActivityForm.submit();
-                // }
-            });
+            handleSubmitForm();
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
+}
+
+/**
+ * Handles form submission.
+ */
+function handleSubmitForm() {
+    const gradeInActivityForm = document.getElementById('grade_in_activity_form');
+    const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
+    gradeInActivityForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const formIsValid = formValidation();
+        if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
+            gradeInActivityForm.submit();
+        }
+    });
+}
+
+/**
+ * Validates the form by checking if the input values are within the specified grade range.
+ * 
+ * This function retrieves the course module ID from the form, selects all inputs associated with that ID,
+ * and checks if their values fall within the specified minimum and maximum grade range. If an input value
+ * is out of range, it marks the input as invalid and displays an error message.
+ * 
+ * @returns {boolean} - Returns true if the form is valid, otherwise false.
+ */
+function formValidation() {
+    const cmId = document.querySelector('[name=coursemodule]').value;
+    const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+    let formIsValid = true;
+    cmConditionInputs.forEach((input) => {
+        const gradeMin = input.dataset.grademin;
+        const gradeMax = input.dataset.grademax;
+        let invalidFeedback = input.nextElementSibling;
+
+        if (input.disabled) {
+            return;
+        }
+        if (!invalidFeedback || !invalidFeedback.classList.contains('invalid-feedback')) {
+            invalidFeedback = document.createElement('span');
+            invalidFeedback.className = 'invalid-feedback';
+            input.after(invalidFeedback);
+        }
+
+        if (input.value > gradeMax || input.value < gradeMin) {
+            input.classList.add('is-invalid');
+            formIsValid = false;
+            getString('errorgradeoutofrange', 'local_coursedynamicrules', {
+                min: gradeMin,
+                max: gradeMax,
+            }).then(function(content) {
+                invalidFeedback.textContent = content;
+                return;
+            }).catch(function() {
+                notification.exception(new Error('Failed to load string: restore'));
+            });
+        } else {
+            input.classList.remove('is-invalid');
+            invalidFeedback.textContent = '';
+        }
+    });
+
+    return formIsValid;
 }
 
 /**
@@ -152,6 +172,7 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
             updateGradeItems(dynamicForm);
+            handleSubmitForm();
             return updatePromise.resolve();
         })
         .catch(Notification.exception);
