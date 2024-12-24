@@ -42,8 +42,9 @@ class dynamic_grade_in_activity_form extends dynamic_form {
     public function definition() {
         $mform = $this->_form;
         $cmid = $this->optional_param('coursemodule', 0, PARAM_INT);
+        $courseid = $this->optional_param('courseid', 0, PARAM_INT);
 
-        $modinfo = get_fast_modinfo(2);
+        $modinfo = get_fast_modinfo($courseid);
         $cms = $modinfo->get_cms();
         $filteredcms = [];
         $options = [];
@@ -67,7 +68,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $options,
             $attributes
         );
-        // $mform->setDefault('coursemodule', $cm->id);
+        $mform->setDefault('coursemodule', $cm->id);
 
         if ($cm) {
             $component = 'mod_' . $cm->modname;
@@ -118,35 +119,43 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         $gradegreatergroup = [];
         $gradegreatergroup[] = $mform->createElement(
             'advcheckbox',
-            'enablegradegreaterthanorequal_' . $gradeitem->id,
+            'enablegradegte_' . $gradeitem->id,
             '',
-            get_string('gradegreaterthanorequal', 'local_coursedynamicrules')
+            get_string('gradegreaterthanorequal', 'local_coursedynamicrules'),
         );
-        $gradegreatergroup[] = $mform->createElement('text', 'gradegreaterthanorequal_' . $gradeitem->id, '');
+        $gradegreatergroup[] = $mform->createElement(
+            'text', 'gradegte_' . $gradeitem->id,
+            '',
+            ['data-cmid' => $cm->id, 'data-condition' => 'gradegte', 'data-gradeitem' => $gradeitem->id]
+        );
         $mform->addGroup(
             $gradegreatergroup,
-            'gradegreatergroup_' . $gradeitem->id,
+            'gradegtegroup_' . $gradeitem->id,
             $optiongroup['groupstring'],
             ' ',
             false
         );
-        $mform->addHelpButton('gradegreatergroup_' . $gradeitem->id, 'gradegreaterthanorequal', 'local_coursedynamicrules');
-        $mform->disabledIf('gradegreaterthanorequal_' . $gradeitem->id, 'enablegradegreaterthanorequal_' . $gradeitem->id, 'notchecked');
-        $mform->setType('gradegreaterthanorequal_' . $gradeitem->id, PARAM_FLOAT);
+        $mform->addHelpButton('gradegtegroup_' . $gradeitem->id, 'gradegreaterthanorequal', 'local_coursedynamicrules');
+        $mform->disabledIf('gradegte_' . $gradeitem->id, 'enablegradegte_' . $gradeitem->id, 'notchecked');
+        $mform->setType('gradegte_' . $gradeitem->id, PARAM_FLOAT);
 
         // Create elements for "grade less than" condition.
         $gradelessgroup = [];
         $gradelessgroup[] = $mform->createElement(
             'advcheckbox',
-            'enablegradelessthan_' . $gradeitem->id,
+            'enablegradelt_' . $gradeitem->id,
             '',
-            get_string('gradelessthan', 'local_coursedynamicrules')
+            get_string('gradelessthan', 'local_coursedynamicrules'),
         );
-        $gradelessgroup[] = $mform->createElement('text', 'gradelessthan_' . $gradeitem->id, '');
-        $mform->addGroup($gradelessgroup, 'gradelessgroup_' . $gradeitem->id, '', ' ', false);
-        $mform->addHelpButton('gradelessgroup_' . $gradeitem->id, 'gradelessthan', 'local_coursedynamicrules');
-        $mform->disabledIf('gradelessthan_' . $gradeitem->id, 'enablegradelessthan_' . $gradeitem->id, 'notchecked');
-        $mform->setType('gradelessthan_' . $gradeitem->id, PARAM_FLOAT);
+        $gradelessgroup[] = $mform->createElement(
+            'text', 'gradelt_' . $gradeitem->id,
+            '',
+            ['data-cmid' => $cm->id, 'data-condition' => 'gradelt', 'data-gradeitem' => $gradeitem->id]
+        );
+        $mform->addGroup($gradelessgroup, 'gradeltgroup_' . $gradeitem->id, '', ' ', false);
+        $mform->addHelpButton('gradeltgroup_' . $gradeitem->id, 'gradelessthan', 'local_coursedynamicrules');
+        $mform->disabledIf('gradelt_' . $gradeitem->id, 'enablegradelt_' . $gradeitem->id, 'notchecked');
+        $mform->setType('gradelt_' . $gradeitem->id, PARAM_FLOAT);
     }
 
     /**
