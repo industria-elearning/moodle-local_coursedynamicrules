@@ -26,8 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 $messageproviders = [
     'coursedynamicrules_notification' => [
+        'capability' => '',
         'defaults' => [
-            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
 ];
