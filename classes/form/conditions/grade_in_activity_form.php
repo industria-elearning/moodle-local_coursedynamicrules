@@ -44,6 +44,12 @@ class grade_in_activity_form extends condition_form {
         // Create container for dynamic form.
         $mform->addElement('html', html_writer::div('', '', ['data-region' => 'dynamicform']));
 
+        $mform->addElement('hidden', 'gradeitems', $this->courseid);
+        $mform->setType('gradeitems', PARAM_RAW);
+
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
+
         parent::definition();
 
         $PAGE->requires->js_call_amd('local_coursedynamicrules/grade_in_activity_form', 'init', []);
