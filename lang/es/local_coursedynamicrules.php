@@ -103,7 +103,7 @@ $string['no_complete_activity'] = 'Actividad no completada';
 $string['no_complete_activity_task'] = 'Tarea de actividad no completada';
 $string['expectedcompletiondate'] = 'Fecha esperada de finalización';
 $string['grade_in_activity'] = 'Calificación en actividad';
-$string['grade_in_activity_description'] = 'Usuarios que han recibido una calificación en el módulo de actividad del curso \'{$a}\'';
+$string['grade_in_activity_description'] = 'Para "{$a->moddescription}", se deben obtener las siguientes calificaciones: {$a->gradestring}';
 $string['grade'] = 'Calificación';
 $string['enablegradegreaterthanorequal_help'] = 'Habilitar calificación mayor o igual que';
 $string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
@@ -116,6 +116,7 @@ $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calific
 $string['enableactivity'] = 'Habilitar actividad';
 $string['enableactivity_description'] = 'Habilitar actividades \'{$a}\'';
 $string['errorgradeoutofrange'] = 'El valor debe estar entre {$a->min} y {$a->max}.';
+
 
 
 
