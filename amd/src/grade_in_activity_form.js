@@ -1,4 +1,3 @@
-/* eslint-disable */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -60,7 +59,7 @@ function createDynamicForm(container) {
 function handleLoadForm(dynamicForm) {
     const loadPromise = new Pending(' local_coursedynamicrules/grade_in_activity_form:load');
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({ courseid: courseId })
+    dynamicForm.load({courseid: courseId})
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
@@ -78,21 +77,25 @@ function handleSubmitForm() {
     const gradeInActivityForm = document.getElementById('grade_in_activity_form');
     const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
     gradeInActivityForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const formIsValid = formValidation();
-        if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
-            gradeInActivityForm.submit();
+        // Check if the submit button was clicked.
+        // this is to prevent the form from submitting when the user clicks the cancel button.
+        if (e.submitter.name === 'submitbutton') {
+            e.preventDefault();
+            const formIsValid = formValidation();
+            if (e.submitter.name === 'submitbutton' && dynamicGradeInActivityForm.checkValidity() && formIsValid) {
+                gradeInActivityForm.submit();
+            }
         }
     });
 }
 
 /**
  * Validates the form by checking if the input values are within the specified grade range.
- * 
+ *
  * This function retrieves the course module ID from the form, selects all inputs associated with that ID,
  * and checks if their values fall within the specified minimum and maximum grade range. If an input value
  * is out of range, it marks the input as invalid and displays an error message.
- * 
+ *
  * @returns {boolean} - Returns true if the form is valid, otherwise false.
  */
 function formValidation() {
@@ -115,8 +118,6 @@ function formValidation() {
             input.after(invalidFeedback);
         }
 
-        console.log({value: inputValue, min: gradeMin, max: gradeMax, isGreater: inputValue > gradeMax, isLess: inputValue < gradeMin});
-        
         if (inputValue > gradeMax || inputValue < gradeMin) {
             input.classList.add('is-invalid');
             formIsValid = false;
@@ -127,7 +128,7 @@ function formValidation() {
                 invalidFeedback.textContent = content;
                 return;
             }).catch(function() {
-                notification.exception(new Error('Failed to load string: restore'));
+                Notification.exception(new Error('Failed to load string: errorgradeoutofrange'));
             });
         } else {
             input.classList.remove('is-invalid');
@@ -169,7 +170,7 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
     const updatePromise = new Pending('local_coursedynamicrules/grade_in_activity_form:update');
 
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({ coursemodule: courseModuleValue, courseid: courseId })
+    dynamicForm.load({coursemodule: courseModuleValue, courseid: courseId})
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
