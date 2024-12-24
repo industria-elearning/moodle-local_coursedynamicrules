@@ -101,8 +101,9 @@ function formValidation() {
 
     let formIsValid = true;
     cmConditionInputs.forEach((input) => {
-        const gradeMin = input.dataset.grademin;
-        const gradeMax = input.dataset.grademax;
+        const gradeMin = parseFloat(input.dataset.grademin);
+        const gradeMax = parseFloat(input.dataset.grademax);
+        const inputValue = parseFloat(input.value);
         let invalidFeedback = input.nextElementSibling;
 
         if (input.disabled) {
@@ -114,7 +115,9 @@ function formValidation() {
             input.after(invalidFeedback);
         }
 
-        if (input.value > gradeMax || input.value < gradeMin) {
+        console.log({value: inputValue, min: gradeMin, max: gradeMax, isGreater: inputValue > gradeMax, isLess: inputValue < gradeMin});
+        
+        if (inputValue > gradeMax || inputValue < gradeMin) {
             input.classList.add('is-invalid');
             formIsValid = false;
             getString('errorgradeoutofrange', 'local_coursedynamicrules', {
