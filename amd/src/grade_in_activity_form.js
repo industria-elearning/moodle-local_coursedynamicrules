@@ -61,7 +61,7 @@ function handleLoadForm(dynamicForm) {
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
             resetGradeItems();
-            updateGradeItems(dynamicForm);
+            updateGradeItems();
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
@@ -145,12 +145,14 @@ function updateGradeItem(input) {
     const condition = input.dataset.condition;
     const gradeItem = input.dataset.gradeitem;
     const value = input.value;
+    const disabled = input.getAttribute('disabled') === 'disabled';
     const gradeItemKey = `${condition}_${gradeItem}`;
 
     gradeItemsObject[gradeItemKey] = {
         gradeitem: gradeItem,
         condition: condition,
         value: value,
+        disabled: disabled,
     };
 
     document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
