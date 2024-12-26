@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\form\actions;
 
 use context_course;
 use context_system;
+use moodle_url;
 
 /**
  * Class sendnotification_form
@@ -36,9 +37,42 @@ class sendnotification_form extends action_form {
      * @return void
      */
     public function definition() {
+        global $OUTPUT, $DB;
         $mform = $this->_form;
         $customdata = $this->_customdata;
         $ruleid = $customdata['ruleid'];
+
+        $notification = $OUTPUT->notification(
+            get_string('notification_action_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
+        // Check if the messaging plugins are installed.
+        if (!$DB->record_exists('config_plugins', ['plugin' => 'local_datacurso_msghub', 'name' => 'version']) ||
+            !$DB->record_exists('config_plugins', ['plugin' => 'message_datacurso_msghub', 'name' => 'version'])) {
+            $plugininfo = $OUTPUT->notification(
+                get_string('missing_plugins_warning', 'local_coursedynamicrules'),
+                \core\output\notification::NOTIFY_WARNING
+            );
+            $mform->addElement('html', $plugininfo);
+        } else {
+            $enabledproviders = get_config(
+                'message',
+                'message_provider_local_coursedynamicrules_coursedynamicrules_notification_enabled'
+            );
+
+            // Validate if enabledproviders includes datacurso_msghub.
+            $enabledproviderslist = explode(',', $enabledproviders);
+            if (!in_array('datacurso_msghub', $enabledproviderslist)) {
+                $notificationsettingssurl = new moodle_url('/admin/message.php');
+                $plugininfo = $OUTPUT->notification(
+                    get_string('provider_not_enabled_warning', 'local_coursedynamicrules', $notificationsettingssurl->out()),
+                    \core\output\notification::NOTIFY_WARNING
+                );
+                $mform->addElement('html', $plugininfo);
+            }
+        }
 
         $mform->addElement('text', 'messagesubject', get_string('messagesubject', 'local_coursedynamicrules'));
         $mform->setType('messagesubject', PARAM_TEXT);
