@@ -116,6 +116,16 @@ $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calific
 $string['enableactivity'] = 'Habilitar actividad';
 $string['enableactivity_description'] = 'Habilitar actividades \'{$a}\'';
 $string['errorgradeoutofrange'] = 'El valor debe estar entre {$a->min} y {$a->max}.';
+$string['notification_action_info'] = 'Esta acción enviará una notificación a los usuarios que cumplan con los criterios de las condiciones de la regla.';
+
+$string['missing_plugins_warning'] = '🔔 ¡Mejora tus notificaciones! Nuestros plugins de <strong>Datacurso Message Hub</strong> te permiten enviar notificaciones por WhatsApp y SMS usando proveedores como Twilio.
+<br>
+<a href="https://yoursite.com/buy-plugins" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
+
+$string['provider_not_enabled_warning'] = 'Habilita las notificaciones con <strong>Datacurso Message Hub</strong> para que esta acción envíe notificaciones por WhatsApp y SMS usando proveedores como Twilio.
+Puedes habilitarlo/deshabilitarlo desde la <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Notificación de reglas dinámicas del curso</strong>.
+<br>
+<a href="https://docs.com/plugin" target="_blank">Consulta la documentación para más información.</a>';
 
 
 
