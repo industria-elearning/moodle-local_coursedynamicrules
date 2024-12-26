@@ -77,6 +77,51 @@ class rule {
     }
 
     /**
+     * Validate status of licence
+     *
+     * @return stdClass
+     *
+     * - success {boolean} - Determine when validations is correct
+     * - message {string} - Message to show when validation is not correct
+     */
+    public static function validate_licence_status() {
+        $config = get_config('local_coursedynamicrules');
+
+        $licencekey = $config->licencekey;
+
+        // First time when localkey is not set in config yet.
+        $localkey = $config->localkey ? $config->localkey : '';
+
+        $licensestatus = new stdClass();
+        $licensestatus->success = false;
+        $licensestatus->message = get_string('pluginnotavailable', 'local_coursedynamicrules');
+
+        try {
+            if (!empty($licencekey)) {
+                $licencedata = self::validate_licence($licencekey, $localkey);
+
+                // When check is remote licencedata contain localkey.
+                $localkey = $licencedata["remotecheck"] ? $licencedata["localkey"] : $localkey;
+
+                if ($licencedata['status'] == 'Active') {
+                    set_config('localkey', $localkey, 'local_coursedynamicrules');
+                    $licensestatus->success = true;
+                    $licensestatus->message = '';
+                }
+            }
+
+        } catch (\Exception $e) {
+            debugging(
+                'Exception while trying verfy licence ' . $e->getMessage(),
+                DEBUG_DEVELOPER
+            );
+        }
+
+        return $licensestatus;
+
+    }
+
+    /**
      * Get conditions for this rule
      * @return condition[]
      */
@@ -102,9 +147,200 @@ class rule {
     }
 
     /**
+     *
+     * Validate the license key.
+     * First validate if the local key is correct so as not to make any request to the server,
+     * if the validation of the local key fails, a remote validation is done.
+     *
+     * @param string $licensekey licence key
+     * @param string $localkey local key for avoid remote validation
+     *
+     * @return array asociative array with properties that contain the result of the validation.
+     *
+     */
+    public static function validate_licence($licensekey, $localkey='') {
+        // Configuration Values.
+        // Enter the url to your WHMCS installation here.
+        $whmcsurl = 'https://shop.datacurso.com/';
+
+        // Must match what is specified in the MD5 Hash Verification field.
+        // of the licensing product that will be used with this check.
+        $licensingsecretkey = 'Ya9x!&9CsBb6EYeT';
+        // The number of days to wait between performing remote license checks.
+        $localkeydays = 1;
+        // The number of days to allow failover for after local key expiry.
+        $allowcheckfaildays = 0;
+
+        // -----------------------------------
+        // Do not edit below this line.
+
+        $checktoken = time() . md5(mt_rand(100000000, mt_getrandmax()) . $licensekey);
+        $checkdate = date("Ymd");
+        $domain = $_SERVER['SERVER_NAME'];
+        $usersip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR'];
+        $dirpath = dirname(__FILE__);
+        $verifyfilepath = 'modules/servers/licensing/verify.php';
+        $localkeyvalid = false;
+
+        if (!empty($localkey)) {
+            $localkey = str_replace("\n", '', $localkey); // Remove the line breaks.
+            $localdata = substr($localkey, 0, strlen($localkey) - 32); // Extract License Data.
+            $md5hash = substr($localkey, strlen($localkey) - 32); // Extract MD5 Hash.
+            if ($md5hash == md5($localdata . $licensingsecretkey)) {
+                $localdata = strrev($localdata); // Reverse the string.
+                $md5hash = substr($localdata, 0, 32); // Extract MD5 Hash.
+                $localdata = substr($localdata, 32); // Extract License Data.
+                $localdata = base64_decode($localdata);
+                $localkeyresults = json_decode($localdata, true);
+                $originalcheckdate = $localkeyresults['checkdate'];
+                if ($md5hash == md5($originalcheckdate . $licensingsecretkey)) {
+                    $localexpiry = date("Ymd", mktime(0, 0, 0, date("m"), date("d") - $localkeydays, date("Y")));
+                    if ($originalcheckdate > $localexpiry) {
+                        $localkeyvalid = true;
+                        $results = $localkeyresults;
+                        $validdomains = explode(',', $results['validdomain']);
+                        if (!in_array($_SERVER['SERVER_NAME'], $validdomains)) {
+                            $localkeyvalid = false;
+                            $localkeyresults['status'] = "Invalid";
+                            $results = [];
+                        }
+                        $validips = explode(',', $results['validip']);
+                        if (!in_array($usersip, $validips)) {
+                            $localkeyvalid = false;
+                            $localkeyresults['status'] = "Invalid";
+                            $results = [];
+                        }
+                        $validdirs = explode(',', $results['validdirectory']);
+                        if (!in_array($dirpath, $validdirs)) {
+                            $localkeyvalid = false;
+                            $localkeyresults['status'] = "Invalid";
+                            $results = [];
+                        }
+                    }
+                }
+            }
+        }
+        if (!$localkeyvalid) {
+            $responsecode = 0;
+            $postfields = [
+            'licensekey' => $licensekey,
+            'domain' => $domain,
+            'ip' => $usersip,
+            'dir' => $dirpath,
+            ];
+            if ($checktoken) {
+                $postfields['check_token'] = $checktoken;
+            }
+            $querystring = '';
+            foreach ($postfields as $k => $v) {
+                $querystring .= $k.'='.urlencode($v).'&';
+            }
+            if (function_exists('curl_exec')) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $whmcsurl . $verifyfilepath);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $querystring);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $data = curl_exec($ch);
+                $responsecode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+            } else {
+                $responsecodepattern = '/^HTTP\/\d+\.\d+\s+(\d+)/';
+                $fp = @fsockopen($whmcsurl, 80, $errno, $errstr, 5);
+                if ($fp) {
+                    $newlinefeed = "\r\n";
+                    $header = "POST ".$whmcsurl . $verifyfilepath . " HTTP/1.0" . $newlinefeed;
+                    $header .= "Host: ".$whmcsurl . $newlinefeed;
+                    $header .= "Content-type: application/x-www-form-urlencoded" . $newlinefeed;
+                    $header .= "Content-length: ".@strlen($querystring) . $newlinefeed;
+                    $header .= "Connection: close" . $newlinefeed . $newlinefeed;
+                    $header .= $querystring;
+                    $data = $line = '';
+                    @stream_set_timeout($fp, 20);
+                    @fputs($fp, $header);
+                    $status = @socket_get_status($fp);
+                    while (!@feof($fp)&&$status) {
+                        $line = @fgets($fp, 1024);
+                        $patternmatches = [];
+                        if (!$responsecode
+                        && preg_match($responsecodepattern, trim($line), $patternmatches)
+                        ) {
+                            $responsecode = (empty($patternmatches[1])) ? 0 : $patternmatches[1];
+                        }
+                        $data .= $line;
+                        $status = @socket_get_status($fp);
+                    }
+                    @fclose ($fp);
+                }
+            }
+            if ($responsecode != 200) {
+                $localexpiry = date(
+                    "Ymd",
+                    mktime(0, 0, 0, date("m"), date("d") - ($localkeydays + $allowcheckfaildays), date("Y"))
+                );
+                if ($originalcheckdate > $localexpiry) {
+                    $results = $localkeyresults;
+                } else {
+                    $results = [];
+                    $results['status'] = "Invalid";
+                    $results['description'] = "Remote Check Failed";
+                    return $results;
+                }
+            } else {
+                preg_match_all('/<(.*?)>([^<]+)<\/\\1>/i', $data, $matches);
+                $results = [];
+                foreach ($matches[1] as $k => $v) {
+                    $results[$v] = $matches[2][$k];
+                }
+            }
+            if (!is_array($results)) {
+                die("Invalid License Server Response");
+            }
+            if ($results['md5hash']) {
+                if ($results['md5hash'] != md5($licensingsecretkey . $checktoken)) {
+                    $results['status'] = "Invalid";
+                    $results['description'] = "MD5 Checksum Verification Failed";
+                    return $results;
+                }
+            }
+            if ($results['status'] == "Active") {
+                $results['checkdate'] = $checkdate;
+                $dataencoded = json_encode($results);
+                $dataencoded = base64_encode($dataencoded);
+                $dataencoded = md5($checkdate . $licensingsecretkey) . $dataencoded;
+                $dataencoded = strrev($dataencoded);
+                $dataencoded = $dataencoded . md5($dataencoded . $licensingsecretkey);
+                $dataencoded = wordwrap($dataencoded, 80, "\n", true);
+                $results['localkey'] = $dataencoded;
+            }
+            $results['remotecheck'] = true;
+        }
+        unset(
+            $postfields,
+            $data,
+            $matches,
+            $whmcsurl,
+            $licensingsecretkey,
+            $checkdate,
+            $usersip,
+            $localkeydays,
+            $allowcheckfaildays,
+            $md5hash
+        );
+        return $results;
+
+    }
+
+    /**
      * Execute all actions of the rule if the conditions are true
      */
     public function execute() {
+
+        $licensestatus = self::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
 
         foreach ($this->users as $user) {
             $rulecontext = (object)[

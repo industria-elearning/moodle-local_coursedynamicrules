@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\helper\rule_component_loader;
-use local_kopere_dashboard\util\html;
 
 require('../../config.php');
 
@@ -46,6 +46,13 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
+
+$licensestatus = rule::validate_licence_status();
+if (!$licensestatus->success) {
+    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
+    echo $OUTPUT->footer();
+    die();
+}
 
 $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
 

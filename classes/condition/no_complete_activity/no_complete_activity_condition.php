@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\condition\no_complete_activity;
 
 use completion_info;
 use local_coursedynamicrules\core\condition;
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\conditions\no_complete_activity_form;
 use stdClass;
 
@@ -66,6 +67,12 @@ class no_complete_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return false;
+        }
+
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;

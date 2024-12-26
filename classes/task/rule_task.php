@@ -45,6 +45,12 @@ class rule_task extends \core\task\adhoc_task {
      */
     public function execute() {
         global $DB;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            throw new \moodle_exception('pluginnotavailable', 'local_coursedynamicrules');
+        }
+
         $customdata = $this->get_custom_data();
 
         $courseid = $customdata->courseid;

@@ -28,8 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_coursedynamicrules_settings', new lang_string('pluginname', 'local_coursedynamicrules'));
 
-    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-    if ($ADMIN->fulltree) {
-        // TODO: Define actual plugin settings page and add it to the tree - {@link https://docs.moodle.org/dev/Admin_settings}.
-    }
+    $settings->add(new admin_setting_configtext(
+        'local_coursedynamicrules/licencekey',
+        get_string('licencekey', 'local_coursedynamicrules'),
+        get_string('licencekey_desc', 'local_coursedynamicrules'),
+        '',
+    ));
+
+    $ADMIN->add('localplugins', $settings);
 }
