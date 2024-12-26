@@ -197,6 +197,10 @@ class grade_in_activity_condition extends condition {
             $gradestrings[] = get_string('gradelessthanvalue', 'local_coursedynamicrules', $gradelt->value);
         }
 
+        if (empty($gradestrings)) {
+            return '';
+        }
+
         return "\"{$itemnamestring}\" " . implode(' & ', $gradestrings);
     }
 
