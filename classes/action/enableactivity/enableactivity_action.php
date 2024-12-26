@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\action\enableactivity;
 
 use core_availability\tree;
 use local_coursedynamicrules\core\action;
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\enableactivity_form;
 use stdClass;
 
@@ -109,6 +110,11 @@ class enableactivity_action extends action {
      */
     public function save_action($formdata) {
         global $DB;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
 
         $coursemodules = $formdata->coursemodules;
 

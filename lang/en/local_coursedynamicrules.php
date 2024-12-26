@@ -126,3 +126,7 @@ $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Dat
 You can enable/disable it from <a href="{$a}" target="_blank">Notification settings</a> and search <strong>Course dynamic rules notification</strong>.
 <br>
 <a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
+$string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
+$string['licencekey'] = 'Licence Key';
+$string['licencekey_desc'] = 'License key required to use this plugin';
+

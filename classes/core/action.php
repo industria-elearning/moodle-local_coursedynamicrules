@@ -100,6 +100,7 @@ abstract class action {
      * @param stdClass $actiondata the action data to set
      */
     public function set_data($action) {
+
         if ($action && $action->params) {
             $this->params = json_decode($action->params, true);
         }

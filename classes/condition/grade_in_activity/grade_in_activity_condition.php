@@ -21,6 +21,7 @@ use core_grades\component_gradeitems;
 use grade_grade;
 use grade_item;
 use local_coursedynamicrules\core\condition;
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
 use stdClass;
 
@@ -46,6 +47,11 @@ class grade_in_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return false;
+        }
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;

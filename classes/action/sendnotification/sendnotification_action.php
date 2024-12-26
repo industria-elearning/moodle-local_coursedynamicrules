@@ -17,6 +17,7 @@
 namespace local_coursedynamicrules\action\sendnotification;
 
 use local_coursedynamicrules\core\action;
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\sendnotification_form;
 use moodle_url;
 use stdClass;
@@ -115,6 +116,12 @@ class sendnotification_action extends action {
      */
     public function save_action($formdata) {
         global $DB;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
+
         $params = [
             'messagesubject' => $formdata->messagesubject,
             'messagebody' => format_text($formdata->messagebody['text'], FORMAT_HTML),
