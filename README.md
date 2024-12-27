@@ -42,18 +42,3 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
-
-# Roadmap 
-
-Se debe crear un plugin que permita agregar reglas dinamicas a las actividades de un curso.
-
-Como punto de partida se tomarán las siguientes reglas:
-
-### Condiciones
-
-1. Condiciones Basadas en Finalización
-     - **Finalización de actividad específica**: La regla se activa cuando una actividad (tarea, cuestionario, foro, etc.) se marca como completada.
-     - **No finalización dentro de un plazo**: Si una actividad no se completa dentro de un período de tiempo establecido.
-
-### Acciones
-1. Enviar notificación de recordatorio a los usuarios coincidentes
