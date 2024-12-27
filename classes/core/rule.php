@@ -165,7 +165,7 @@ class rule {
 
         // Must match what is specified in the MD5 Hash Verification field.
         // of the licensing product that will be used with this check.
-        $licensingsecretkey = 'Ya9x!&9CsBb6EYeT';
+        $licensingsecretkey = 'p!kQ$#Y?BP4Pi6b$';
         // The number of days to wait between performing remote license checks.
         $localkeydays = 1;
         // The number of days to allow failover for after local key expiry.
