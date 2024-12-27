@@ -16,5 +16,5 @@ jobs:
           curl -X POST \
           -H "Content-Type: application/json" \
           -H "Authorization: ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_TOKEN }}" \
-          -d '{"repository":"${{ github.repository }}"}' \
+          -d '{"repository":"${{ github.repository }}", "branch":"${{ github.ref_name }}"}' \
           ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_URL }}
