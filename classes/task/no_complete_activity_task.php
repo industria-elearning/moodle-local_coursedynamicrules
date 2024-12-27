@@ -42,6 +42,11 @@ class no_complete_activity_task extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
+        $localkey = get_config('local_coursedynamicrules', 'localkey');
+        if (!$localkey) {
+            return;
+        }
+
         $licensestatus = rule::validate_licence_status();
         if (!$licensestatus->success) {
             return;
