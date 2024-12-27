@@ -3,7 +3,7 @@ name: Encode with IonCube
 on:
   push:
     branches:
-      - 'main'
+      - 'licence'
   workflow_dispatch:
 
 jobs:
