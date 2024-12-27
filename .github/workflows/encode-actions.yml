@@ -1,0 +1,20 @@
+name: Encode with IonCube
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+    
+  webhook:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Invoke deployment hook
+      run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_TOKEN }}" \
+          -d '{"repository":"${{ github.repository }}"}' \
+          ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_URL }}
