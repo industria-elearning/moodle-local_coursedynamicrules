@@ -47,7 +47,9 @@ $string['typemissing'] = 'Falta el valor "type"';
 $string['name'] = 'Nombre';
 $string['description'] = 'Descripción';
 $string['conditions'] = 'Condiciones';
+$string['conditions_help'] = 'Las condiciones se utilizan para definir las condiciones que deben cumplirse para ejecutar las acciones de la regla';
 $string['actions'] = 'Acciones';
+$string['actions_help'] = 'Las acciones se utilizan para definir las acciones que se ejecutarán cuando se cumplan las condiciones de la regla';
 $string['ruleactive'] = 'Activa';
 $string['ruleactive_help'] = 'Habilitar o deshabilitar la regla';
 $string['ruleadd'] = 'Agregar regla';
@@ -123,9 +125,14 @@ $string['missing_plugins_warning'] = '🔔 ¡Mejora tus notificaciones! Nuestros
 <a href="https://yoursite.com/buy-plugins" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
 
 $string['provider_not_enabled_warning'] = 'Habilita las notificaciones con <strong>Datacurso Message Hub</strong> para que esta acción envíe notificaciones por WhatsApp y SMS usando proveedores como Twilio.
-Puedes habilitarlo/deshabilitarlo desde la <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Notificación de reglas dinámicas del curso</strong>.
+Puedes habilitarlo desde la <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Notificación de reglas dinámicas del curso</strong>.
 <br>
 <a href="https://docs.com/plugin" target="_blank">Consulta la documentación para más información.</a>';
+
+$string['rules'] = 'Reglas';
+$string['rules_help'] = 'Las reglas se utilizan para definir un conjunto de condiciones y acciones que se ejecutarán';
+$string['missing_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté instalado y habilitado. Por favor descárguelo desde <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instálelo.';
+$string['disabled_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté habilitado. Por favor acceda a la página <a href="{$a}" target="_blank">Gestionar restricciones</a>, busque <strong>Restricción por usuario</strong> y habilítelo.';
 
 
 
