@@ -16,6 +16,8 @@
 
 namespace local_coursedynamicrules\form\actions;
 
+use moodle_url;
+
 /**
  * Class enableactivity_form
  *
@@ -33,10 +35,33 @@ class enableactivity_form extends action_form {
      * @return void
      */
     public function definition() {
+        global $OUTPUT, $DB;
         $mform = $this->_form;
         $customdata = $this->_customdata;
         $ruleid = $customdata['ruleid'];
         $courseid = $customdata['courseid'];
+
+        // Check if the availability_user plugins is installed.
+        if (!get_config('availability_user', 'version')) {
+
+            $plugininfo = $OUTPUT->notification(
+                get_string('missing_availability_user', 'local_coursedynamicrules'),
+                \core\output\notification::NOTIFY_ERROR,
+                false
+            );
+            $mform->addElement('html', $plugininfo);
+            return;
+        } else if (get_config('availability_user', 'disabled')) {
+            $managerestrictionsurl = new moodle_url('/admin/tool/availabilityconditions/');
+            // Check if the availability_user plugins is enabled.
+            $plugininfo = $OUTPUT->notification(
+                get_string('disabled_availability_user', 'local_coursedynamicrules', $managerestrictionsurl->out()),
+                \core\output\notification::NOTIFY_ERROR,
+                false
+            );
+            $mform->addElement('html', $plugininfo);
+            return;
+        }
 
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);
@@ -48,7 +73,9 @@ class enableactivity_form extends action_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            if (!$cm->deletioninprogress) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
         }
 
         $attributes = [
