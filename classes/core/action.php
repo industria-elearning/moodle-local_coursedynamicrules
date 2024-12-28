@@ -28,6 +28,9 @@ use stdClass;
  */
 abstract class action {
 
+    /** @var int ID of the action on the DB */
+    private $id;
+
     /** @var action_form|null */
     protected $actionform;
 
@@ -45,8 +48,9 @@ abstract class action {
      * @param object $record Record of the action stored in DB
      */
     public function __construct($record, $courseid = null) {
-        $this->params = json_decode($record->params);
+        $this->id = $record->id;
         $this->courseid = $courseid;
+        $this->params = json_decode($record->params);
     }
 
     /**
@@ -104,6 +108,27 @@ abstract class action {
         if ($action && $action->params) {
             $this->params = json_decode($action->params, true);
         }
+    }
+
+    /**
+     * Retrieves the ID of the action.
+     *
+     * @return int The ID of the action.
+     */
+    public function get_id() {
+        return $this->id;
+    }
+
+    /**
+     * Deletes a action record from the 'cdr_action' table. and related information with it.
+     *
+     * @return bool True on success, false on failure.
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function delete() {
+        global $DB;
+
+        return $DB->delete_records('cdr_action', ['id' => $this->get_id()]);
     }
 
     /**
