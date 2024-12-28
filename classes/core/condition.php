@@ -27,6 +27,9 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class condition {
+    /** @var int ID of the condition on the DB */
+    private $id;
+
     /** @var string Type of the action example: sendnotification */
     protected $type;
 
@@ -66,6 +69,7 @@ abstract class condition {
      * @param object $record Record that represents data stored in DB
      */
     public function set_data($record, $courseid = null) {
+        $this->id = $record->id;
         $this->type = $record->conditiontype;
         $this->courseid = $courseid;
         $this->params = json_decode($record->params);
@@ -118,6 +122,27 @@ abstract class condition {
      */
     public function get_display_name_postfix($condition) {
         return '';
+    }
+
+    /**
+     * Retrieves the ID of the condition.
+     *
+     * @return int The ID of the condition.
+     */
+    public function get_id() {
+        return $this->id;
+    }
+
+    /**
+     * Deletes a condition record from the 'cdr_condition' table. and related information with it.
+     *
+     * @return bool True on success, false on failure.
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function delete() {
+        global $DB;
+
+        return $DB->delete_records('cdr_condition', ['id' => $this->id]);
     }
 
     /**
