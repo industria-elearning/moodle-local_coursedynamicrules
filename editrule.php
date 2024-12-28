@@ -89,6 +89,9 @@ if ($ruleform->is_cancelled()) {
     }
 }
 
+$heading = $ruleid ? get_string('editrule', 'local_coursedynamicrules') : get_string('createrule', 'local_coursedynamicrules');
+echo $OUTPUT->heading($heading);
+
 $ruleform->display();
 echo $OUTPUT->footer();
 
