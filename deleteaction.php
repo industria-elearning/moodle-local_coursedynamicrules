@@ -69,8 +69,9 @@ $description = $actioninstance->get_description();
 
 if ($delete === md5($config->confirmdeleteaction)) {
     require_sesskey();
-    // Delete rule.
-    $DB->delete_records('cdr_action', ['id' => $id]);
+
+    // Delete action.
+    $actioninstance->delete();
 
     echo $OUTPUT->notification(
         get_string("deletedaction", "local_coursedynamicrules", $description),
