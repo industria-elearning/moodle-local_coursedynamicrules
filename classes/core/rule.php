@@ -159,6 +159,8 @@ class rule {
      *
      */
     public static function validate_licence($licensekey, $localkey='') {
+        global $CFG;
+
         // Configuration Values.
         // Enter the url to your WHMCS installation here.
         $whmcsurl = 'https://shop.datacurso.com/';
@@ -176,8 +178,8 @@ class rule {
 
         $checktoken = time() . md5(mt_rand(100000000, mt_getrandmax()) . $licensekey);
         $checkdate = date("Ymd");
-        $domain = $_SERVER['SERVER_NAME'];
-        $usersip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR'];
+        $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
+        $usersip = gethostbyname($domain);
         $dirpath = dirname(__FILE__);
         $verifyfilepath = 'modules/servers/licensing/verify.php';
         $localkeyvalid = false;
