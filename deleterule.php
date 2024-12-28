@@ -66,9 +66,8 @@ if ($delete === md5($config->confirmdeleterule)) {
     require_sesskey();
 
     // Delete rule.
-    $DB->delete_records('cdr_rule', ['id' => $id]);
-    $DB->delete_records('cdr_condition', ['ruleid' => $id]);
-    $DB->delete_records('cdr_action', ['ruleid' => $id]);
+    $ruleinstance = new rule($rule, $courseid);
+    $ruleinstance->delete();
 
     echo $OUTPUT->notification(
         get_string("deletedrule", "local_coursedynamicrules", $rule->name),
