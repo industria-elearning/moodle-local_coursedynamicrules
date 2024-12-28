@@ -49,7 +49,6 @@ class sendnotification_action extends action {
 
         $messagesubject = $this->params->messagesubject;
         $messagebody = $this->params->messagebody;
-        $messagesmallmessage = $this->params->messagesmallmessage;
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -70,7 +69,7 @@ class sendnotification_action extends action {
         $message->fullmessage = html_to_text($messagebody);
         $message->fullmessageformat = FORMAT_HTML;
         $message->fullmessagehtml = $messagebody;
-        $message->smallmessage = $messagesmallmessage;
+        $message->smallmessage = $messagebody;
         $messageid = message_send($message);
         return $messageid;
     }
