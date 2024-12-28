@@ -43,18 +43,24 @@ class enableactivity_action extends action {
         $cmids = $this->params->coursemodules;
 
         foreach ($cmids as $cmid) {
-            $cm = $DB->get_record('course_modules', ['id' => $cmid]);
-            $availability = json_decode($cm->availability);
-            $availability->c[0]->userids[] = $userid;
+            $cmrecord = $DB->get_record('course_modules', ['id' => $cmid]);
+            $availability = json_decode($cmrecord->availability);
 
-            $DB->set_field(
-                'course_modules',
-                'availability',
-                json_encode($availability),
-                [
-                    'id' => $cmid,
-                ]
-            );
+            $userids = $availability->c[0]->userids ?? [];
+
+            if (!in_array($userid, $userids)) {
+                $userids[] = $userid;
+                $availability->c[0]->userids = $userids;
+
+                $DB->set_field(
+                    'course_modules',
+                    'availability',
+                    json_encode($availability),
+                    [
+                        'id' => $cmid,
+                    ]
+                );
+            }
 
         }
 
@@ -116,7 +122,18 @@ class enableactivity_action extends action {
             return;
         }
 
-        $coursemodules = $formdata->coursemodules;
+        $coursemodules = [];
+
+        foreach ($formdata->coursemodules as $cmid) {
+            $cminfo = get_coursemodule_from_id(null, $cmid, $formdata->courseid);
+
+            // Store visible and visibleoncoursepage status to restore it later when the rule is deleted.
+            $coursemodules[] = (object) [
+                'id' => $cmid,
+                'visible' => $cminfo->visible,
+                'visibleoncoursepage' => $cminfo->visibleoncoursepage,
+            ];
+        }
 
         $params = [
             'coursemodules' => $coursemodules,
@@ -131,7 +148,8 @@ class enableactivity_action extends action {
 
         $DB->insert_record('cdr_action', $action);
 
-        foreach ($coursemodules as $cmid) {
+        foreach ($coursemodules as $cm) {
+            $cmid = $cm->id;
             $availabilityoptions = (object)[
                 'type' => 'user',
                 'userids' => [],
@@ -142,6 +160,7 @@ class enableactivity_action extends action {
                 false
             );
 
+            // Set availability to the course module.
             $availability = json_encode($availability);
             $DB->set_field(
                 'course_modules',
@@ -151,6 +170,10 @@ class enableactivity_action extends action {
                     'id' => $cmid,
                 ]
             );
+
+            // Set module to visible.
+            set_coursemodule_visible($cmid, 1);
+
         }
 
         rebuild_course_cache($formdata->courseid, true);
@@ -162,13 +185,12 @@ class enableactivity_action extends action {
      * @return string
      */
     public function get_description() {
-        $cmids = $this->params->coursemodules;
+        $coursemodules = $this->params->coursemodules;
         $descriptionarray = [];
-        $modinfo = get_fast_modinfo($this->courseid);
 
-        foreach ($cmids as $cmid) {
-            $cms = $modinfo->get_cms();
-            $cminfo = $cms[$cmid];
+        foreach ($coursemodules as $cm) {
+            $cmid = $cm->id;
+            $cminfo = get_coursemodule_from_id(null, $cmid, $this->courseid);
             $descriptionarray[] = ucfirst($cminfo->modname) . " - " . $cminfo->name;
         }
         return get_string(
@@ -176,5 +198,38 @@ class enableactivity_action extends action {
             'local_coursedynamicrules',
             implode(', ', $descriptionarray)
         );
+    }
+
+    /**
+     * Deletes a action record from the 'cdr_action' table. and related information with it.
+     *
+     * @return bool True on success, false on failure.
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function delete() {
+
+        global $DB;
+        $coursemodules = $this->params->coursemodules;
+
+        foreach ($coursemodules as $cm) {
+            $cmid = $cm->id;
+            $initialvisible = $cm->visible;
+            $initialvisibleoncoursepage = $cm->visibleoncoursepage;
+
+            // Remove availability condition from the course module.
+            $DB->set_field(
+                'course_modules',
+                'availability',
+                null,
+                [
+                    'id' => $cmid,
+                ]
+            );
+
+            // Restore coursemodule visibility to initial status.
+            set_coursemodule_visible($cmid, $initialvisible, $initialvisibleoncoursepage);
+        }
+
+        return parent::delete();
     }
 }
