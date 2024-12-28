@@ -379,4 +379,28 @@ class rule {
 
     }
 
+    /**
+     * Retrieves the ID of the rule.
+     *
+     * @return int The ID of the rule.
+     */
+    public function get_id() {
+        return $this->id;
+    }
+    /**
+     * Deletes a rule record from the 'cdr_rule' table. and related conditions and actions with it.
+     *
+     * @return bool True on success, false on failure.
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function delete() {
+        global $DB;
+
+        foreach ($this->conditions as $condition) {
+            $condition->delete();
+        }
+
+        return $DB->delete_records('cdr_rule', ['id' => $this->id]);
+    }
+
 }
