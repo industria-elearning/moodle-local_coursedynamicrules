@@ -40,9 +40,10 @@ class enableactivity_action extends action {
     public function execute($context) {
         global $DB;
         $userid = $context->userid;
-        $cmids = $this->params->coursemodules;
+        $coursemodules = $this->params->coursemodules;
 
-        foreach ($cmids as $cmid) {
+        foreach ($coursemodules as $cm) {
+            $cmid = $cm->id;
             $cmrecord = $DB->get_record('course_modules', ['id' => $cmid]);
             $availability = json_decode($cmrecord->availability);
 
