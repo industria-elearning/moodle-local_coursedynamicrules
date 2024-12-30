@@ -398,6 +398,10 @@ class rule {
             $condition->delete();
         }
 
+        foreach ($this->actions as $action) {
+            $action->delete();
+        }
+
         return $DB->delete_records('cdr_rule', ['id' => $this->id]);
     }
 
