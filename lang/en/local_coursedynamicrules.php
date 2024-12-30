@@ -129,7 +129,7 @@ You can enable it from <a href="{$a}" target="_blank">Notification settings</a> 
 <br>
 <a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
-$string['licencekey'] = 'Licence Key';
+$string['licencekey'] = 'License Key';
 $string['licencekey_desc'] = 'License key required to use this plugin';
 $string['rules'] = 'Rules';
 $string['rules_help'] = 'Rules are used to define set of conditions and actions that will be executed';
@@ -139,3 +139,7 @@ $string['enableactivity_action_info'] = 'This action will enable selected activi
 $string['grade_in_activity_condition_info'] = 'This condition will check which user has obtained the specified grade in the selected activity module.';
 $string['no_complete_activity_condition_info'] = 'This condition will check which user has not completed the selected activity module after the specified date.';
 $string['passgrade_condition_info'] = 'This condition will check which user has completed the selected activity module with a passing grade.';
+$string['generalsettings'] = 'General settings';
+$string['checklicensekey'] = 'Check licence key';
+$string['licensekeyvalid'] = 'License key is valid';
+$string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
