@@ -33,10 +33,17 @@ class no_complete_activity_form extends condition_form {
      * @return void
      */
     public function definition() {
+        global $PAGE, $OUTPUT;
         $mform = $this->_form;
         $customdata = $this->_customdata;
         $this->courseid = $customdata['courseid'];
         $this->ruleid = $customdata['ruleid'];
+
+        $notification = $OUTPUT->notification(
+            get_string('passgrade_condition_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
 
         $modinfo = get_fast_modinfo($this->courseid);
         $cms = $modinfo->get_cms();

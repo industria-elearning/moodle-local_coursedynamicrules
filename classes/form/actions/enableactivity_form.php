@@ -41,6 +41,12 @@ class enableactivity_form extends action_form {
         $ruleid = $customdata['ruleid'];
         $courseid = $customdata['courseid'];
 
+        $notification = $OUTPUT->notification(
+            get_string('enableactivity_action_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
         // Check if the availability_user plugins is installed.
         if (!get_config('availability_user', 'version')) {
 
