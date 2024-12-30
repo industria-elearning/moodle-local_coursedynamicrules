@@ -175,6 +175,10 @@ class sendnotification_action extends action {
         // Remove all HTML tags.
         $text = strip_tags($html);
 
+        // Remove all line breaks.
+        $text = preg_replace('/\s+/', ' ', $text);
+        $text = preg_replace('/\n+/', ' ', $text);
+
         // Decode HTML entities.
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
 
