@@ -26,14 +26,34 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_coursedynamicrules_settings', new lang_string('pluginname', 'local_coursedynamicrules'));
+    $pluginname = 'local_coursedynamicrules';
 
+    // Add plugin settings category link.
+    $plugincategory = new admin_category($pluginname, get_string('pluginname', $pluginname));
+
+    // Add plugin settings category link to the local plugins category.
+    $ADMIN->add('localplugins', $plugincategory);
+
+    // Add plugin settings page.
+    $settings = new admin_settingpage("{$pluginname}_settings", get_string('generalsettings', $pluginname));
+    $ADMIN->add($pluginname, $settings);
+
+    // Add license key setting.
     $settings->add(new admin_setting_configtext(
         'local_coursedynamicrules/licencekey',
-        get_string('licencekey', 'local_coursedynamicrules'),
-        get_string('licencekey_desc', 'local_coursedynamicrules'),
+        get_string('licencekey', $pluginname),
+        get_string('licencekey_desc', $pluginname),
         '',
     ));
 
-    $ADMIN->add('localplugins', $settings);
+    $url = new moodle_url('/local/coursedynamicrules/checklicensekey.php', []);
+    $ADMIN->add(
+        $pluginname,
+        new admin_externalpage(
+            "{$pluginname}_checklicensekey",
+            get_string('checklicensekey', $pluginname),
+            $url,
+        )
+    );
+
 }
