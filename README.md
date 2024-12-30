@@ -1,59 +1,61 @@
-# Course dynamic rules #
+# Reglas dinámicas del curso
 
-TODO Describe the plugin shortly here.
+## Sobre reglas dinámicas del curso
 
-TODO Provide more detailed description here.
+Este plugin permite crear reglas dinamicas para los cursos de Moodle.
 
-## Installing via uploaded ZIP file ##
+## Instalación mediante archivo ZIP subido ##
 
-1. Log in to your Moodle site as an admin and go to _Site administration >
-   Plugins > Install plugins_.
-2. Upload the ZIP file with the plugin code. You should only be prompted to add
-   extra details if your plugin type is not automatically detected.
-3. Check the plugin validation report and finish the installation.
+1. Inicie sesión en su sitio Moodle como administrador y vaya a `Administración del sitio > Extensiones > Instalar complementos`.
+2. Suba el archivo ZIP con el código del plugin. Solo se le pedirá que agregue
+    detalles adicionales si el tipo de plugin no se detecta automáticamente.
+3. Verifique el informe de validación del plugin y finalice la instalación.
 
-## Installing manually ##
+## Instalación manual ##
 
-The plugin can be also installed by putting the contents of this directory to
+El plugin también se puede instalar colocando el contenido de este directorio en
 
-    {your/moodle/dirroot}/local/coursedynamicrules
+`{su/moodle/dirroot}/local/coursedynamicrules`
 
-Afterwards, log in to your Moodle site as an admin and go to _Site administration >
-Notifications_ to complete the installation.
+Después, inicie sesión en su sitio Moodle como administrador y vaya a `Administración del sitio > General > Notificaciones` para completar la instalación.
 
-Alternatively, you can run
+Alternativamente, puede ejecutar
+```bash
+php admin/cli/upgrade.php
+```
 
-    $ php admin/cli/upgrade.php
+para completar la instalación desde la línea de comandos.
 
-to complete the installation from the command line.
+## Activación del plugin
 
-## License ##
+Una vez que el plugin esté instalado, será necesario activarlo utilizando la llave de licencia proporcionada en la tienda del plugin, para ellos hacemos lo siguiente:
 
-2024 Industria Elearning <info@industriaelearning.com>
+1. Accedemos a [https://shop.datacurso.com/clientarea.php](https://shop.datacurso.com/clientarea.php) y damos click sobre el servicio que queremos activar en este caso `Moodle - Reglas dinámicas del Curso para Moodle LMS`.
+   
+   ![Service to active](__docs/images/service-to-active.png)
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
+2. Copiamos la clave de licencia.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+    ![Shop licence key](__docs/images/shop-license-key.png)
 
-You should have received a copy of the GNU General Public License along with
-this program.  If not, see <https://www.gnu.org/licenses/>.
+3. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general` 
+   
+    ![Local plugins](__docs/images/general-settings.png)
 
-# Roadmap 
+4. Pegamos la llave de licencia en el campo `Clave de licencia` y damos click en `Guardar cambios`.
 
-Se debe crear un plugin que permita agregar reglas dinamicas a las actividades de un curso.
+    ![Plugin activation](__docs/images/plugin-activation.png)
 
-Como punto de partida se tomarán las siguientes reglas:
 
-### Condiciones
+4. Para validar si la licencia fue activada correctamente, accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Verificar clave de licencia`
+   
+    ![Verify licence](__docs/images/verify-licence.png)
 
-1. Condiciones Basadas en Finalización
-     - **Finalización de actividad específica**: La regla se activa cuando una actividad (tarea, cuestionario, foro, etc.) se marca como completada.
-     - **No finalización dentro de un plazo**: Si una actividad no se completa dentro de un período de tiempo establecido.
+5. Si la licencia fue activada correctamente, veremos un mensaje de confirmación.
 
-### Acciones
-1. Enviar notificación de recordatorio a los usuarios coincidentes
+    ![Licence activated](__docs/images/licence-activated.png)
+
+
+
+
+
