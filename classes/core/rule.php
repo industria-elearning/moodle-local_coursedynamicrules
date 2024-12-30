@@ -86,11 +86,7 @@ class rule {
      */
     public static function validate_licence_status() {
         $config = get_config('local_coursedynamicrules');
-
         $licencekey = $config->licencekey;
-
-        // First time when localkey is not set in config yet.
-        $localkey = $config->localkey ? $config->localkey : '';
 
         $licensestatus = new stdClass();
         $licensestatus->success = false;
@@ -98,10 +94,22 @@ class rule {
 
         try {
             if (!empty($licencekey)) {
+                $localkey = $config->localkey ?? '';
+
+                $initiallicensekey = get_config('local_coursedynamicrules', 'initiallicensekey');
+
+                // When licence key is changed set localkey to empty to force remote validation.
+                if ($licencekey != $initiallicensekey) {
+                    set_config('initiallicensekey', $licencekey, 'local_coursedynamicrules');
+                    $localkey = '';
+                }
+
                 $licencedata = self::validate_licence($licencekey, $localkey);
 
                 // When check is remote licencedata contain localkey.
-                $localkey = $licencedata["remotecheck"] ? $licencedata["localkey"] : $localkey;
+                if (!empty($licencedata["remotecheck"])) {
+                    $localkey = $licencedata["localkey"];
+                }
 
                 if ($licencedata['status'] == 'Active') {
                     set_config('localkey', $localkey, 'local_coursedynamicrules');
