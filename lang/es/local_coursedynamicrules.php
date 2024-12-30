@@ -133,6 +133,10 @@ $string['rules'] = 'Reglas';
 $string['rules_help'] = 'Las reglas se utilizan para definir un conjunto de condiciones y acciones que se ejecutarán';
 $string['missing_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté instalado y habilitado. Por favor descárguelo desde <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instálelo.';
 $string['disabled_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté habilitado. Por favor acceda a la página <a href="{$a}" target="_blank">Gestionar restricciones</a>, busque <strong>Restricción por usuario</strong> y habilítelo.';
+$string['enableactivity_action_info'] = 'Esta acción habilitará los módulos de actividades seleccionados para los usuarios que cumplan con los criterios de las condiciones de la regla.';
+$string['grade_in_activity_condition_info'] = 'Esta condición verificará cuál usuario ha obtenido la calificación especificada en el módulo de actividad seleccionado.';
+$string['no_complete_activity_condition_info'] = 'Esta condición verificará cuál usuario no ha completado el módulo de actividad seleccionado después de la fecha especificada.';
+$string['passgrade_condition_info'] = 'Esta condición verificará cuál usuario ha completado el módulo de actividad seleccionado con una calificación aprobatoria.';
 
 
 
