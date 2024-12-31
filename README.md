@@ -187,6 +187,34 @@ Esta acción se utiliza para habilitar actividades específicas en el curso para
     ![Restriction by user](__docs/images/restriction-by-user.png)
 
 
+### Enviar notificación
+
+#### Descripción
+
+Esta acción se utiliza para enviar notificaciones a los usuarios que cumplan con las condiciones de la regla.
+
+#### Configuración de la acción
+
+1. **Asunto**:
+   Definimos el asunto de la notificación.
+
+2. **Cuerpo**: 
+   Definimos el cuerpo de la notificación.
+
+    ![Send notification](__docs/images/send-notification.png)
+
+3. **Marcadores de posición**:
+    Podemos utilizar marcadores de posición en el cuerpo de la notificación para que el mensaje sea mas personalizado para cada usuario, los marcadores de posición disponibles son:
+
+    - `{$a->coursename}` - Nombre del curso
+    - `{$a->courselink}` - Enlace del curso
+    - `{$a->fullname}` - Nombre completo del usuario
+    - `{$a->firstname}` - Nombre del usuario
+    - `{$a->lastname}` - Apellido del usuario
+    
+     ![Notification placeholders](__docs/images/notification-placeholders.png)
+
+
 
 
 
