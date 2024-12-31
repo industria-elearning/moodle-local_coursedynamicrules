@@ -52,6 +52,7 @@ $string['ruleactive'] = 'Activa';
 $string['ruleactive_help'] = 'Habilitar o deshabilitar la regla';
 $string['ruleadd'] = 'Agregar regla';
 $string['ruleaddedsuccessfully'] = 'Regla añadida con éxito';
+$string['active'] = 'Activo';
 $string['editrule'] = 'Editar regla';
 $string['deleterule'] = 'Eliminar regla';
 $string['addconditions'] = 'Agregar condiciones';
@@ -62,6 +63,9 @@ $string['searchcourseactivitymodules'] = 'Buscar módulos de actividad del curso
 $string['passgrade_description'] = 'Usuarios que han completado el módulo de actividad del curso \'{$a}\' con una calificación aprobatoria';
 $string['no_complete_activity_description'] = 'Usuarios que no han completado el módulo de actividad del curso \'{$a->moddescription}\' después de {$a->expectedcompletiondate}';
 $string['invalidruleid'] = 'ID de regla no válido';
+$string['passgrade_description'] = 'Usuarios que hayan completado el módulo de actividad del curso \'{$a}\' con una calificación aprobatoria';
+$string['no_complete_activity_description'] = 'Usuarios que no hayan completado el módulo de actividad del curso \'{$a->moddescription}\' después de {$a->expectedcompletiondate}';
+$string['invalidruleid'] = 'ID de regla inválido';
 $string['deletecondition'] = 'Eliminar condición';
 $string['messagesubject'] = 'Asunto';
 $string['messagebody'] = 'Cuerpo';
@@ -115,9 +119,3 @@ $string['errornegativegrade'] = 'La calificación debe ser 0 o mayor.';
 $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calificación máxima para la actividad.';
 $string['enableactivity'] = 'Habilitar actividad';
 $string['enableactivity_description'] = 'Habilitar actividades \'{$a}\'';
-
-
-
-
-
-
