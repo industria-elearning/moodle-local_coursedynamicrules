@@ -41,18 +41,19 @@ class rule {
     /** @var action[] List of actions instances */
     private $actions = [];
 
-    /** @var stdClass[] List of users enrolled in the course */
+    /** @var array List of users to validate this rule */
     private $users;
 
     /**
      * Rule constructor.
      * @param object $rule
+     * @param array $users List of users to validate this rule
      */
-    public function __construct($rule) {
+    public function __construct($rule, $users) {
         global $DB;
         $this->id = $rule->id;
         $this->courseid = $rule->courseid;
-        $this->users = enrol_get_course_users($this->courseid);
+        $this->users = $users;
         $this->active = $rule->active;
 
         // Load conditions and actions from the DB.
