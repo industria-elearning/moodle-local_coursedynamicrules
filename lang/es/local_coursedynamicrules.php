@@ -108,10 +108,6 @@ $string['grade_in_activity'] = 'Calificación en actividad';
 $string['grade_in_activity_description'] = 'Para "{$a->moddescription}", se deben obtener las siguientes calificaciones: {$a->gradestring}';
 $string['grade'] = 'Calificación';
 $string['enablegradegreaterthanorequal_help'] = 'Habilitar calificación mayor o igual que';
-$string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
-$string['gradegreaterthanorequal_help'] = 'Calificación mínima (inclusiva)';
-$string['gradelessthan'] = 'debe ser <';
-$string['gradelessthan_help'] = 'Calificación máxima (exclusiva)';
 $string['enablegradelessthan'] = 'Habilitar calificación menor que';
 $string['errornegativegrade'] = 'La calificación debe ser 0 o mayor.';
 $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calificación máxima para la actividad.';
@@ -142,8 +138,10 @@ $string['generalsettings'] = 'Configuración general';
 $string['checklicensekey'] = 'Verificar clave de licencia';
 $string['licensekeyvalid'] = 'La clave de licencia es válida';
 $string['licensekeyinvalid'] = 'La clave de licencia ha caducado o no es válida. Por favor, vaya a <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
-
-
+$string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'La condición se cumple si la calificación del usuario es mayor o igual al valor especificado.';
+$string['gradelessthan'] = 'debe ser <';
+$string['gradelessthan_help'] = 'La condición se cumple si la calificación del usuario es menor al valor especificado.';
 
 
 
