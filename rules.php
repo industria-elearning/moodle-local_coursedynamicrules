@@ -22,16 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\helper\rule_component_loader;
+
 require('../../config.php');
 
 require_login();
 
-$courseid = required_param('id', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
-$url = new moodle_url('/local/coursedynamicrules/rules.php', ['id' => $courseid]);
+$url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
+
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
+if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
     exit;
 }
 
@@ -41,21 +45,112 @@ $PAGE->set_course($course);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
+echo $OUTPUT->header();
 
-// Mock de datos.
-$mockdata = [
-    ['Rule 1', 'Completed module 1', 'Send notification', '2024-10-15'],
-    ['Rule 2', 'Completed module 2', 'Send reminder', '2024-10-12'],
-    ['Rule 3', 'Completed module 3', 'Unlock certificate', '2024-10-14'],
-    ['Rule 4', 'Completed module 4', 'Send notification', '2024-10-15'],
-];
+$rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
 
 $table = new html_table();
-$table->head = ['Name', 'Conditions', 'Actions', 'Creation Date'];
-$table->data = $mockdata;
-$addrulebutton = new single_button(new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $courseid]), 'Add rule', 'get', true);
+$table->head[] = get_string('rule:name', 'local_coursedynamicrules');
+$table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
+$table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
+$table->head[] = '';
+$table->size = ['20%', '38%', '38%', '4%'];
 
-echo $OUTPUT->header();
+foreach ($rules as $rule) {
+    $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
+    $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
+    $conditionstext = '';
+    $actionstext = '';
+
+    $conditionsurl = new moodle_url(
+        '/local/coursedynamicrules/conditions.php',
+        ['courseid' => $courseid, 'ruleid' => $rule->id]
+    );
+    $actionsurl = new moodle_url(
+        '/local/coursedynamicrules/actions.php',
+        ['courseid' => $courseid, 'ruleid' => $rule->id]
+    );
+
+
+    if (empty($conditions)) {
+        $conditionstext = html_writer::link(
+            $conditionsurl,
+            get_string('condition:add', 'local_coursedynamicrules')
+        );
+    } else {
+        $conditionstext = '';
+        foreach ($conditions as $condition) {
+            $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
+
+            $header = $conditioninstance->get_header();
+            $description = $conditioninstance->get_description();
+
+            if (!empty($header) && !empty($description)) {
+                $conditionstext .= '<p>' . $conditioninstance->get_description() . '</p>';
+            }
+        }
+        $editlink = html_writer::link(
+            $conditionsurl,
+            $OUTPUT->pix_icon('t/edit', get_string('condition:edit', 'local_coursedynamicrules'))
+        );
+
+        $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
+    }
+
+    if (empty($actions)) {
+        $actionstext = html_writer::link(
+            $actionsurl,
+            get_string('addactions', 'local_coursedynamicrules')
+        );
+    } else {
+        $actionstext = '';
+        foreach ($actions as $action) {
+            $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
+
+            $header = $actioninstance->get_header();
+            $description = $actioninstance->get_description();
+
+            if (!empty($header) && !empty($description)) {
+
+                $actionstext .= '<p>' . $actioninstance->get_description() . '</p>';
+            }
+        }
+        $editlink = html_writer::link(
+            $actionsurl,
+            $OUTPUT->pix_icon('t/edit', get_string('editactions', 'local_coursedynamicrules'))
+        );
+
+        $actionstext = html_writer::div($actionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
+    }
+    $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $rule->id, 'courseid' => $courseid]);
+    $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);  
+    $editrulelink = html_writer::link(
+        $editruleurl,
+        $OUTPUT->pix_icon('t/edit', get_string('rule:edit', 'local_coursedynamicrules')),
+    );
+    $deleterulelink = html_writer::link(
+        $deleteruleurl,
+        $OUTPUT->pix_icon('t/delete', get_string('rule:delete', 'local_coursedynamicrules')),
+    );
+
+    $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
+
+
+    $table->data[] = [
+        new html_table_cell($rule->name),
+        new html_table_cell($conditionstext),
+        new html_table_cell($actionstext),
+        new html_table_cell($ruletext),
+    ];
+
+}
+
+$addrulebutton = new single_button(
+    $editruleurl,
+    get_string('rule:add', 'local_coursedynamicrules'),
+    'get',
+    true
+);
 
 echo html_writer::div($OUTPUT->render($addrulebutton), 'my-3');
 echo html_writer::table($table);

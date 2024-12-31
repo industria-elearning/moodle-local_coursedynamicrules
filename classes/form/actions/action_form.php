@@ -14,35 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace local_coursedynamicrules\form\actions;
+
 /**
- * TODO describe file editcondition
+ * Class action_form
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class action_form extends \moodleform {
+    /**
+     * Add elements to form.
+     */
+    public function definition() {
+        $mform = $this->_form;
+        $condition = $this->_customdata['action'];
 
-require('../../config.php');
-
-require_login();
-
-
-$courseid = required_param('courseid', PARAM_INT);
-$type = required_param('type', PARAM_ALPHA);
-
-$url = new moodle_url('/local/coursedynamicrules/editcondition.php', ['id' => $courseid, 'type' => $type]);
-$PAGE->set_url($url);
-
-if (! $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
+        $this->add_action_buttons();
+    }
 }
-
-require_login($course);
-
-$PAGE->set_course($course);
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('admin');
-
-echo $OUTPUT->header();
-echo $OUTPUT->footer();

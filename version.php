@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_coursedynamicrules';
-$plugin->release = '0.1.0';
-$plugin->version = 2024101504;
+$plugin->release = '1.0.0';
+$plugin->version = 2024111710;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;

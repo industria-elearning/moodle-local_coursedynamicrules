@@ -14,29 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace local_coursedynamicrules\form\conditions;
+
 /**
- * Callback implementations for Course dynamic rules
+ * Class condition_form
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Extends the navigation tree with the course dynamic rules menu item.
- *
- * @param navigation_node $navigation the navigation tree
- * @param stdClass $course the course
- * @param stdClass $context the context
- */
-function local_coursedynamicrules_extend_navigation_course($navigation, $course, $context) {
-    if (has_capability('local/coursedynamicrules:manage', $context)) {
-        $url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $course->id]);
-        $name = get_string('pluginname', 'local_coursedynamicrules');
-        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+class condition_form  extends \moodleform {
+    /**
+     * Add elements to form.
+     */
+    public function definition() {
+        $this->add_action_buttons();
     }
 }
-
