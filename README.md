@@ -79,7 +79,7 @@ Una vez que el plugin esté instalado, será necesario activarlo utilizando la l
 
 2. Nos aparecerá una vista como la siguiente con la lista de condiciones disponibles desde donde podemos seleccionar la que deseamos agregar, la informaciona a cerca de cada condición la podemos encontrar en la siguiente sección [Condiciones disponibles](#condiciones-disponibles).
    
-    ![Add condition](__docs/images/add-condition.png)
+    ![Conditions list](__docs/images/conditions-list.png)
 
 ## Condiciones disponibles
 
@@ -153,6 +153,42 @@ Esta condición se utiliza para evaluar si los usuarios han completado una activ
    **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
 
     ![Pass grade search](__docs/images/activity-completion-with-pass-grade.png)
+
+
+## Agregar acciones a la regla
+
+1. Damos click en el enlace `Agregar acciones`.
+   
+    ![Add actions](__docs/images/add-actions.png)
+
+2. Nos aparecerá una vista como la siguiente con la lista de acciones disponibles desde donde podemos seleccionar la que deseamos agregar, la informaciona a cerca de cada acción la podemos encontrar en la siguiente sección [Acciones disponibles](#acciones-disponibles).
+   
+    ![Actions list](__docs/images/action-lists.png)
+
+## Acciones disponibles
+
+### Habilitar actividad
+
+#### Descripción
+
+Esta acción se utiliza para habilitar actividades específicas en el curso para usuarios que cumplan con las condiciones de la regla.
+
+**Nota**: Para poder usar esta acción es necesario instalar el plugin `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+
+#### Configuración de la acción
+
+1. **Buscar módulos de actividad del curso**:
+   Desde este campo de busqueda podemos podemos seleccionar los modulos de actividad que deseamos habilitar.
+
+    ![Enable activity search](__docs/images/enable-activity-search.png)
+
+    Las actividades seleccionadas solo quedarán disponibles para los usuarios que cumplan con las condiciones de la regla, desde la vista del curso para roles con permisos necesarios (profesores, administradores, etc.) se mostrará la siguiente información que indica los usuarios para los cuales la actividad está habilitada:
+
+    ![Restriction by user](__docs/images/restriction-by-user.png)
+
+
+
+
 
 
 
