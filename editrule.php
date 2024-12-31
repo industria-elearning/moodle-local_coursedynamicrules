@@ -36,15 +36,12 @@ require_capability('local/coursedynamicrules:updaterule', $context);
 $url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid, 'id' => $ruleid]);
 $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
- $PAGE->set_url($url);
-
-if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
-}
-
- require_login($course);
-//  require_capability('local/coursedynamicrules:editrules', context_course::instance($courseid));
-
+$PAGE->set_title($course->shortname);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_course($course);
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_course($course);

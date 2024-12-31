@@ -16,6 +16,9 @@
 
 namespace local_coursedynamicrules\form\actions;
 
+use context_course;
+use context_system;
+
 /**
  * Class sendnotification_form
  *
@@ -41,8 +44,24 @@ class sendnotification_form extends action_form {
         $mform->setType('messagesubject', PARAM_TEXT);
         $mform->addRule('messagesubject', null, 'required', null, 'client');
 
-        $mform->addElement('textarea', 'messagebody', get_string('messagebody', 'local_coursedynamicrules'),  'rows="10"');
-        $mform->setType('messagebody', PARAM_TEXT);
+        $editoroptions = [
+            'subdirs' => 0,
+            'maxbytes' => 0,
+            'maxfiles' => 0,
+            'changeformat' => 0,
+            'context' => null,
+            'noclean' => 0,
+            'trusttext' => 0,
+            'enable_filemanagement' => true,
+        ];
+        $mform->addElement(
+            'editor',
+            'messagebody',
+            get_string('messagebody', 'local_coursedynamicrules'),
+            null,
+            $editoroptions
+        );
+        $mform->setType('messagebody', PARAM_RAW);
         $mform->addRule('messagebody', null, 'required', null, 'client');
         $mform->addHelpButton('messagebody', 'messagebody', 'local_coursedynamicrules');
 
@@ -62,7 +81,7 @@ class sendnotification_form extends action_form {
 
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);
-        $mform->setType('type', PARAM_ALPHA);
+        $mform->setType('type', PARAM_TEXT);
         $mform->setType('ruleid', PARAM_INT);
 
         parent::definition();

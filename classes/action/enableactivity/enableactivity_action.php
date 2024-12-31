@@ -14,68 +14,54 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\action\sendnotification;
+namespace local_coursedynamicrules\action\enableactivity;
 
+use core_availability\tree;
 use local_coursedynamicrules\core\action;
-use local_coursedynamicrules\form\actions\sendnotification_form;
-use moodle_url;
+use local_coursedynamicrules\form\actions\enableactivity_form;
 use stdClass;
 
 /**
- * Class sendnotification_action
+ * Class enableactivity_action
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sendnotification_action extends action {
-    /** @var string type of the action, should be overridden by each action type */
-    protected $type = 'sendnotification';
-
-    /** @var string related user id to the event */
+class enableactivity_action extends action {
+    /** @var string type of the action */
+    protected $type = 'enableactivity';
 
     /**
-     * Executes the action
-     * @param object $rulecontext Context of the rule
-     *
-     * @return mixed
+     * Execute the action
+     * @param object $context Context of the rule
      */
-    public function execute($rulecontext) {
+    public function execute($context) {
         global $DB;
+        $userid = $context->userid;
+        $cmids = $this->params->coursemodules;
 
-        $userid = $rulecontext->userid;
-        $courseid = $rulecontext->courseid;
+        foreach ($cmids as $cmid) {
+            $cm = $DB->get_record('course_modules', ['id' => $cmid]);
+            $availability = json_decode($cm->availability);
+            $availability->c[0]->userids[] = $userid;
 
-        $messagesubject = $this->params->messagesubject;
-        $messagebody = $this->params->messagebody;
-        $messagesmallmessage = $this->params->messagesmallmessage;
+            $DB->set_field(
+                'course_modules',
+                'availability',
+                json_encode($availability),
+                [
+                    'id' => $cmid,
+                ]
+            );
 
-        $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
-        $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
-        $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
-        $courselink = '<a href="'.$courseurl->out(false).'">'.$courseurl->out(false).'</a>';
+        }
 
-        $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
-        $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
-        $messagebody = str_replace($key, $value, $messagebody);
-
-        $message = new \core\message\message();
-        $message->component = 'local_coursedynamicrules';
-        // Notification name from message.php.
-        $message->name = 'coursedynamicrules_notification';
-        $message->userfrom = $message->userfrom = \core_user::get_support_user();
-        $message->userto = $userid;
-        $message->subject = $messagesubject;
-        $message->fullmessage = html_to_text($messagebody);
-        $message->fullmessageformat = FORMAT_HTML;
-        $message->fullmessagehtml = $messagebody;
-        $message->smallmessage = $messagesmallmessage;
-        $messageid = message_send($message);
-        return $messageid;
+        rebuild_course_cache($this->courseid, true);
     }
 
     /**
-     * Creates and returns an instance of the form for editing the item
+     * Creates and returns an instance of the form for editing the action
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
      *              current url. If a moodle_url object then outputs params as hidden variables.
@@ -92,21 +78,29 @@ class sendnotification_action extends action {
      *               Special attribute 'data-double-submit-protection' set to 'off' will turn off
      *               double-submit protection JavaScript - this may be necessary if your form sends
      *               downloadable files in response to a submit button, and can't call
-     *               \core_form\util::form_download_complete();
+     *               \core_form\util::form_download_complete(){
+     * }
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
     public function build_editform(
-        $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null) {
-            $this->actionform = new sendnotification_form(
-                $action,
-                $customdata,
-                $method,
-                $target,
-                $attributes,
-                $editable,
-                $ajaxformdata
-            );
+        $action=null,
+        $customdata=null,
+        $method='post',
+        $target='',
+        $attributes=null,
+        $editable=true,
+        $ajaxformdata=null
+    ) {
+        $this->actionform = new enableactivity_form(
+            $action,
+            $customdata,
+            $method,
+            $target,
+            $attributes,
+            $editable,
+            $ajaxformdata
+        );
     }
 
     /**
@@ -115,9 +109,11 @@ class sendnotification_action extends action {
      */
     public function save_action($formdata) {
         global $DB;
+
+        $coursemodules = $formdata->coursemodules;
+
         $params = [
-            'messagesubject' => $formdata->messagesubject,
-            'messagebody' => format_text($formdata->messagebody['text'], FORMAT_HTML),
+            'coursemodules' => $coursemodules,
         ];
 
         $action = new stdClass();
@@ -128,6 +124,30 @@ class sendnotification_action extends action {
         $this->set_data($action);
 
         $DB->insert_record('cdr_action', $action);
+
+        foreach ($coursemodules as $cmid) {
+            $availabilityoptions = (object)[
+                'type' => 'user',
+                'userids' => [],
+            ];
+            $availability = tree::get_root_json(
+                [$availabilityoptions],
+                tree::OP_AND,
+                false
+            );
+
+            $availability = json_encode($availability);
+            $DB->set_field(
+                'course_modules',
+                'availability',
+                $availability,
+                [
+                    'id' => $cmid,
+                ]
+            );
+        }
+
+        rebuild_course_cache($formdata->courseid, true);
     }
 
     /**
@@ -136,7 +156,19 @@ class sendnotification_action extends action {
      * @return string
      */
     public function get_description() {
-        $messagesubject = $this->params->messagesubject;
-        return get_string('sendnotification_description', 'local_coursedynamicrules', $messagesubject);
+        $cmids = $this->params->coursemodules;
+        $descriptionarray = [];
+        $modinfo = get_fast_modinfo($this->courseid);
+
+        foreach ($cmids as $cmid) {
+            $cms = $modinfo->get_cms();
+            $cminfo = $cms[$cmid];
+            $descriptionarray[] = ucfirst($cminfo->modname) . " - " . $cminfo->name;
+        }
+        return get_string(
+            'enableactivity_description',
+            'local_coursedynamicrules',
+            implode(', ', $descriptionarray)
+        );
     }
 }

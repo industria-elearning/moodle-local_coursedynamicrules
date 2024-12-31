@@ -110,7 +110,6 @@ $string['total'] = 'In total';
 $string['per'] = 'per';
 $string['frequencylimit'] = 'Frequency limit';
 $string['freqtextbefore'] = 'This rule will only execute ';
-
 $string['grade'] = 'Grade';
 $string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
 $string['gradegreaterthanorequal'] = 'must be &#x2265;';
@@ -120,6 +119,7 @@ $string['gradelessthan_help'] = 'Maximum grade (exclusive)';
 $string['enablegradelessthan'] = 'Enable grade less than';
 $string['errornegativegrade'] = 'The grade must be 0 or greater.';
 $string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
-
+$string['enableactivity'] = 'Enable activity';
+$string['enableactivity_description'] = 'Enable activities \'{$a}\'';
 // $string['option_min'] = 'must be &#x2265;';
 // $string['option_max'] = 'must be <';

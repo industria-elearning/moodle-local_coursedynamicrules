@@ -19,37 +19,40 @@ namespace local_coursedynamicrules\observer;
 use local_coursedynamicrules\task\rule_task;
 
 /**
- * Class course_module_completion_updated
+ * Class user_graded
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_completion_updated {
+class user_graded {
     /** @var array $conditions list of conditions to include in the executions for this event observer */
     private static $conditiontypes = [
-        'passgrade',
-        'no_complete_activity',
+        'grade_in_activity',
     ];
+
     /**
-     * The definition of the event.
-     *
+     * Trigger when user receive grade
+     * @param \core\event\user_graded $event
      */
-    public static function observe(\core\event\course_module_completion_updated $event) {
-        global $DB;
+    public static function observe(\core\event\user_graded $event) {
         $eventdata = $event->get_data();
 
-        $courseid = $eventdata["courseid"];
+        $gradeitemtype = $event->get_grade()->grade_item->itemtype;
+        // This validation is because this event is also triggered with the course grade.
+        if ($gradeitemtype == 'mod') {
 
-        // User that completed the module.
-        $userid = $eventdata["relateduserid"];
+            $courseid = $eventdata["courseid"];
+            // User that completed the module.
+            $userid = $eventdata["relateduserid"];
 
-        $task = rule_task::instance((object)[
-            'courseid' => $courseid,
-            'userid' => $userid,
-            'conditiontypes' => self::$conditiontypes,
-        ]);
+            $task = rule_task::instance((object)[
+                'courseid' => $courseid,
+                'userid' => $userid,
+                'conditiontypes' => self::$conditiontypes,
+            ]);
 
-        \core\task\manager::queue_adhoc_task($task);
+            \core\task\manager::queue_adhoc_task($task);
+        }
     }
 }
