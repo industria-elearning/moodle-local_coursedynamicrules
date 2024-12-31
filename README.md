@@ -2,7 +2,21 @@
 
 ## Sobre reglas dinámicas del curso
 
-Este plugin permite crear reglas dinamicas para los cursos de Moodle.
+Este plugin permite a los administradores y profesores definir reglas personalizadas que automatizan acciones basadas en condiciones específicas relacionadas con las actividades y los usuarios de un curso.
+
+### Pre-requisitos
+
+1. Tener minimo la versión de PHP 8.1 instalada en el servidor.
+
+2. Tener la versión de Moodle 4.1.14 o superior instalada en el servidor.
+
+3. Tener instalada y activada la extensión ioncube loader en su versión 12 o superior en el servidor 
+      - desde CPanle podemos hacerlo siguiendo las indicaciones del siguiente enlace: [https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel](https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel).
+      - Alternativamente podemos realizar la instalación de forma manual siguiendo las instrucciones del siguiente enlace: [https://kinsta.com/blog/ioncube-loader/](https://kinsta.com/blog/ioncube-loader/)
+   
+4. Comprar plugin `Reglas dinámicas del Curso para Moodle LMS` desde nuestra tienda en la sección de complementos para Moodle https://shop.datacurso.com/index.php?rp=/store/plugins-moodle
+
+5. Tener instalado el plugin de Moodle `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 
 ## Instalación mediante archivo ZIP subido
 
