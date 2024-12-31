@@ -114,11 +114,11 @@ $string['errorgradeoutofrange'] = 'O valor deve estar entre {$a->min} e {$a->max
 $string['notification_action_info'] = 'Esta ação enviará uma notificação aos usuários que atendam aos critérios das condições da regra.';
 $string['missing_plugins_warning'] = '🔔 Melhore suas notificações! Nossos plugins <strong>Datacurso Message Hub</strong> permitem enviar notificações via WhatsApp e SMS usando provedores como Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Clique aqui para comprar e ativar agora!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Clique aqui para comprar e ativar agora!</a>';
 $string['provider_not_enabled_warning'] = 'Ative as notificações com o <strong>Datacurso Message Hub</strong> para esta ação enviar notificações via WhatsApp e SMS usando provedores como Twilio.
 Você pode ativar nas <a href="{$a}" target="_blank">Configurações de notificação</a> e procurar <strong>Notificação de regras dinâmicas do curso</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">Veja a documentação para mais informações.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Veja a documentação para mais informações.</a>';
 $string['rules'] = 'Regras';
 $string['rules_help'] = 'Regras são usadas para definir um conjunto de condições e ações que serão executadas';
 $string['missing_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja instalado e habilitado. Por favor, faça o download em <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instale-o.';

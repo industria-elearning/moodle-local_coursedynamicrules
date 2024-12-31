@@ -119,11 +119,11 @@ $string['errorgradeoutofrange'] = 'The value must be between {$a->min} and {$a->
 $string['notification_action_info'] = 'This action will send a notification to users who meet the rule conditions criteria.';
 $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <strong>Datacurso Message Hub</strong> plugins let you send notifications via WhatsApp and SMS using providers like Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Click here to purchase and enable them now!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Click here to purchase and enable them now!</a>';
 $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
 You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Course dynamic rules notification</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">See documentation for more information.</a>';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['licencekey'] = 'License Key';
 $string['licencekey_desc'] = 'License key required to use this plugin';
