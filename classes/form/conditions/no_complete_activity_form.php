@@ -40,7 +40,7 @@ class no_complete_activity_form extends condition_form {
         $this->ruleid = $customdata['ruleid'];
 
         $notification = $OUTPUT->notification(
-            get_string('passgrade_condition_info', 'local_coursedynamicrules'),
+            get_string('no_complete_activity_condition_info', 'local_coursedynamicrules'),
             \core\output\notification::NOTIFY_INFO
         );
         $mform->addElement('html', $notification);
@@ -49,7 +49,7 @@ class no_complete_activity_form extends condition_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && !$cm->deletioninprogress) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }
