@@ -118,12 +118,12 @@ $string['notification_action_info'] = 'Esta acción enviará una notificación a
 
 $string['missing_plugins_warning'] = '🔔 ¡Mejora tus notificaciones! Nuestros plugins de <strong>Datacurso Message Hub</strong> te permiten enviar notificaciones por WhatsApp y SMS usando proveedores como Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
 
 $string['provider_not_enabled_warning'] = 'Habilita las notificaciones con <strong>Datacurso Message Hub</strong> para que esta acción envíe notificaciones por WhatsApp y SMS usando proveedores como Twilio.
 Puedes habilitarlo desde la <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Notificación de reglas dinámicas del curso</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">Consulta la documentación para más información.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Consulta la documentación para más información.</a>';
 
 $string['rules'] = 'Reglas';
 $string['rules_help'] = 'Las reglas se utilizan para definir un conjunto de condiciones y acciones que se ejecutarán';
