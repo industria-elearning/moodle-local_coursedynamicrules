@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param stdClass $context the context
  */
 function local_coursedynamicrules_extend_navigation_course($navigation, $course, $context) {
-    if (has_capability('local/coursedynamicrules:manage', $context)) {
+    if (has_capability('local/coursedynamicrules:managerule', $context)) {
         $url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $course->id]);
         $name = get_string('pluginname', 'local_coursedynamicrules');
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));

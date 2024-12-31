@@ -26,25 +26,24 @@ use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
-require_login();
-
 $courseid = required_param('courseid', PARAM_INT);
 
-$url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
-$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
-
-$PAGE->set_url($url);
-
-if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
-    exit;
-}
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
 
 require_login($course);
 
-$PAGE->set_course($course);
+require_capability('local/coursedynamicrules:managerule', $context);
+
+$url = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
+
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_course($course);
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
+
 echo $OUTPUT->header();
 
 $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
@@ -54,7 +53,6 @@ $table->head[] = get_string('rule:name', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
 $table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
 $table->head[] = '';
-$table->size = ['20%', '38%', '38%', '4%'];
 
 foreach ($rules as $rule) {
     $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
@@ -123,7 +121,7 @@ foreach ($rules as $rule) {
         $actionstext = html_writer::div($actionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
     $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['id' => $rule->id, 'courseid' => $courseid]);
-    $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);  
+    $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);
     $editrulelink = html_writer::link(
         $editruleurl,
         $OUTPUT->pix_icon('t/edit', get_string('rule:edit', 'local_coursedynamicrules')),
@@ -145,6 +143,7 @@ foreach ($rules as $rule) {
 
 }
 
+$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
 $addrulebutton = new single_button(
     $editruleurl,
     get_string('rule:add', 'local_coursedynamicrules'),

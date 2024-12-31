@@ -31,22 +31,26 @@ $id = required_param('id', PARAM_INT); // Rule ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 $courseid = required_param('courseid', PARAM_INT);
 
-require_login();
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
+
+require_login($course);
+require_capability('local/coursedynamicrules:deleterule', $context);
 
 $url = new moodle_url('/local/coursedynamicrules/deleterule.php', ['delete' => $delete, 'courseid' => $courseid]);
 $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
+$PAGE->set_title($course->shortname);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_course($course);
 $PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
+$rule = $DB->get_record('cdr_rule', ['id' => $id], '*', MUST_EXIST);
 
-$rule = $DB->get_record('cdr_rule', ['id' => $id]);
-
-if (!$rule) {
-    exit;
-}
 $config = get_config('local_coursedynamicrules');
 
 if ($delete === md5($config->confirmdeleterule)) {
@@ -63,6 +67,8 @@ if ($delete === md5($config->confirmdeleterule)) {
         false
     );
     echo $OUTPUT->continue_button($rulesurl);
+    echo $OUTPUT->footer();
+
     exit; // We must exit here!!!
 }
 

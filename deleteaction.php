@@ -26,15 +26,16 @@ use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
 
-require_login();
-
-
 $id = required_param('id', PARAM_INT); // Action ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 $courseid = required_param('courseid', PARAM_INT);
 $ruleid = required_param('ruleid', PARAM_INT);
 
-require_login();
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+$context = context_course::instance($courseid);
+
+require_login($course);
+require_capability('local/coursedynamicrules:deleteaction', $context);
 
 $url = new moodle_url(
     '/local/coursedynamicrules/deleteaction.php',
@@ -42,17 +43,17 @@ $url = new moodle_url(
 );
 $actionsurl = new moodle_url('/local/coursedynamicrules/actions.php', ['courseid' => $courseid, 'ruleid' => $ruleid]);
 
+$PAGE->set_title($course->shortname);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_course($course);
 $PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
+$action = $DB->get_record('cdr_action', ['id' => $id], '*', MUST_EXIST);
 
-$action = $DB->get_record('cdr_action', ['id' => $id]);
-
-if (!$action) {
-    exit;
-}
 $config = get_config('local_coursedynamicrules');
 
 $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
@@ -69,6 +70,7 @@ if ($delete === md5($config->confirmdeleteaction)) {
         false
     );
     echo $OUTPUT->continue_button($actionsurl);
+    echo $OUTPUT->footer();
     exit; // We must exit here!!!
 }
 
