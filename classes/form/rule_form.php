@@ -47,6 +47,39 @@ class rule_form extends \moodleform {
         $mform->setDefault('active', $rule->active ?? 0);
         $mform->addHelpButton('active', 'rule:active', 'local_coursedynamicrules');
 
+        $mform->addElement('checkbox', 'hasfrequencylimit', get_string('hasfrequencylimit', 'local_coursedynamicrules'));
+
+        $frequencygroup = [];
+        $frequencygroup[] = $mform->createElement('static', 'freqtextbefore', '', get_string('freqtextbefore', 'local_coursedynamicrules'));
+        $frequencygroup[] = $mform->createElement('text', 'frequencylimit', '', ['size' => 5]);
+        $frequencygroup[] = $mform->createElement('static', 'freqtextafter', '', ' times ');
+        $frequencygroup[] = $mform->createElement('select', 'frequencytype', '', [
+            'total' => get_string('total', 'local_coursedynamicrules'),
+            'per' => get_string('per', 'local_coursedynamicrules'),
+        ]);
+
+        $mform->addGroup($frequencygroup, 'frequency_group', '', ' ', false);
+
+        $periodgroup = [];
+        $periodgroup[] = $mform->createElement('text', 'periodvalue', '', ['size' => 5]);
+        $periodgroup[] = $mform->createElement('select', 'periodunit', '', [
+            'minutes' => 'minutes',
+            'hours' => 'hours',
+            'days' => 'days',
+            'weeks' => 'weeks',
+        ]);
+
+        $mform->addGroup($periodgroup, 'period_group', '', ' ', false);
+
+        $mform->addHelpButton('hasfrequencylimit', 'hasfrequencylimit', 'local_coursedynamicrules');
+
+        $mform->setType('frequencylimit', PARAM_INT);
+        $mform->setType('periodvalue', PARAM_INT);
+
+        $mform->hideIf('frequency_group', 'hasfrequencylimit', 'notchecked');
+        $mform->hideIf('period_group', 'frequencytype', 'eq', 'total');
+        $mform->hideIf('period_group', 'hasfrequencylimit', 'notchecked');
+
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->setType('courseid', PARAM_INT);
 

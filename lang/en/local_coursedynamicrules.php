@@ -91,5 +91,11 @@ $string['after'] = 'After';
 $string['condition:no_complete_activity'] = 'Activity not completed';
 $string['no_complete_activity_task'] = 'No complete activity task';
 $string['expectedcompletiondate'] = 'Expected completion date';
+$string['hasfrequencylimit'] = 'Enable frequency limit';
+$string['hasfrequencylimit_help'] = 'Enable frequency limit to execute the rule only in espefic period of time';
+$string['total'] = 'In total';
+$string['per'] = 'per';
+$string['frequencylimit'] = 'Frequency limit';
+$string['freqtextbefore'] = 'This rule will only execute ';
 
 
