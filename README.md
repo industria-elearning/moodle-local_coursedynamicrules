@@ -85,8 +85,6 @@ Una vez que el plugin esté instalado, será necesario activarlo utilizando la l
 
 ### Calificación en actividad
 
-La condición "Calificación en actividad" permite verificar qué usuarios han obtenido una calificación específica en un módulo de actividad seleccionado.
-
 #### Descripción  
 Esta condición se utiliza para evaluar las calificaciones de los usuarios en una actividad que requiere calificación. Si la actividad seleccionada tiene múltiples ítems de calificación, se mostrará una lista desplegable con los ítems disponibles.  
 
@@ -99,16 +97,65 @@ Por ejemplo, en el caso del módulo `Foro`, los ítems de calificación disponib
 
 #### Configuración de la condición
 
-1. **Selección de actividad**:
-   Utilizamos el campo de búsqueda para seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. Solo aparecerán actividades configuradas con elementos de calificación.
+1. **Buscar módulos de actividad del curso**:
+   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+
+   ![Grade in activity search](__docs/images/grade-in-activity-search.png)
+   
+   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+
+    ![Activity completion with require grade](__docs/images/activity-completion-with-require-grade.png)
 
 2. **Opciones de comparación**:  
-   
-   ![Comparison options](__docs/images/comparison-options.png)
-
    Una vez seleccionada la actividad, podemos definir las condiciones de comparación según los ítems de calificación disponibles. Se ofrecen dos opciones:  
    - `Debe ser ≥`: La condición se cumple si la calificación del usuario es mayor o igual al valor especificado.  
    - `Debe ser <`: La condición se cumple si la calificación del usuario es menor al valor especificado.  
+  
+    ![Comparison options](__docs/images/comparison-options.png)
+
+
+### Actividad no completada
+
+#### Descripción
+
+Esta condición se utiliza para evaluar si un usuario no ha completado una actividad específica despues de un período de tiempo determinado.
+
+#### Configuración de la condición
+
+1. **Buscar módulos de actividad del curso**:
+   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+
+   ![No complete activity search](__docs/images/no-complete-activity-search.png)
+   
+   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+
+    ![Activity completion automatic](__docs/images/activity-completion-automatic.png)
+
+2. **Fecha esperada de finalización**:
+    Definimos la fecha en la que esperamos que los usuarios hayan completado la actividad.
+
+    ![Expected completion date](__docs/images/expected-completion-date.png)
+
+
+### Finalización de actividad con calificación aprobatoria
+
+#### Descripción
+
+Esta condición se utiliza para evaluar si los usuarios han completado una actividad con una calificación aprobatoria.
+
+#### Configuración de la condición
+
+1. **Buscar módulos de actividad del curso**:
+   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+
+    ![Pass grade search](__docs/images/pass-grade-search.png)
+   
+   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+
+    ![Pass grade search](__docs/images/activity-completion-with-pass-grade.png)
+
+
+
 
 
 
