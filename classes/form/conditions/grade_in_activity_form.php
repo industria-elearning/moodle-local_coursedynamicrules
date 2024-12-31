@@ -16,18 +16,17 @@
 
 namespace local_coursedynamicrules\form\conditions;
 
-
 /**
- * TODO describe file passgrade_form
+ * Class grade_in_activity
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class passgrade_form extends condition_form {
-
+class grade_in_activity_form extends condition_form {
     /** @var string type of condition */
-    protected $type = "passgrade";
+    protected $type = "grade_in_activity";
+
     /**
      * Form definition
      *
@@ -43,8 +42,11 @@ class passgrade_form extends condition_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            // Get only course modules that require passgrade.
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $cm->completionpassgrade) {
+            // Indicate when require grade is enable.
+            // See get_moduleinfo_data funtion.
+            $completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $completionusegrade) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }
@@ -61,7 +63,32 @@ class passgrade_form extends condition_form {
             $options,
             $attributes
         );
-        $mform->setType('coursemodule', PARAM_INT);
+
+        $gradegreatergroup = [];
+        $gradegreatergroup[] = $mform->createElement(
+            'advcheckbox',
+            'enablegradegreaterthanorequal',
+            '',
+            get_string('gradegreaterthanorequal', 'local_coursedynamicrules')
+        );
+        $gradegreatergroup[] = $mform->createElement('text', 'gradegreaterthanorequal', '');
+        $mform->addGroup($gradegreatergroup, 'gradegreatergroup', get_string('grade', 'local_coursedynamicrules'), ' ', false);
+        $mform->addHelpButton('gradegreatergroup', 'gradegreaterthanorequal', 'local_coursedynamicrules');
+        $mform->disabledIf('gradegreaterthanorequal', 'enablegradegreaterthanorequal', 'notchecked');
+        $mform->setType('gradegreaterthanorequal', PARAM_FLOAT);
+
+        $gradelessgroup = [];
+        $gradelessgroup[] = $mform->createElement(
+            'advcheckbox',
+            'enablegradelessthan',
+            '',
+            get_string('gradelessthan', 'local_coursedynamicrules')
+        );
+        $gradelessgroup[] = $mform->createElement('text', 'gradelessthan', '');
+        $mform->addGroup($gradelessgroup, 'gradelessgroup', '', ' ', false);
+        $mform->addHelpButton('gradelessgroup', 'gradelessthan', 'local_coursedynamicrules');
+        $mform->disabledIf('gradelessthan', 'enablegradelessthan', 'notchecked');
+        $mform->setType('gradelessthan', PARAM_FLOAT);
 
         parent::definition();
     }

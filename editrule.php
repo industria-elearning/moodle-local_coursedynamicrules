@@ -27,7 +27,6 @@ require('../../config.php');
 $ruleid = optional_param('id', 0, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
 
-
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $context = context_course::instance($courseid);
 
@@ -75,7 +74,7 @@ if ($ruleform->is_cancelled()) {
         $DB->insert_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('rule:addedsuccessfully', 'local_coursedynamicrules'),
+            get_string('ruleaddedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -83,7 +82,7 @@ if ($ruleform->is_cancelled()) {
         $DB->update_record('cdr_rule', $data);
         redirect(
             $rulesurl,
-            get_string('rule:updatedsuccessfully', 'local_coursedynamicrules'),
+            get_string('ruleupdatedsuccessfully', 'local_coursedynamicrules'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );

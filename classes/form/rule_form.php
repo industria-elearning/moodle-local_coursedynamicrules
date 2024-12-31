@@ -34,18 +34,18 @@ class rule_form extends \moodleform {
         $courseid = $customdata['courseid'];
         $rule = $customdata['rule'];
 
-        $mform->addElement('text', 'name', get_string('rule:name', 'local_coursedynamicrules'));
+        $mform->addElement('text', 'name', get_string('name', 'local_coursedynamicrules'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->setDefault('name', $rule->name);
 
-        $mform->addElement('textarea', 'description', get_string('rule:description', 'local_coursedynamicrules'));
+        $mform->addElement('textarea', 'description', get_string('description', 'local_coursedynamicrules'));
         $mform->setType('description', PARAM_RAW);
         $mform->setDefault('description', $rule->description);
 
-        $mform->addElement('checkbox', 'active', get_string('rule:active', 'local_coursedynamicrules'));
+        $mform->addElement('checkbox', 'active', get_string('ruleactive', 'local_coursedynamicrules'));
         $mform->setDefault('active', $rule->active ?? 0);
-        $mform->addHelpButton('active', 'rule:active', 'local_coursedynamicrules');
+        $mform->addHelpButton('active', 'ruleactive', 'local_coursedynamicrules');
 
         $mform->addElement('checkbox', 'hasfrequencylimit', get_string('hasfrequencylimit', 'local_coursedynamicrules'));
 

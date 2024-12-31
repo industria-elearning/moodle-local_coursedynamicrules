@@ -49,9 +49,9 @@ echo $OUTPUT->header();
 $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
 
 $table = new html_table();
-$table->head[] = get_string('rule:name', 'local_coursedynamicrules');
-$table->head[] = get_string('rule:conditions', 'local_coursedynamicrules');
-$table->head[] = get_string('rule:actions', 'local_coursedynamicrules');
+$table->head[] = get_string('name', 'local_coursedynamicrules');
+$table->head[] = get_string('conditions', 'local_coursedynamicrules');
+$table->head[] = get_string('actions', 'local_coursedynamicrules');
 $table->head[] = '';
 
 foreach ($rules as $rule) {
@@ -73,7 +73,7 @@ foreach ($rules as $rule) {
     if (empty($conditions)) {
         $conditionstext = html_writer::link(
             $conditionsurl,
-            get_string('condition:add', 'local_coursedynamicrules')
+            get_string('addconditions', 'local_coursedynamicrules')
         );
     } else {
         $conditionstext = '';
@@ -89,7 +89,7 @@ foreach ($rules as $rule) {
         }
         $editlink = html_writer::link(
             $conditionsurl,
-            $OUTPUT->pix_icon('t/edit', get_string('condition:edit', 'local_coursedynamicrules'))
+            $OUTPUT->pix_icon('t/edit', get_string('editconditions', 'local_coursedynamicrules'))
         );
 
         $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
@@ -124,11 +124,11 @@ foreach ($rules as $rule) {
     $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);
     $editrulelink = html_writer::link(
         $editruleurl,
-        $OUTPUT->pix_icon('t/edit', get_string('rule:edit', 'local_coursedynamicrules')),
+        $OUTPUT->pix_icon('t/edit', get_string('editrule', 'local_coursedynamicrules')),
     );
     $deleterulelink = html_writer::link(
         $deleteruleurl,
-        $OUTPUT->pix_icon('t/delete', get_string('rule:delete', 'local_coursedynamicrules')),
+        $OUTPUT->pix_icon('t/delete', get_string('deleterule', 'local_coursedynamicrules')),
     );
 
     $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
@@ -146,7 +146,7 @@ foreach ($rules as $rule) {
 $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
 $addrulebutton = new single_button(
     $editruleurl,
-    get_string('rule:add', 'local_coursedynamicrules'),
+    get_string('ruleadd', 'local_coursedynamicrules'),
     'get',
     true
 );
