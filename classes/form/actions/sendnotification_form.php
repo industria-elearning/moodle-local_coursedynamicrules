@@ -51,6 +51,7 @@ class sendnotification_form extends action_form {
             <strong>' . get_string('availableplaceholders', 'local_coursedynamicrules') . ':</strong>
             <ul>
                 <li>{$a->coursename} - ' . get_string('coursename', 'local_coursedynamicrules') . '</li>
+                <li>{$a->courselink} - ' . get_string('courselink', 'local_coursedynamicrules') . '</li>
                 <li>{$a->fullname} - ' . get_string('fullname', 'local_coursedynamicrules') . '</li>
                 <li>{$a->firstname} - ' . get_string('firstname', 'local_coursedynamicrules') . '</li>
                 <li>{$a->lastname} - ' . get_string('lastname', 'local_coursedynamicrules') . '</li>

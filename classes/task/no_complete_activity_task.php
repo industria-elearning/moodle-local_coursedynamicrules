@@ -54,7 +54,32 @@ class no_complete_activity_task extends \core\task\scheduled_task {
 
         foreach ($rules as $rule) {
             $ruleinstance = new rule($rule);
-            $ruleinstance->execute();
+            $conditions = $ruleinstance->get_conditions();
+
+            if ($this->is_time_to_execute_rule($ruleinstance) && !empty($conditions)) {
+                $ruleinstance->execute();
+                $ruleinstance->set_active(false);
+            }
+
         }
+    }
+
+    /**
+     * Validate if rule could be executed.
+     * @param rule $rule
+     */
+    private function is_time_to_execute_rule($rule) {
+        $conditions = $rule->get_conditions();
+
+        foreach ($conditions as $condition) {
+            $now = time();
+            $params = $condition->get_params();
+            if ($condition->get_type() == 'no_complete_activity' && $now < $params->expectedcompletiondate) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 }
