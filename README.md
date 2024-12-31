@@ -70,10 +70,6 @@ Una vez que el plugin esté instalado, será necesario activarlo utilizando la l
    
     ![Rule configuration](__docs/images/rule-configuration.png)
 
-
-
-
-- `Calificación en actividad`: Esta condicion 
     
 ## Agregar condiciones a la regla
 
