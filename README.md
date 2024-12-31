@@ -13,7 +13,7 @@ Este plugin permite a los administradores y profesores definir reglas personaliz
 3. Tener el cron de Moodle configurado y ejecutándose correctamente.
 
 4. Tener instalada y activada la extensión ioncube loader en su versión 12 o superior en el servidor 
-      - desde CPanle podemos hacerlo siguiendo las indicaciones del siguiente enlace: [https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel](https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel).
+      - desde CPaneL podemos hacerlo siguiendo las indicaciones del siguiente enlace: [https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel](https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel).
       - Alternativamente podemos realizar la instalación de forma manual siguiendo las instrucciones del siguiente enlace: [https://kinsta.com/blog/ioncube-loader/](https://kinsta.com/blog/ioncube-loader/)
    
 5. Comprar plugin `Reglas dinámicas del Curso para Moodle LMS` desde nuestra tienda en la sección de complementos para Moodle https://shop.datacurso.com/index.php?rp=/store/plugins-moodle
