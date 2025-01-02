@@ -209,6 +209,22 @@ Esta acción se utiliza para habilitar actividades específicas en el curso para
 
 Esta acción se utiliza para enviar notificaciones a los usuarios que cumplan con las condiciones de la regla.
 
+#### Mejore el envío de notificaciones
+
+¡Mejore sus notificaciones! con nuestros plugins de <strong>Datacurso Message Hub</strong> los cuales le permitirán enviar notificaciones por WhatsApp y SMS usando proveedores como Twilio. [Click aquí para comprarlos y activarlos ahora!](https://shop.datacurso.com/clientarea.php)
+
+Para obtener mas información puede visitar la pagina de documentación [https://docs.datacurso.com/index.php?title=Message_Hub](https://docs.datacurso.com/index.php?title=Message_Hub)
+
+#### Configurar el envío de notificaciones (Necesario solo si no tiene instalado los plugins de Datacurso Message Hub)
+
+1. Acceder a `Administración del sitio > General > Mensajería > Ajustes de notificación`
+   
+    ![Notification settings](__docs/images/notification-settings.png)
+
+2. En la sección `Preferencias de notificación predeterminadas` ubicamos `Notificación de reglas dinámicas del curso` y habilitamos la opción para `Datacurso Message Hub`
+
+    ![Notification preferences](__docs/images/notification-preferences.png)
+
 #### Configuración de la acción
 
 1. **Asunto**:
