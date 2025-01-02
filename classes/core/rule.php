@@ -167,13 +167,18 @@ class rule {
      *
      */
     public static function validate_licence($licensekey, $localkey='') {
+
+        global $CFG;
+
         // Configuration Values.
         // Enter the url to your WHMCS installation here.
         $whmcsurl = 'https://shop.datacurso.com/';
 
         // Must match what is specified in the MD5 Hash Verification field.
         // of the licensing product that will be used with this check.
-        $licensingsecretkey = 'Ya9x!&9CsBb6EYeT';
+
+        $licensingsecretkey = 'p!kQ$#Y?BP4Pi6b$';
+
         // The number of days to wait between performing remote license checks.
         $localkeydays = 1;
         // The number of days to allow failover for after local key expiry.
@@ -184,8 +189,8 @@ class rule {
 
         $checktoken = time() . md5(mt_rand(100000000, mt_getrandmax()) . $licensekey);
         $checkdate = date("Ymd");
-        $domain = $_SERVER['SERVER_NAME'];
-        $usersip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR'];
+        $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
+        $usersip = gethostbyname($domain);
         $dirpath = dirname(__FILE__);
         $verifyfilepath = 'modules/servers/licensing/verify.php';
         $localkeyvalid = false;
