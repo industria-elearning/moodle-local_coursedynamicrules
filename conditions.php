@@ -24,6 +24,7 @@
 
 // TODO Refactor this file.
 
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
@@ -47,6 +48,14 @@ $PAGE->set_course($course);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
+echo $OUTPUT->header();
+
+$licensestatus = rule::validate_licence_status();
+if (!$licensestatus->success) {
+    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
+    echo $OUTPUT->footer();
+    die();
+}
 
 if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
@@ -74,8 +83,6 @@ foreach ($conditions as $condition) {
         ];
     }
 }
-
-echo $OUTPUT->header();
 
 $conditionoptions = load_condition_options();
 

@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\condition\passgrade;
 
 use completion_info;
 use local_coursedynamicrules\core\condition;
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\conditions\passgrade_form;
 use stdClass;
 
@@ -73,6 +74,11 @@ class passgrade_condition extends condition {
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return false;
+        }
 
         $modinfo = get_fast_modinfo($courseid, $userid);
         // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.

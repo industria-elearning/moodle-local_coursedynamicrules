@@ -42,6 +42,11 @@ class no_complete_activity_task extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
+
         $rules = $DB->get_records_sql(
             "SELECT DISTINCT r.*
             FROM

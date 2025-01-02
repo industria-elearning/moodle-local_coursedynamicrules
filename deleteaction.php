@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
@@ -51,6 +52,13 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
+
+$licensestatus = rule::validate_licence_status();
+if (!$licensestatus->success) {
+    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
+    echo $OUTPUT->footer();
+    die();
+}
 
 $action = $DB->get_record('cdr_action', ['id' => $id], '*', MUST_EXIST);
 
