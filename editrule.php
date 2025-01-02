@@ -42,12 +42,6 @@ $PAGE->set_course($course);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_course($course);
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 

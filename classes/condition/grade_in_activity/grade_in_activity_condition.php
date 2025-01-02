@@ -16,9 +16,15 @@
 
 namespace local_coursedynamicrules\condition\grade_in_activity;
 
+use grade_grade;
+use grade_item;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
 use stdClass;
+
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->libdir . '/gradelib.php');
 
 /**
  * Class grade_in_activity_condition
@@ -28,6 +34,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_in_activity_condition extends condition {
+
     /** @var string type of condition */
     protected $type = "grade_in_activity";
 
@@ -37,58 +44,62 @@ class grade_in_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
-        global $DB;
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
-        $gradegreaterthanorequal = $this->params->gradegreaterthanorequal;
-        $gradelessthan = $this->params->gradelessthan;
-
-        if (!isset($gradegreaterthanorequal) && !isset($gradelessthan)) {
-            return false;
-        }
+        $gradeitemsconditions = $this->params->gradeitemsconditions;
 
         $cminfo = get_coursemodule_from_id(null, $cmid, $courseid);
         if (!$cminfo || $cminfo->deletioninprogress) {
             return false;
         }
 
-        // Indicate when require grade is enable.
-        // See get_moduleinfo_data funtion.
-        $completionusegrade = isset($cminfo->completiongradeitemnumber);
-
-        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC || !$completionusegrade) {
-            return false;
-        }
-
-        $gradeinfo = $DB->get_record_sql(
-            "SELECT gg.finalgrade, gg.itemid
-            FROM
-                {grade_grades} gg
-                JOIN {grade_items} gi ON gg.itemid = gi.id
-            WHERE
-                gi.itemtype = 'mod'
-                AND gi.itemmodule = 'quiz'
-                AND gi.iteminstance = :cminstance
-                AND gg.userid = :userid",
-            ['cminstance' => $cminfo->instance, 'userid' => $userid]
-        );
-
-        if (!$gradeinfo) {
+        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
             return false;
         }
 
         $hasgraderequire = false;
+        $allitemconditionsmet = true;
 
-        if ($gradegreaterthanorequal &&  $gradeinfo->finalgrade >= $gradegreaterthanorequal) {
-            $hasgraderequire = true;
+        /** @var grade_item[]  $gradeitems */
+        $gradeitems = grade_item::fetch_all(['iteminstance' => $cminfo->instance, 'itemmodule' => $cminfo->modname]);
+
+        foreach ($gradeitems as $gradeitem) {
+            $gradeitemid = $gradeitem->id;
+
+            $grade = grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $userid]);
+            $finalgrade = $grade->finalgrade;
+
+            $gradegtekey = 'gradegte' . '_' . $gradeitemid;
+            $gradegte = $gradeitemsconditions->$gradegtekey;
+
+            if ($gradegte) {
+                $gradegtebounded = $gradeitem->bounded_grade($gradegte->value);
+                if ($finalgrade >= $gradegtebounded) {
+                    $hasgraderequire = true;
+                } else {
+                    $allitemconditionsmet = false;
+                }
+            }
+
+            $gradeltkey = 'gradelt' . '_' . $gradeitemid;
+            $gradelt = $gradeitemsconditions->$gradeltkey;
+
+            if ($gradelt) {
+                $gradeltbounded = $gradeitem->bounded_grade($gradelt->value);
+                if ($finalgrade < $gradeltbounded) {
+                    $hasgraderequire = true;
+                } else {
+                    $allitemconditionsmet = false;
+                }
+            }
+
+            if (!$allitemconditionsmet) {
+                break;
+            }
         }
 
-        if ($gradelessthan &&  $gradeinfo->finalgrade < $gradelessthan) {
-            $hasgraderequire = true;
-        }
-
-        return $hasgraderequire;
+        return $hasgraderequire && $allitemconditionsmet;
 
     }
 
@@ -171,10 +182,27 @@ class grade_in_activity_condition extends condition {
     public function save_condition($formdata) {
         global $DB;
 
+        $gradeitems = json_decode($formdata->gradeitems, true);
+        $gradeitemsconditions = [];
+        foreach ($gradeitems as $gradeitemkey => $gradeitem) {
+            $value = clean_param($gradeitem['value'], PARAM_FLOAT);
+
+            if (!empty($value)) {
+                $gradeitemkey = clean_param($gradeitemkey, PARAM_RAW);
+                $gradeitemid = clean_param($gradeitem['gradeitem'], PARAM_INT);
+                $gradeitemcondition = clean_param($gradeitem['condition'], PARAM_TEXT);
+                $gradeitemsconditions[$gradeitemkey] = [
+                    'gradeitem' => $gradeitemid,
+                    'condition' => $gradeitemcondition,
+                    'value' => $value,
+                ];
+            }
+
+        }
+
         $params = [
-            'cmid' => $formdata->coursemodule,
-            'gradelessthan' => $formdata->gradelessthan,
-            'gradegreaterthanorequal' => $formdata->gradegreaterthanorequal,
+            'cmid' => clean_param($formdata->cmid, PARAM_INT),
+            'gradeitemsconditions' => $gradeitemsconditions,
         ];
 
         $condition = new stdClass();
