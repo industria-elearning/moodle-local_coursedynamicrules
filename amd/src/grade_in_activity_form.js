@@ -24,6 +24,8 @@
 import DynamicForm from 'core_form/dynamicform';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {get_string as getString} from "core/str";
+
 
 /**
  * Initializes the dynamic form handling.
@@ -60,6 +62,7 @@ function handleLoadForm(dynamicForm) {
     dynamicForm.load({courseid: courseId})
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
+<<<<<<< HEAD
 
             // Handle gradeitems dynamics conditions.
             document.querySelector('[name=gradeitems]').value = JSON.stringify({});
@@ -132,12 +135,89 @@ function handleLoadForm(dynamicForm) {
                 }
             });
 
+=======
+            resetGradeItems();
+            updateGradeItems();
+            handleSubmitForm();
+>>>>>>> FIX-02
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * Handles form submission.
+ */
+function handleSubmitForm() {
+    const gradeInActivityForm = document.getElementById('grade_in_activity_form');
+    const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
+    gradeInActivityForm.addEventListener('submit', (e) => {
+        // Check if the submit button was clicked.
+        // this is to prevent the form from submitting when the user clicks the cancel button.
+        if (e.submitter.name === 'submitbutton') {
+            e.preventDefault();
+            const formIsValid = formValidation();
+            if (e.submitter.name === 'submitbutton' && dynamicGradeInActivityForm.checkValidity() && formIsValid) {
+                gradeInActivityForm.submit();
+            }
+        }
+    });
+}
+
+/**
+ * Validates the form by checking if the input values are within the specified grade range.
+ *
+ * This function retrieves the course module ID from the form, selects all inputs associated with that ID,
+ * and checks if their values fall within the specified minimum and maximum grade range. If an input value
+ * is out of range, it marks the input as invalid and displays an error message.
+ *
+ * @returns {boolean} - Returns true if the form is valid, otherwise false.
+ */
+function formValidation() {
+    const cmId = document.querySelector('[name=coursemodule]').value;
+    const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+    let formIsValid = true;
+    cmConditionInputs.forEach((input) => {
+        const gradeMin = parseFloat(input.dataset.grademin);
+        const gradeMax = parseFloat(input.dataset.grademax);
+        const inputValue = parseFloat(input.value);
+        let invalidFeedback = input.nextElementSibling;
+
+        if (input.disabled) {
+            return;
+        }
+        if (!invalidFeedback || !invalidFeedback.classList.contains('invalid-feedback')) {
+            invalidFeedback = document.createElement('span');
+            invalidFeedback.className = 'invalid-feedback';
+            input.after(invalidFeedback);
+        }
+
+        if (inputValue > gradeMax || inputValue < gradeMin) {
+            input.classList.add('is-invalid');
+            formIsValid = false;
+            getString('errorgradeoutofrange', 'local_coursedynamicrules', {
+                min: gradeMin,
+                max: gradeMax,
+            }).then(function(content) {
+                invalidFeedback.textContent = content;
+                return;
+            }).catch(function() {
+                Notification.exception(new Error('Failed to load string: errorgradeoutofrange'));
+            });
+        } else {
+            input.classList.remove('is-invalid');
+            invalidFeedback.textContent = '';
+        }
+    });
+
+    return formIsValid;
+}
+
+/**
+>>>>>>> FIX-02
  * Attaches a change event listener to the course module select element.
  *
  * @param {DynamicForm} dynamicForm The dynamic form instance.
@@ -169,6 +249,7 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
 
     const courseId = document.querySelector('[name=courseid]').value;
     dynamicForm.load({coursemodule: courseModuleValue, courseid: courseId})
+<<<<<<< HEAD
     .then(() => {
         attachCourseModuleChangeListener(dynamicForm);
 
@@ -221,5 +302,65 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
         return updatePromise.resolve();
     })
     .catch(Notification.exception);
+=======
+        .then(() => {
+            attachCourseModuleChangeListener(dynamicForm);
+            resetGradeItems();
+            updateGradeItems(dynamicForm);
+            handleSubmitForm();
+            return updatePromise.resolve();
+        })
+        .catch(Notification.exception);
+}
+
+/**
+ * Resets the grade items field.
+ */
+function resetGradeItems() {
+    document.querySelector('[name=gradeitems]').value = JSON.stringify({});
+}
+
+/**
+ * Updates the grade items based on the current form state.
+ *
+ */
+function updateGradeItems() {
+    const cmId = document.querySelector('[name=coursemodule]').value;
+    document.querySelector('[name=cmid]').value = cmId;
+    const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+    cmConditionInputs.forEach((input) => {
+        updateGradeItem(input);
+
+        input.addEventListener('change', (e) => {
+            updateGradeItem(e.target);
+        });
+    });
+}
+
+/**
+ * Updates a single grade item based on the input element.
+ *
+ * @param {HTMLElement} input The input element.
+ */
+function updateGradeItem(input) {
+    const gradeItems = document.querySelector('[name=gradeitems]').value;
+    const gradeItemsObject = JSON.parse(gradeItems);
+
+    const condition = input.dataset.condition;
+    const gradeItem = input.dataset.gradeitem;
+    const value = input.value;
+    const disabled = input.getAttribute('disabled') === 'disabled';
+    const gradeItemKey = `${condition}_${gradeItem}`;
+
+    gradeItemsObject[gradeItemKey] = {
+        gradeitem: gradeItem,
+        condition: condition,
+        value: value,
+        disabled: disabled,
+    };
+
+    document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
+>>>>>>> FIX-02
 }
 
