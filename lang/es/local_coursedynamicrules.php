@@ -108,10 +108,6 @@ $string['grade_in_activity'] = 'Calificación en actividad';
 $string['grade_in_activity_description'] = 'Para "{$a->moddescription}", se deben obtener las siguientes calificaciones: {$a->gradestring}';
 $string['grade'] = 'Calificación';
 $string['enablegradegreaterthanorequal_help'] = 'Habilitar calificación mayor o igual que';
-$string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
-$string['gradegreaterthanorequal_help'] = 'Calificación mínima (inclusiva)';
-$string['gradelessthan'] = 'debe ser <';
-$string['gradelessthan_help'] = 'Calificación máxima (exclusiva)';
 $string['enablegradelessthan'] = 'Habilitar calificación menor que';
 $string['errornegativegrade'] = 'La calificación debe ser 0 o mayor.';
 $string['errormaxgradeexceeded'] = 'La calificación no puede exceder la calificación máxima para la actividad.';
@@ -122,22 +118,30 @@ $string['notification_action_info'] = 'Esta acción enviará una notificación a
 
 $string['missing_plugins_warning'] = '🔔 ¡Mejora tus notificaciones! Nuestros plugins de <strong>Datacurso Message Hub</strong> te permiten enviar notificaciones por WhatsApp y SMS usando proveedores como Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Haz clic aquí para comprarlos y activarlos ahora!</a>';
 
 $string['provider_not_enabled_warning'] = 'Habilita las notificaciones con <strong>Datacurso Message Hub</strong> para que esta acción envíe notificaciones por WhatsApp y SMS usando proveedores como Twilio.
 Puedes habilitarlo desde la <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Notificación de reglas dinámicas del curso</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">Consulta la documentación para más información.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Consulta la documentación para más información.</a>';
 
 $string['rules'] = 'Reglas';
 $string['rules_help'] = 'Las reglas se utilizan para definir un conjunto de condiciones y acciones que se ejecutarán';
 $string['missing_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté instalado y habilitado. Por favor descárguelo desde <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instálelo.';
 $string['disabled_availability_user'] = 'Esta acción requiere que el plugin <strong>Restriction by user</strong> esté habilitado. Por favor acceda a la página <a href="{$a}" target="_blank">Gestionar restricciones</a>, busque <strong>Restricción por usuario</strong> y habilítelo.';
-
-
-
-
-
+$string['enableactivity_action_info'] = 'Esta acción habilitará los módulos de actividades seleccionados para los usuarios que cumplan con los criterios de las condiciones de la regla.';
+$string['grade_in_activity_condition_info'] = 'Esta condición verificará cuál usuario ha obtenido la calificación especificada en el módulo de actividad seleccionado.';
+$string['no_complete_activity_condition_info'] = 'Esta condición verificará cuál usuario no ha completado el módulo de actividad seleccionado después de la fecha especificada.';
+$string['passgrade_condition_info'] = 'Esta condición verificará cuál usuario ha completado el módulo de actividad seleccionado con una calificación aprobatoria.';
+$string['licencekey'] = 'Clave de licencia';
+$string['generalsettings'] = 'Configuración general';
+$string['checklicensekey'] = 'Verificar clave de licencia';
+$string['licensekeyvalid'] = 'La clave de licencia es válida';
+$string['licensekeyinvalid'] = 'La clave de licencia ha caducado o no es válida. Por favor, vaya a <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
+$string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'La condición se cumple si la calificación del usuario es mayor o igual al valor especificado.';
+$string['gradelessthan'] = 'debe ser <';
+$string['gradelessthan_help'] = 'La condición se cumple si la calificación del usuario es menor al valor especificado.';
 
 
 

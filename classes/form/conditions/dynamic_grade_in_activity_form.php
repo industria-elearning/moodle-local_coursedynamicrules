@@ -56,7 +56,11 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         $filteredcms = [];
         $options = [];
         foreach ($cms as $cm) {
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && !$cm->deletioninprogress) {
+            // Indicate when require grade is enable.
+            // See get_moduleinfo_data funtion.
+            $completionusegrade = !is_null($cm->completiongradeitemnumber);
+
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $completionusegrade && !$cm->deletioninprogress) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
                 $filteredcms[$cm->id] = $cm;
             }

@@ -108,12 +108,8 @@ $string['grade_in_activity'] = 'Grade in activity';
 $string['grade_in_activity_description'] = 'For "{$a->moddescription}", the following grades must be obtained: {$a->gradestring}';
 $string['grade'] = 'Grade';
 $string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
-$string['gradegreaterthanorequal'] = 'must be &#x2265;';
 $string['gradegreaterthanorequalvalue'] = '&#x2265; {$a}';
-$string['gradegreaterthanorequal_help'] = 'Minimum grade (inclusive)';
-$string['gradelessthan'] = 'must be <';
 $string['gradelessthanvalue'] = '< {$a}';
-$string['gradelessthan_help'] = 'Maximum grade (exclusive)';
 $string['enablegradelessthan'] = 'Enable grade less than';
 $string['errornegativegrade'] = 'The grade must be 0 or greater.';
 $string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
@@ -123,15 +119,28 @@ $string['errorgradeoutofrange'] = 'The value must be between {$a->min} and {$a->
 $string['notification_action_info'] = 'This action will send a notification to users who meet the rule conditions criteria.';
 $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <strong>Datacurso Message Hub</strong> plugins let you send notifications via WhatsApp and SMS using providers like Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Click here to purchase and enable them now!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Click here to purchase and enable them now!</a>';
 $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
 You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Course dynamic rules notification</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">See documentation for more information.</a>';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
-$string['licencekey'] = 'Licence Key';
+$string['licencekey'] = 'License Key';
 $string['licencekey_desc'] = 'License key required to use this plugin';
 $string['rules'] = 'Rules';
 $string['rules_help'] = 'Rules are used to define set of conditions and actions that will be executed';
 $string['missing_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be installed and enabled. Please download it from <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> and install it.';
 $string['disabled_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be enabled. Please access to the <a href="{$a}" target="_blank">Manage restrictions</a> page, search <strong>Restriction by user</strong> and enable it.';
+$string['enableactivity_action_info'] = 'This action will enable selected activities modules for users who meet the rule conditions criteria.';
+$string['grade_in_activity_condition_info'] = 'This condition will check which user has obtained the specified grade in the selected activity module.';
+$string['no_complete_activity_condition_info'] = 'This condition will check which user has not completed the selected activity module after the specified date.';
+$string['passgrade_condition_info'] = 'This condition will check which user has completed the selected activity module with a passing grade.';
+$string['generalsettings'] = 'General settings';
+$string['checklicensekey'] = 'Check licence key';
+$string['licensekeyvalid'] = 'License key is valid';
+$string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
+$string['gradegreaterthanorequal'] = 'must be &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'The condition is met if the user\'s grade is greater than or equal to the specified value.';
+$string['gradelessthan'] = 'must be <';
+$string['gradelessthan_help'] = 'The condition is met if the user\'s grade is less than the specified value.';
+

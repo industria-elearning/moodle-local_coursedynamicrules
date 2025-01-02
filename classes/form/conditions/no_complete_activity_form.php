@@ -33,16 +33,23 @@ class no_complete_activity_form extends condition_form {
      * @return void
      */
     public function definition() {
+        global $PAGE, $OUTPUT;
         $mform = $this->_form;
         $customdata = $this->_customdata;
         $this->courseid = $customdata['courseid'];
         $this->ruleid = $customdata['ruleid'];
 
+        $notification = $OUTPUT->notification(
+            get_string('no_complete_activity_condition_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
         $modinfo = get_fast_modinfo($this->courseid);
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && !$cm->deletioninprogress) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }

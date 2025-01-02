@@ -105,10 +105,6 @@ $string['grade_in_activity'] = 'Nota na atividade';
 $string['grade_in_activity_description'] = 'Para "{$a->moddescription}", as seguintes notas devem ser obtidas: {$a->gradestring}';
 $string['grade'] = 'Nota';
 $string['enablegradegreaterthanorequal_help'] = 'Ativar nota maior ou igual a';
-$string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
-$string['gradegreaterthanorequal_help'] = 'Nota mínima (inclusive)';
-$string['gradelessthan'] = 'deve ser <';
-$string['gradelessthan_help'] = 'Nota máxima (exclusive)';
 $string['enablegradelessthan'] = 'Ativar nota menor que';
 $string['errornegativegrade'] = 'A nota deve ser 0 ou maior.';
 $string['errormaxgradeexceeded'] = 'A nota não pode exceder a nota máxima para a atividade.';
@@ -118,12 +114,25 @@ $string['errorgradeoutofrange'] = 'O valor deve estar entre {$a->min} e {$a->max
 $string['notification_action_info'] = 'Esta ação enviará uma notificação aos usuários que atendam aos critérios das condições da regra.';
 $string['missing_plugins_warning'] = '🔔 Melhore suas notificações! Nossos plugins <strong>Datacurso Message Hub</strong> permitem enviar notificações via WhatsApp e SMS usando provedores como Twilio.
 <br>
-<a href="https://yoursite.com/buy-plugins" target="_blank">Clique aqui para comprar e ativar agora!</a>';
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Clique aqui para comprar e ativar agora!</a>';
 $string['provider_not_enabled_warning'] = 'Ative as notificações com o <strong>Datacurso Message Hub</strong> para esta ação enviar notificações via WhatsApp e SMS usando provedores como Twilio.
 Você pode ativar nas <a href="{$a}" target="_blank">Configurações de notificação</a> e procurar <strong>Notificação de regras dinâmicas do curso</strong>.
 <br>
-<a href="https://docs.com/plugin" target="_blank">Veja a documentação para mais informações.</a>';
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Veja a documentação para mais informações.</a>';
 $string['rules'] = 'Regras';
 $string['rules_help'] = 'Regras são usadas para definir um conjunto de condições e ações que serão executadas';
 $string['missing_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja instalado e habilitado. Por favor, faça o download em <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instale-o.';
 $string['disabled_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja habilitado. Por favor, acesse a página <a href="{$a}" target="_blank">Gerenciar restrições</a>, procure por <strong>Restrição por usuário</strong> e habilite-o.';
+$string['enableactivity_action_info'] = 'Esta ação habilitará os módulos de atividades selecionados para os usuários que atenderem aos critérios das condições da regra.';
+$string['grade_in_activity_condition_info'] = 'Esta condição verificará qual usuário obteve a nota especificada no módulo de atividade selecionado.';
+$string['no_complete_activity_condition_info'] = 'Esta condição verificará qual usuário não completou o módulo de atividade selecionado após a data especificada.';
+$string['passgrade_condition_info'] = 'Esta condição verificará qual usuário completou o módulo de atividade selecionado com uma nota de aprovação.';
+$string['licencekey'] = 'Chave de licença';
+$string['generalsettings'] = 'Configurações gerais';
+$string['checklicensekey'] = 'Verificar chave de licença';
+$string['licensekeyvalid'] = 'A chave de licença é válida';
+$string['licensekeyinvalid'] = 'A chave de licença expirou ou é inválida. Por favor, vá para <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou comprar uma nova licença.';
+$string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'A condição é atendida se a nota do usuário for maior ou igual ao valor especificado.';
+$string['gradelessthan'] = 'deve ser <';
+$string['gradelessthan_help'] = 'A condição é atendida se a nota do usuário for menor que o valor especificado.';
