@@ -16,6 +16,8 @@
 
 namespace local_coursedynamicrules\condition\grade_in_activity;
 
+use cm_info;
+use core_grades\component_gradeitems;
 use grade_grade;
 use grade_item;
 use local_coursedynamicrules\core\condition;
@@ -127,10 +129,75 @@ class grade_in_activity_condition extends condition {
         if (!$cminfo) {
             return '';
         }
+
+        $component = 'mod_' . $cminfo->modname;
+
+        // Get the itemnames mapping for the component. This is used to display the grade item names in the form.
+        $itemnames = component_gradeitems::get_itemname_mapping_for_component($component);
+
+        $gradeitemsconditions = $this->params->gradeitemsconditions;
+
+        $gradestrings = [];
+        if (count($itemnames) === 1) {
+            $itemnamestring = get_string('gradenoun');
+            $gradestrings[] = $this->get_grades_string($cminfo, 0, $itemnamestring, $gradeitemsconditions);
+        } else if (count($itemnames) > 1) {
+            foreach ($itemnames as $itemnumber => $itemname) {
+                $itemnamestring = get_string("grade_{$itemname}_name", $component);
+                $gradestrings[] = $this->get_grades_string($cminfo, $itemnumber, $itemnamestring, $gradeitemsconditions);
+            }
+        }
+
+        $gradestring = implode(', ', $gradestrings);
+
         return get_string(
             'grade_in_activity_description',
-            'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name
+            'local_coursedynamicrules',
+            [
+                'moddescription' => ucfirst($cminfo->modname) . " - " . $cminfo->name,
+                'gradestring' => $gradestring,
+            ]
         );
+    }
+
+    /**
+     * Generates a string representation of grade conditions for a given activity.
+     *
+     * @param cm_info $cminfo Information about the course module instance.
+     * @param int $itemnumber The item number of the grade item.
+     * @param string $itemnamestring The name of the grade item.
+     * @param object $gradeitemsconditions Conditions related to grade items.
+     * @return string A string representing the grade conditions for the specified activity.
+     */
+    private function get_grades_string($cminfo, $itemnumber, $itemnamestring, $gradeitemsconditions) {
+        $gradeitem = grade_item::fetch(
+            [
+                'iteminstance' => $cminfo->instance,
+                'itemmodule' => $cminfo->modname,
+                'itemtype' => 'mod',
+                'itemnumber' => $itemnumber,
+            ]
+        );
+
+        $gradeitemid = $gradeitem->id;
+
+        $gradestrings = [];
+
+        $gradegtekey = 'gradegte' . '_' . $gradeitemid;
+        $gradegte = $gradeitemsconditions->$gradegtekey;
+
+        if ($gradegte) {
+            $gradestrings[] = get_string('gradegreaterthanorequalvalue', 'local_coursedynamicrules', $gradegte->value);
+        }
+
+        $gradeltkey = 'gradelt' . '_' . $gradeitemid;
+        $gradelt = $gradeitemsconditions->$gradeltkey;
+
+        if ($gradelt) {
+            $gradestrings[] = get_string('gradelessthanvalue', 'local_coursedynamicrules', $gradelt->value);
+        }
+
+        return "\"{$itemnamestring}\" " . implode(' & ', $gradestrings);
     }
 
     /**
@@ -186,8 +253,9 @@ class grade_in_activity_condition extends condition {
         $gradeitemsconditions = [];
         foreach ($gradeitems as $gradeitemkey => $gradeitem) {
             $value = clean_param($gradeitem['value'], PARAM_FLOAT);
+            $disabled = $gradeitem['disabled'];
 
-            if (!empty($value)) {
+            if (!empty($value) && !$disabled) {
                 $gradeitemkey = clean_param($gradeitemkey, PARAM_RAW);
                 $gradeitemid = clean_param($gradeitem['gradeitem'], PARAM_INT);
                 $gradeitemcondition = clean_param($gradeitem['condition'], PARAM_TEXT);

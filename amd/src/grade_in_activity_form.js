@@ -1,3 +1,4 @@
+/* eslint-disable */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +25,8 @@
 import DynamicForm from 'core_form/dynamicform';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {get_string as getString} from "core/str";
+
 
 /**
  * Initializes the dynamic form handling.
@@ -57,55 +60,79 @@ function createDynamicForm(container) {
 function handleLoadForm(dynamicForm) {
     const loadPromise = new Pending(' local_coursedynamicrules/grade_in_activity_form:load');
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({courseid: courseId})
+    dynamicForm.load({ courseid: courseId })
         .then(() => {
             attachCourseModuleChangeListener(dynamicForm);
-
-            document.querySelector('[name=gradeitems]').value = JSON.stringify({});
-
-            const cmId = document.querySelector('[name=coursemodule]').value;
-
-            document.querySelector('[name=cmid]').value = cmId;
-            const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
-
-            cmConditionInputs.forEach((input) => {
-                const gradeItems = document.querySelector('[name=gradeitems]').value;
-                const gradeItemsObject = JSON.parse(gradeItems);
-
-                const condition = input.dataset.condition;
-                const gradeItem = input.dataset.gradeitem;
-                const value = input.value;
-                const gradeItemKey = `${condition}_${gradeItem}`;
-                gradeItemsObject[gradeItemKey] = {
-                    gradeitem: gradeItem,
-                    condition: condition,
-                    value: value,
-                };
-
-                document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
-
-                input.addEventListener('change', (e) => {
-                    const gradeItems = document.querySelector('[name=gradeitems]').value;
-                    const gradeItemsObject = JSON.parse(gradeItems);
-
-                    const condition = e.target.dataset.condition;
-                    const gradeItem = e.target.dataset.gradeitem;
-                    const value = e.target.value;
-                    const gradeItemKey = `${condition}_${gradeItem}`;
-
-                    gradeItemsObject[gradeItemKey] = {
-                        gradeitem: gradeItem,
-                        condition: condition,
-                        value: value,
-                    };
-
-                    document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
-                });
-            });
-
+            resetGradeItems();
+            updateGradeItems();
+            handleSubmitForm();
             return loadPromise.resolve();
         })
         .catch(Notification.exception);
+}
+
+/**
+ * Handles form submission.
+ */
+function handleSubmitForm() {
+    const gradeInActivityForm = document.getElementById('grade_in_activity_form');
+    const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
+    gradeInActivityForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formIsValid = formValidation();
+        if (dynamicGradeInActivityForm.checkValidity() && formIsValid) {
+            gradeInActivityForm.submit();
+        }
+    });
+}
+
+/**
+ * Validates the form by checking if the input values are within the specified grade range.
+ * 
+ * This function retrieves the course module ID from the form, selects all inputs associated with that ID,
+ * and checks if their values fall within the specified minimum and maximum grade range. If an input value
+ * is out of range, it marks the input as invalid and displays an error message.
+ * 
+ * @returns {boolean} - Returns true if the form is valid, otherwise false.
+ */
+function formValidation() {
+    const cmId = document.querySelector('[name=coursemodule]').value;
+    const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+
+    let formIsValid = true;
+    cmConditionInputs.forEach((input) => {
+        const gradeMin = input.dataset.grademin;
+        const gradeMax = input.dataset.grademax;
+        let invalidFeedback = input.nextElementSibling;
+
+        if (input.disabled) {
+            return;
+        }
+        if (!invalidFeedback || !invalidFeedback.classList.contains('invalid-feedback')) {
+            invalidFeedback = document.createElement('span');
+            invalidFeedback.className = 'invalid-feedback';
+            input.after(invalidFeedback);
+        }
+
+        if (input.value > gradeMax || input.value < gradeMin) {
+            input.classList.add('is-invalid');
+            formIsValid = false;
+            getString('errorgradeoutofrange', 'local_coursedynamicrules', {
+                min: gradeMin,
+                max: gradeMax,
+            }).then(function(content) {
+                invalidFeedback.textContent = content;
+                return;
+            }).catch(function() {
+                notification.exception(new Error('Failed to load string: restore'));
+            });
+        } else {
+            input.classList.remove('is-invalid');
+            invalidFeedback.textContent = '';
+        }
+    });
+
+    return formIsValid;
 }
 
 /**
@@ -139,53 +166,64 @@ function handleCourseModuleChange(dynamicForm, courseModuleValue) {
     const updatePromise = new Pending('local_coursedynamicrules/grade_in_activity_form:update');
 
     const courseId = document.querySelector('[name=courseid]').value;
-    dynamicForm.load({coursemodule: courseModuleValue, courseid: courseId})
-    .then(() => {
-        attachCourseModuleChangeListener(dynamicForm);
+    dynamicForm.load({ coursemodule: courseModuleValue, courseid: courseId })
+        .then(() => {
+            attachCourseModuleChangeListener(dynamicForm);
+            resetGradeItems();
+            updateGradeItems(dynamicForm);
+            handleSubmitForm();
+            return updatePromise.resolve();
+        })
+        .catch(Notification.exception);
+}
 
-        document.querySelector('[name=cmid]').value = courseModuleValue;
+/**
+ * Resets the grade items field.
+ */
+function resetGradeItems() {
+    document.querySelector('[name=gradeitems]').value = JSON.stringify({});
+}
 
-        document.querySelector('[name=gradeitems]').value = JSON.stringify({});
+/**
+ * Updates the grade items based on the current form state.
+ *
+ */
+function updateGradeItems() {
+    const cmId = document.querySelector('[name=coursemodule]').value;
+    document.querySelector('[name=cmid]').value = cmId;
+    const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
 
-        const cmId = document.querySelector('[name=coursemodule]').value;
-        const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
+    cmConditionInputs.forEach((input) => {
+        updateGradeItem(input);
 
-        cmConditionInputs.forEach((input) => {
-            const gradeItems = document.querySelector('[name=gradeitems]').value;
-            const gradeItemsObject = JSON.parse(gradeItems);
-
-            const condition = input.dataset.condition;
-            const gradeItem = input.dataset.gradeitem;
-            const value = input.value;
-            const gradeItemKey = `${condition}_${gradeItem}`;
-            gradeItemsObject[gradeItemKey] = {
-                gradeitem: gradeItem,
-                condition: condition,
-                value: value,
-            };
-
-            document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
-
-            input.addEventListener('change', (e) => {
-                const gradeItems = document.querySelector('[name=gradeitems]').value;
-                const gradeItemsObject = JSON.parse(gradeItems);
-
-                const condition = e.target.dataset.condition;
-                const gradeItem = e.target.dataset.gradeitem;
-                const value = e.target.value;
-                const gradeItemKey = `${condition}_${gradeItem}`;
-
-                gradeItemsObject[gradeItemKey] = {
-                    gradeitem: gradeItem,
-                    condition: condition,
-                    value: value,
-                };
-
-                document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
-            });
+        input.addEventListener('change', (e) => {
+            updateGradeItem(e.target);
         });
-        return updatePromise.resolve();
-    })
-    .catch(Notification.exception);
+    });
+}
+
+/**
+ * Updates a single grade item based on the input element.
+ *
+ * @param {HTMLElement} input The input element.
+ */
+function updateGradeItem(input) {
+    const gradeItems = document.querySelector('[name=gradeitems]').value;
+    const gradeItemsObject = JSON.parse(gradeItems);
+
+    const condition = input.dataset.condition;
+    const gradeItem = input.dataset.gradeitem;
+    const value = input.value;
+    const disabled = input.getAttribute('disabled') === 'disabled';
+    const gradeItemKey = `${condition}_${gradeItem}`;
+
+    gradeItemsObject[gradeItemKey] = {
+        gradeitem: gradeItem,
+        condition: condition,
+        value: value,
+        disabled: disabled,
+    };
+
+    document.querySelector('[name=gradeitems]').value = JSON.stringify(gradeItemsObject);
 }
 

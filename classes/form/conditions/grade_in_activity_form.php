@@ -41,14 +41,14 @@ class grade_in_activity_form extends condition_form {
         $this->courseid = $customdata['courseid'];
         $this->ruleid = $customdata['ruleid'];
 
+        $attributes = $mform->getAttributes();
+        $attributes['id'] = 'grade_in_activity_form';
+        $attributes['novalidate'] = true;
+
+        $mform->setAttributes($attributes);
+
         // Create container for dynamic form.
         $mform->addElement('html', html_writer::div('', '', ['data-region' => 'dynamicform']));
-
-        $mform->addElement('hidden', 'gradeitems', $this->courseid);
-        $mform->setType('gradeitems', PARAM_RAW);
-
-        $mform->addElement('hidden', 'cmid');
-        $mform->setType('cmid', PARAM_INT);
 
         parent::definition();
 
