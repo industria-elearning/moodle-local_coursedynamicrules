@@ -120,7 +120,12 @@ $string['missing_plugins_warning'] = '🔔 Melhore as suas notificações! Os no
 <br>
 <a href="https://yoursite.com/buy-plugins" target="_blank">Clique aqui para comprar e ativar agora!</a>';
 $string['provider_not_enabled_warning'] = 'Ative as notificações com o <strong>Datacurso Message Hub</strong> para esta ação enviar notificações via WhatsApp e SMS utilizando fornecedores como Twilio.
-Pode ativar/desativar nas <a href="{$a}" target="_blank">Definições de notificação</a> e procurar <strong>Notificação de regras dinâmicas do curso</strong>.
+Pode ativar nas <a href="{$a}" target="_blank">Definições de notificação</a> e procurar <strong>Notificação de regras dinâmicas do curso</strong>.
 <br>
 <a href="https://docs.com/plugin" target="_blank">Consulte a documentação para mais informações.</a>';
+$string['rules'] = 'Regras';
+$string['rules_help'] = 'As regras são usadas para definir um conjunto de condições e ações que serão executadas';
+$string['missing_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja instalado e ativado. Por favor, faça o download em <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instale-o.';
+$string['disabled_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja ativado. Por favor, acesse a página <a href="{$a}" target="_blank">Gerenciar restrições</a>, procure por <strong>Restrição por usuário</strong> e ative-o.';
+
 

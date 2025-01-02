@@ -16,8 +16,6 @@
 
 namespace local_coursedynamicrules\form\actions;
 
-use context_course;
-use context_system;
 use moodle_url;
 
 /**

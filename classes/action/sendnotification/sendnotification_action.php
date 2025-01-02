@@ -49,7 +49,6 @@ class sendnotification_action extends action {
 
         $messagesubject = $this->params->messagesubject;
         $messagebody = $this->params->messagebody;
-        $messagesmallmessage = $this->params->messagesmallmessage;
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -59,6 +58,9 @@ class sendnotification_action extends action {
         $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
         $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
         $messagebody = str_replace($key, $value, $messagebody);
+
+        $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
+        $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
 
         $message = new \core\message\message();
         $message->component = 'local_coursedynamicrules';
@@ -70,7 +72,9 @@ class sendnotification_action extends action {
         $message->fullmessage = html_to_text($messagebody);
         $message->fullmessageformat = FORMAT_HTML;
         $message->fullmessagehtml = $messagebody;
-        $message->smallmessage = $messagesmallmessage;
+        $message->smallmessage = $smallmessagetext;
+        $message->notification = 1;
+
         $messageid = message_send($message);
         return $messageid;
     }
@@ -145,5 +149,39 @@ class sendnotification_action extends action {
     public function get_description() {
         $messagesubject = $this->params->messagesubject;
         return get_string('sendnotification_description', 'local_coursedynamicrules', $messagesubject);
+    }
+
+    /**
+     * Sanitizes an HTML message for Twilio.
+     *
+     * This function takes an HTML message as input and returns a sanitized string
+     * that is safe to be sent via Twilio.
+     *
+     * @param string $html The HTML message to be sanitized.
+     * @return string The sanitized message.
+     */
+    protected function sanitize_html_message_twilio($html): string {
+        // Check if the HTML message is empty or invalid.
+        if (empty($html) || !is_string($html)) {
+            return '';
+        }
+
+        // Convert all <a> tags to plain text.
+        $html = preg_replace_callback('/<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/i', function ($matches) {
+            // We return only the URL, we don't need the text.
+            return $matches[1] . ' ';
+        }, $html);
+
+        // Remove all HTML tags.
+        $text = strip_tags($html);
+
+        // Remove all line breaks.
+        $text = preg_replace('/\s+/', ' ', $text);
+        $text = preg_replace('/\n+/', ' ', $text);
+
+        // Decode HTML entities.
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
+
+        return $text;
     }
 }

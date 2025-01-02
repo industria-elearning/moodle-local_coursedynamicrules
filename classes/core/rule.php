@@ -159,15 +159,13 @@ class rule {
      *
      */
     public static function validate_licence($licensekey, $localkey='') {
-        global $CFG;
-
         // Configuration Values.
         // Enter the url to your WHMCS installation here.
         $whmcsurl = 'https://shop.datacurso.com/';
 
         // Must match what is specified in the MD5 Hash Verification field.
         // of the licensing product that will be used with this check.
-        $licensingsecretkey = 'p!kQ$#Y?BP4Pi6b$';
+        $licensingsecretkey = 'Ya9x!&9CsBb6EYeT';
         // The number of days to wait between performing remote license checks.
         $localkeydays = 1;
         // The number of days to allow failover for after local key expiry.
@@ -178,8 +176,8 @@ class rule {
 
         $checktoken = time() . md5(mt_rand(100000000, mt_getrandmax()) . $licensekey);
         $checkdate = date("Ymd");
-        $domain = parse_url($CFG->wwwroot, PHP_URL_HOST);
-        $usersip = gethostbyname($domain);
+        $domain = $_SERVER['SERVER_NAME'];
+        $usersip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR'];
         $dirpath = dirname(__FILE__);
         $verifyfilepath = 'modules/servers/licensing/verify.php';
         $localkeyvalid = false;
@@ -377,6 +375,30 @@ class rule {
         $this->active = $active ? 1 : 0;
         $DB->set_field('cdr_rule', 'active', $this->active, ['id' => $this->id]);
 
+    }
+
+    /**
+     * Retrieves the ID of the rule.
+     *
+     * @return int The ID of the rule.
+     */
+    public function get_id() {
+        return $this->id;
+    }
+    /**
+     * Deletes a rule record from the 'cdr_rule' table. and related conditions and actions with it.
+     *
+     * @return bool True on success, false on failure.
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function delete() {
+        global $DB;
+
+        foreach ($this->conditions as $condition) {
+            $condition->delete();
+        }
+
+        return $DB->delete_records('cdr_rule', ['id' => $this->id]);
     }
 
 }

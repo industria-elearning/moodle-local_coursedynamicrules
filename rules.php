@@ -159,6 +159,11 @@ $addrulebutton = new single_button(
     true
 );
 
+echo $OUTPUT->heading_with_help(
+    get_string('rules', 'local_coursedynamicrules'),
+    'rules',
+    'local_coursedynamicrules'
+);
 echo html_writer::div($OUTPUT->render($addrulebutton), 'my-3');
 echo html_writer::table($table);
 echo $OUTPUT->footer();

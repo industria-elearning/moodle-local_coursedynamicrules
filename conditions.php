@@ -86,6 +86,7 @@ foreach ($conditions as $condition) {
 
 $conditionoptions = load_condition_options();
 
+echo $OUTPUT->heading_with_help(get_string('conditions', 'local_coursedynamicrules'), 'conditions', 'local_coursedynamicrules');
 echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
 echo html_writer::start_div('d-flex h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $conditionoptions]);

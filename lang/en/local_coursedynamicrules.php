@@ -47,7 +47,9 @@ $string['typemissing'] = 'Missing value "type"';
 $string['name'] = 'Name';
 $string['description'] = 'Description';
 $string['conditions'] = 'Conditions';
+$string['conditions_help'] = 'Conditions are used to define the conditions that must be met for executing the rule actions';
 $string['actions'] = 'Actions';
+$string['actions_help'] = 'Actions are used to define the actions that will be executed when the rule conditions are met';
 $string['ruleactive'] = 'Active';
 $string['ruleactive_help'] = 'Enable or disable the rule';
 $string['ruleadd'] = 'Add rule';
@@ -103,12 +105,14 @@ $string['no_complete_activity'] = 'Activity not completed';
 $string['no_complete_activity_task'] = 'No complete activity task';
 $string['expectedcompletiondate'] = 'Expected completion date';
 $string['grade_in_activity'] = 'Grade in activity';
-$string['grade_in_activity_description'] = 'Users who have receive a grade for course activity module \'{$a}\'';
+$string['grade_in_activity_description'] = 'For "{$a->moddescription}", the following grades must be obtained: {$a->gradestring}';
 $string['grade'] = 'Grade';
 $string['enablegradegreaterthanorequal_help'] = 'Enable grade greater than or equal to';
 $string['gradegreaterthanorequal'] = 'must be &#x2265;';
+$string['gradegreaterthanorequalvalue'] = '&#x2265; {$a}';
 $string['gradegreaterthanorequal_help'] = 'Minimum grade (inclusive)';
 $string['gradelessthan'] = 'must be <';
+$string['gradelessthanvalue'] = '< {$a}';
 $string['gradelessthan_help'] = 'Maximum grade (exclusive)';
 $string['enablegradelessthan'] = 'Enable grade less than';
 $string['errornegativegrade'] = 'The grade must be 0 or greater.';
@@ -121,10 +125,13 @@ $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <stro
 <br>
 <a href="https://yoursite.com/buy-plugins" target="_blank">Click here to purchase and enable them now!</a>';
 $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
-You can enable/disable it from <a href="{$a}" target="_blank">Notification settings</a> and search <strong>Course dynamic rules notification</strong>.
+You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Course dynamic rules notification</strong>.
 <br>
 <a href="https://docs.com/plugin" target="_blank">See documentation for more information.</a>';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['licencekey'] = 'Licence Key';
 $string['licencekey_desc'] = 'License key required to use this plugin';
-
+$string['rules'] = 'Rules';
+$string['rules_help'] = 'Rules are used to define set of conditions and actions that will be executed';
+$string['missing_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be installed and enabled. Please download it from <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> and install it.';
+$string['disabled_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be enabled. Please access to the <a href="{$a}" target="_blank">Manage restrictions</a> page, search <strong>Restriction by user</strong> and enable it.';

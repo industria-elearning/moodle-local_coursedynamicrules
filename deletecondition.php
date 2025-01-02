@@ -70,8 +70,8 @@ $description = $conditioninstance->get_description();
 
 if ($delete === md5($config->confirmdeletecondition)) {
     require_sesskey();
-    // Delete rule.
-    $DB->delete_records('cdr_condition', ['id' => $id]);
+    // Delete condition.
+    $conditioninstance->delete();
 
     echo $OUTPUT->notification(
         get_string("deletedcondition", "local_coursedynamicrules", $description),
