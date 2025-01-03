@@ -124,9 +124,6 @@ $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Dat
 You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Course dynamic rules notification</strong>.
 <br>
 <a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">See documentation for more information.</a>';
-$string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
-$string['licencekey'] = 'License Key';
-$string['licencekey_desc'] = 'License key required to use this plugin';
 $string['rules'] = 'Rules';
 $string['rules_help'] = 'Rules are used to define set of conditions and actions that will be executed';
 $string['missing_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be installed and enabled. Please download it from <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> and install it.';
@@ -136,11 +133,15 @@ $string['grade_in_activity_condition_info'] = 'This condition will check which u
 $string['no_complete_activity_condition_info'] = 'This condition will check which user has not completed the selected activity module after the specified date.';
 $string['passgrade_condition_info'] = 'This condition will check which user has completed the selected activity module with a passing grade.';
 $string['generalsettings'] = 'General settings';
-$string['checklicensekey'] = 'Check licence key';
-$string['licensekeyvalid'] = 'License key is valid';
-$string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['gradegreaterthanorequal'] = 'must be &#x2265;';
 $string['gradegreaterthanorequal_help'] = 'The condition is met if the user\'s grade is greater than or equal to the specified value.';
 $string['gradelessthan'] = 'must be <';
 $string['gradelessthan_help'] = 'The condition is met if the user\'s grade is less than the specified value.';
 
+// License.
+$string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
+$string['licencekey'] = 'License Key';
+$string['licencekey_desc'] = 'License key required to use this plugin';
+$string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
+$string['checklicensekey'] = 'Check licence key';
+$string['licensekeyvalid'] = 'License key is valid';
