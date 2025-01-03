@@ -85,22 +85,25 @@ class rule {
      * - message {string} - Message to show when validation is not correct
      */
     public static function validate_licence_status() {
-        $config = get_config('local_coursedynamicrules');
+
+        $pluginname = 'local_coursedynamicrules';
+
+        $config = get_config($pluginname);
         $licencekey = $config->licencekey;
 
         $licensestatus = new stdClass();
         $licensestatus->success = false;
-        $licensestatus->message = get_string('pluginnotavailable', 'local_coursedynamicrules');
+        $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
             if (!empty($licencekey)) {
                 $localkey = $config->localkey ?? '';
 
-                $initiallicensekey = get_config('local_coursedynamicrules', 'initiallicensekey');
+                $initiallicensekey = get_config($pluginname, 'initiallicensekey');
 
                 // When licence key is changed set localkey to empty to force remote validation.
                 if ($licencekey != $initiallicensekey) {
-                    set_config('initiallicensekey', $licencekey, 'local_coursedynamicrules');
+                    set_config('initiallicensekey', $licencekey, $pluginname);
                     $localkey = '';
                 }
 
@@ -112,7 +115,7 @@ class rule {
                 }
 
                 if ($licencedata['status'] == 'Active') {
-                    set_config('localkey', $localkey, 'local_coursedynamicrules');
+                    set_config('localkey', $localkey, $pluginname);
                     $licensestatus->success = true;
                     $licensestatus->message = '';
                 }
