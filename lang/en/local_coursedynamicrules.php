@@ -137,6 +137,17 @@ $string['gradegreaterthanorequal'] = 'must be &#x2265;';
 $string['gradegreaterthanorequal_help'] = 'The condition is met if the user\'s grade is greater than or equal to the specified value.';
 $string['gradelessthan'] = 'must be <';
 $string['gradelessthan_help'] = 'The condition is met if the user\'s grade is less than the specified value.';
+$string['no_course_access_condition_info'] = 'This condition will check which user has not access to this course in the specified time period.';
+$string['no_course_access'] = 'No course access';
+$string['no_course_access_description'] = 'Users who have not accessed this course in the last {$a->periodvalue} {$a->periodunit}';
+$string['period'] = 'Period';
+$string['period_help'] = 'The minimum amount of time a user must go without accessing the course.';
+$string['no_course_access_task'] = 'No course access task';
+$strign['minutes'] = 'Minutes';
+$string['hours'] = 'Hours';
+$strign['days'] = 'Days';
+$string['weeks'] = 'Weeks';
+$string['months'] = 'Months';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
