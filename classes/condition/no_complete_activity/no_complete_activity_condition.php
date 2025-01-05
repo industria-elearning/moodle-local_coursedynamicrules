@@ -57,7 +57,15 @@ class no_complete_activity_condition extends condition {
      */
     public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
     $ajaxformdata=null) {
-        $this->conditionform = new no_complete_activity_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+        $this->conditionform = new no_complete_activity_form(
+            $action,
+            $customdata,
+            $method,
+            $target,
+            $attributes,
+            $editable,
+            $ajaxformdata
+        );
     }
 
     /**
@@ -102,7 +110,8 @@ class no_complete_activity_condition extends condition {
             return false;
         }
 
-        // Return false if the user has completed the activity module with a passing grade because is not necessary execute the actions of the rule.
+        // Return false if the user has completed the activity module with a passing grade
+        // because is not necessary execute the actions of the rule.
         if ($cminfo->completion == COMPLETION_TRACKING_AUTOMATIC && $completiondata->completionstate == COMPLETION_COMPLETE_PASS) {
             return false;
         }
