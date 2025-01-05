@@ -143,11 +143,6 @@ $string['no_course_access_description'] = 'Users who have not accessed this cour
 $string['period'] = 'Period';
 $string['period_help'] = 'The minimum amount of time a user must go without accessing the course.';
 $string['no_course_access_task'] = 'No course access task';
-$strign['minutes'] = 'Minutes';
-$string['hours'] = 'Hours';
-$strign['days'] = 'Days';
-$string['weeks'] = 'Weeks';
-$string['months'] = 'Months';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
