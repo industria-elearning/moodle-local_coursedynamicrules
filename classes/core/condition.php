@@ -42,9 +42,13 @@ abstract class condition {
     /** @var int course id */
     protected $courseid;
 
+    /** @var int rule id */
+    protected $ruleid;
+
     /**
      * Action constructor.
      * @param object $record Record of the action stored in DB
+     * @param int $courseid the course id where the action is applied.
      */
     public function __construct($record, $courseid = null) {
         $this->set_data($record, $courseid);
@@ -67,11 +71,13 @@ abstract class condition {
     /**
      * Set the data of the condition
      * @param object $record Record that represents data stored in DB
+     * @param int $courseid the course id
      */
     public function set_data($record, $courseid = null) {
         $this->id = $record->id;
         $this->type = $record->conditiontype;
         $this->courseid = $courseid;
+        $this->ruleid = $record->ruleid;
         $this->params = json_decode($record->params);
     }
 
