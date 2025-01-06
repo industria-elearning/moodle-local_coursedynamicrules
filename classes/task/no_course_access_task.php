@@ -89,7 +89,6 @@ class no_course_access_task extends \core\task\scheduled_task {
         foreach ($conditions as $condition) {
             $params = $condition->get_params();
 
-            $next = userdate($params->nexttimeperiod);
             $now = time();
             // Check if the condition type matches and the current time is before the next time period.
             if ($condition->get_type() == $this->conditiontype && $now < $params->nexttimeperiod) {
