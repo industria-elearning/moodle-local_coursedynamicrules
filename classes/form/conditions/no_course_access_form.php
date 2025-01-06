@@ -48,10 +48,10 @@ class no_course_access_form extends condition_form {
         $periodgroup = [];
         $periodgroup[] = $mform->createElement('text', 'periodvalue', '', ['size' => 5]);
         $periodgroup[] = $mform->createElement('select', 'periodunit', '', [
-            'minutes' => get_string('minutes'),
-            'hours' => get_string('hours'),
-            'days' => get_string('days'),
-            'weeks' => get_string('weeks'),
+            'minutes' => get_string('minutes', 'local_coursedynamicrules'),
+            'hours' => get_string('hours', 'local_coursedynamicrules'),
+            'days' => get_string('days', 'local_coursedynamicrules'),
+            'weeks' => get_string('weeks', 'local_coursedynamicrules'),
         ]);
 
         $mform->addGroup($periodgroup, 'period_group', get_string('period', 'local_coursedynamicrules'), '', false);
