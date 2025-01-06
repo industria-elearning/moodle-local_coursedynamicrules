@@ -47,6 +47,7 @@ class no_course_access_task extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
+        // Validate the license status before proceeding.
         $licensestatus = rule::validate_licence_status();
         if (!$licensestatus->success) {
             return;
@@ -54,6 +55,7 @@ class no_course_access_task extends \core\task\scheduled_task {
 
         $conditiontype = $this->conditiontype;
 
+        // Retrieve all active rules with the specified condition type.
         $rules = $DB->get_records_sql(
             "SELECT DISTINCT r.*
             FROM
@@ -65,10 +67,56 @@ class no_course_access_task extends \core\task\scheduled_task {
             ['conditiontype' => $conditiontype]
         );
 
+        // Iterate through each rule and execute if conditions are met.
         foreach ($rules as $rule) {
             $users = enrol_get_course_users($rule->courseid);
             $ruleinstance = new rule($rule, $users);
-            $ruleinstance->execute();
+            if ($this->could_be_execute_rule($ruleinstance)) {
+                $ruleinstance->execute();
+                $this->set_time_period($ruleinstance);
+            }
+        }
+    }
+
+    /**
+     * Check if the rule can be executed based on its conditions.
+     *
+     * @param rule $ruleinstance The rule instance to check.
+     * @return bool True if the rule can be executed, false otherwise.
+     */
+    private function could_be_execute_rule($ruleinstance) {
+        $conditions = $ruleinstance->get_conditions();
+        foreach ($conditions as $condition) {
+            $params = $condition->get_params();
+
+            $next = userdate($params->nexttimeperiod);
+            $now = time();
+            // Check if the condition type matches and the current time is before the next time period.
+            if ($condition->get_type() == $this->conditiontype && $now < $params->nexttimeperiod) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Set the next time period for the rule conditions.
+     *
+     * @param rule $ruleinstance The rule instance to update.
+     */
+    private function set_time_period($ruleinstance) {
+        global $DB;
+        $conditions = $ruleinstance->get_conditions();
+        foreach ($conditions as $condition) {
+            $params = $condition->get_params();
+            $conditionid = $condition->get_id();
+            $now = time();
+
+            // Check if the condition type matches and the current time is after the next time period.
+            if ($condition->get_type() == $this->conditiontype && $now >= $params->nexttimeperiod) {
+                $params->nexttimeperiod = strtotime("+$params->periodvalue $params->periodunit", $now);
+                $DB->set_field('cdr_condition', 'params', json_encode($params), ['id' => $conditionid]);
+            }
         }
     }
 }
