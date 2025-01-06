@@ -31,6 +31,7 @@ use stdClass;
 class no_course_access_condition extends condition {
     /** @var string type of condition */
     protected $type = "no_course_access";
+
     /**
      * Creates and returns an instance of the form for editing the item
      *
@@ -117,6 +118,7 @@ class no_course_access_condition extends condition {
         $params = [
             'periodvalue' => $periodvalue,
             'periodunit' => $periodunit,
+            'nexttimeperiod' => time(),
         ];
 
         $condition = new stdClass();
@@ -146,9 +148,11 @@ class no_course_access_condition extends condition {
     public function get_description() {
         $periodvalue = $this->params->periodvalue;
         $periodunit = $this->params->periodunit;
+
+        $periodunitstr = get_string($periodunit, 'local_coursedynamicrules');
         $options = [
             'periodvalue' => $periodvalue,
-            'periodunit' => get_string($periodunit),
+            'periodunit' => strtolower($periodunitstr),
         ];
         $description = get_string('no_course_access_description', 'local_coursedynamicrules', $options);
 
