@@ -136,6 +136,12 @@ Por ejemplo, en el caso del módulo `Foro`, los ítems de calificación disponib
 
 Esta condición se utiliza para evaluar si un usuario no ha completado una actividad específica despues de un período de tiempo determinado.
 
+Esta condición se ejecuta de forma recurrente mediante la tarea programada `local_coursedynamicrules\task\no_complete_activity_task` que por defecto se ejecuta cada minuto.
+
+La condición solo evaluará una vez cuando se haya cumplido el tiempo especificado en la configuración de la condición, la cual se detalla en la siguiente sección [Configuración de la condición](#configuración-de-la-condición-1).
+
+Una vez que se evalúe la condición y se ejecutan las acciones de la regla, la regla se desactivará automáticamente.
+
 #### Configuración de la condición
 
 1. **Buscar módulos de actividad del curso**:
