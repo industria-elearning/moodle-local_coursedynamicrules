@@ -43,14 +43,16 @@ abstract class action {
     /** @var int course id */
     protected $courseid;
 
+    /** @var int rule id */
+    protected $ruleid;
+
     /**
      * Action constructor.
      * @param object $record Record of the action stored in DB
+     * @param int $courseid the course id where the action is applied.
      */
     public function __construct($record, $courseid = null) {
-        $this->id = $record->id;
-        $this->courseid = $courseid;
-        $this->params = json_decode($record->params);
+        $this->set_data($record, $courseid);
     }
 
     /**
@@ -101,13 +103,15 @@ abstract class action {
     /**
      * Set the action data
      *
-     * @param stdClass $actiondata the action data to set
+     * @param stdClass $record the action data to set
+     * @param int $courseid the course id
      */
-    public function set_data($action) {
-
-        if ($action && $action->params) {
-            $this->params = json_decode($action->params, true);
-        }
+    public function set_data($record, $courseid = null) {
+        $this->id = $record->id;
+        $this->type = $record->actiontype;
+        $this->courseid = $courseid;
+        $this->ruleid = $record->ruleid;
+        $this->params = json_decode($record->params);
     }
 
     /**
