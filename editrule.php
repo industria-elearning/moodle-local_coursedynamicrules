@@ -70,7 +70,9 @@ $ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 
 if ($ruleform->is_cancelled()) {
     redirect($rulesurl);
 } else if ($data = $ruleform->get_data()) {
+    $data->timemodified = time();
     if (empty($data->id)) {
+        $data->timecreated = time();
         $DB->insert_record('cdr_rule', $data);
         redirect(
             $rulesurl,
