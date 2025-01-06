@@ -153,6 +153,25 @@ Esta condición se utiliza para evaluar si un usuario no ha completado una activ
     ![Expected completion date](__docs/images/expected-completion-date.png)
 
 
+### Sin acceso al curso
+
+#### Descripción
+
+Esta condición se utiliza para evaluar que usuarios no han accedido a un curso dentro de un período de tiempo determinado.
+
+Esta condición se ejecuta de forma recurrente mediante la tarea programada `local_coursedynamicrules\task\no_course_access_task` que por defecto se ejecuta cada minuto. 
+
+Una vez que se agrega la condición a una regla, se empezará a evaluar a los usuarios que cumplan con la condición y se ejecutarán las acciones asociadas a la regla.
+
+La condición se volverá a evaluar cada vez que haya pasado el periodo tiempo especificado en la configuración de la condición los cuales se detallan en la siguiente sección [Configuración de la condición](#configuración-de-la-condición-2).
+
+#### Configuración de la condición
+
+1. **Periodo**:
+   Definimos el periodo de tiempo en el que esperamos que los usuarios hayan accedido al curso en el primer campo ingresamos el valor y en el segundo seleccionamos la unidad de tiempo.
+
+    ![Time period](__docs/images/time-period.png)
+
 ### Finalización de actividad con calificación aprobatoria
 
 #### Descripción
