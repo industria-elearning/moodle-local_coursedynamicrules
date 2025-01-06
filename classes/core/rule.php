@@ -370,6 +370,9 @@ class rule {
                 $this->execute_actions($rulecontext);
             }
         }
+
+        // After the rule is executed, set the last execution time.
+        $this->set_last_execution_time(time());
     }
 
     /**
@@ -390,7 +393,18 @@ class rule {
         global $DB;
         $this->active = $active ? 1 : 0;
         $DB->set_field('cdr_rule', 'active', $this->active, ['id' => $this->id]);
+    }
 
+    /**
+     * Sets the last execution time for the rule.
+     *
+     * This method updates the 'lastexecutiontime' field in the 'cdr_rule' table
+     *
+     * @param int $time The timestamp of the last execution time.
+     */
+    public function set_last_execution_time($time) {
+        global $DB;
+        $DB->set_field('cdr_rule', 'lastexecutiontime', $time, ['id' => $this->id]);
     }
 
     /**
