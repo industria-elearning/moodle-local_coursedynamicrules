@@ -20,12 +20,18 @@ use local_coursedynamicrules\core\rule;
 
 /**
  * Class no_complete_activity_task
+ * This task is responsible for executing the rules with the condition no_complete_activity.
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class no_complete_activity_task extends \core\task\scheduled_task {
+
+    /** @var string type of condition */
+    protected $conditiontype = "no_complete_activity";
+
+
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -53,8 +59,9 @@ class no_complete_activity_task extends \core\task\scheduled_task {
                 {cdr_rule} r
                 JOIN {cdr_condition} c ON c.ruleid = r.id
             WHERE
-                c.conditiontype = 'no_complete_activity'
-                AND r.active = 1"
+                c.conditiontype = :conditiontype
+                AND r.active = 1",
+            ['conditiontype' => $this->conditiontype]
         );
 
         foreach ($rules as $rule) {
@@ -66,7 +73,6 @@ class no_complete_activity_task extends \core\task\scheduled_task {
                 $ruleinstance->execute();
                 $ruleinstance->set_active(false);
             }
-
         }
     }
 
@@ -79,13 +85,15 @@ class no_complete_activity_task extends \core\task\scheduled_task {
 
         foreach ($conditions as $condition) {
             $now = time();
+
             $params = $condition->get_params();
-            if ($condition->get_type() == 'no_complete_activity' && $now < $params->expectedcompletiondate) {
+            $expectedcompletiondate = $params->expectedcompletiondate;
+
+            if ($condition->get_type() == $this->conditiontype && $now < $expectedcompletiondate) {
                 return false;
             }
         }
 
         return true;
-
     }
 }

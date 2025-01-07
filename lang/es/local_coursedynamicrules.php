@@ -142,6 +142,17 @@ $string['gradegreaterthanorequal'] = 'debe ser &#x2265;';
 $string['gradegreaterthanorequal_help'] = 'La condición se cumple si la calificación del usuario es mayor o igual al valor especificado.';
 $string['gradelessthan'] = 'debe ser <';
 $string['gradelessthan_help'] = 'La condición se cumple si la calificación del usuario es menor al valor especificado.';
+$string['no_course_access_condition_info'] = 'Esta condición verificará qué usuarios no han accedido a este curso dentro del período de tiempo especificado.';
+$string['no_course_access'] = 'Sin acceso al curso';
+$string['no_course_access_description'] = 'Usuarios que tarden más de {$a->periodvalue} {$a->periodunit} sin acceder a este curso.';
+$string['period'] = 'Período';
+$string['period_help'] = 'El tiempo mínimo que un usuario debe pasar sin acceder al curso.';
+$string['no_course_access_task'] = 'Tarea de sin acceso al curso';
+$string['minutes'] = 'Minutos';
+$string['hours'] = 'Horas';
+$string['days'] = 'Días';
+$string['weeks'] = 'Semanas';
+$string['months'] = 'Meses';
 
 
 

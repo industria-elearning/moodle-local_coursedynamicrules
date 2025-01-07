@@ -14,24 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition\no_complete_activity;
+namespace local_coursedynamicrules\condition\no_course_access;
 
-use completion_info;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\core\rule;
-use local_coursedynamicrules\form\conditions\no_complete_activity_form;
+use local_coursedynamicrules\form\conditions\no_course_access_form;
 use stdClass;
 
 /**
- * Class no_complete_activity_condition
+ * Class no_course_access_condition
  *
  * @package    local_coursedynamicrules
- * @copyright  2024 Industria Elearning <info@industriaelearning.com>
+ * @copyright  2025 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class no_complete_activity_condition extends condition {
+class no_course_access_condition extends condition {
     /** @var string type of condition */
-    protected $type = "no_complete_activity";
+    protected $type = "no_course_access";
 
     /**
      * Creates and returns an instance of the form for editing the item
@@ -57,7 +56,7 @@ class no_complete_activity_condition extends condition {
      */
     public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
     $ajaxformdata=null) {
-        $this->conditionform = new no_complete_activity_form(
+        $this->conditionform = new no_course_access_form(
             $action,
             $customdata,
             $method,
@@ -75,6 +74,7 @@ class no_complete_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
+        global $DB;
 
         $licensestatus = rule::validate_licence_status();
         if (!$licensestatus->success) {
@@ -83,41 +83,26 @@ class no_complete_activity_condition extends condition {
 
         $courseid = $context->courseid;
         $userid = $context->userid;
-        $cmid = $this->params->cmid;
-        $expectedcompletiondate = $this->params->expectedcompletiondate;
+        $periodvalue = $this->params->periodvalue;
+        $periodunit = $this->params->periodunit;
+
+        $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', [
+            'courseid' => $courseid,
+            'userid' => $userid,
+        ]);
+
+        // If user has never accessed the course.
+        if (!$lastaccess) {
+            return true;
+        }
 
         $now = time();
 
-        if ($now < $expectedcompletiondate) {
-            return false;
-        }
+        // Calculate the period.
+        $period = strtotime("+$periodvalue $periodunit", $lastaccess);
 
-        $modinfo = get_fast_modinfo($courseid, $userid);
-        // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.
-        $cminfo = $modinfo->cms[$cmid];
-        if (!$cminfo || $cminfo->deletioninprogress) {
-            return false;
-        }
-
-        $completion = new completion_info($modinfo->get_course());
-
-        $completiondata = $completion->get_data(
-            (object)['id' => $cmid], false, $userid
-        );
-
-        // Return false if the user has completed the activity module because is not necessary execute the actions of the rule.
-        if ($cminfo->completion == COMPLETION_TRACKING_MANUAL && $completiondata->completionstate == COMPLETION_COMPLETE) {
-            return false;
-        }
-
-        // Return false if the user has completed the activity module with a passing grade
-        // because is not necessary execute the actions of the rule.
-        if ($cminfo->completion == COMPLETION_TRACKING_AUTOMATIC && $completiondata->completionstate == COMPLETION_COMPLETE_PASS) {
-            return false;
-        }
-
-        // Return true if the user has not completed the activity module in the expected date.
-        return true;
+        // If the user has not accessed the course in the last period.
+        return $now >= $period;
     }
 
     /**
@@ -126,9 +111,14 @@ class no_complete_activity_condition extends condition {
      */
     public function save_condition($formdata) {
         global $DB;
+
+        $periodvalue = $formdata->periodvalue;
+        $periodunit = $formdata->periodunit;
+
         $params = [
-            'cmid' => $formdata->coursemodule,
-            'expectedcompletiondate' => $formdata->expectedcompletiondate,
+            'periodvalue' => $periodvalue,
+            'periodunit' => $periodunit,
+            'nexttimeperiod' => time(),
         ];
 
         $condition = new stdClass();
@@ -147,7 +137,7 @@ class no_complete_activity_condition extends condition {
      * @return string
      */
     public function get_header() {
-        return get_string('no_complete_activity', 'local_coursedynamicrules');
+        return get_string('no_course_access', 'local_coursedynamicrules');
     }
 
     /**
@@ -156,20 +146,15 @@ class no_complete_activity_condition extends condition {
      * @return string
      */
     public function get_description() {
-        $courseid = $this->courseid;
-        $cmid = $this->params->cmid;
-        $modinfo = get_fast_modinfo($courseid);
-        $cms = $modinfo->get_cms();
-        $cminfo = $cms[$cmid];
+        $periodvalue = $this->params->periodvalue;
+        $periodunit = $this->params->periodunit;
 
-        if (!$cminfo) {
-            return '';
-        }
+        $periodunitstr = get_string($periodunit, 'local_coursedynamicrules');
         $options = [
-            'moddescription' => ucfirst($cminfo->modname) . " - " . $cminfo->name,
-            'expectedcompletiondate' => userdate($this->params->expectedcompletiondate),
+            'periodvalue' => $periodvalue,
+            'periodunit' => strtolower($periodunitstr),
         ];
-        $description = get_string('no_complete_activity_description', 'local_coursedynamicrules', $options);
+        $description = get_string('no_course_access_description', 'local_coursedynamicrules', $options);
 
         return $description;
     }
