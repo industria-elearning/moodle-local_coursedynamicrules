@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * TODO describe file backup_local_coursedynamicrules_plugin.class
  *
- * @package     local_coursedynamicrules
- * @copyright   2024 Industria Elearning <info@industriaelearning.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_coursedynamicrules
+ * @copyright  2025 Industria Elearning <info@industriaelearning.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+// More information about the backup process: {@link https://docs.moodle.org/dev/Backup_API}.
+// More information about the restore process: {@link https://docs.moodle.org/dev/Restore_API}.
 
-$plugin->component = 'local_coursedynamicrules';
-$plugin->release = '1.3.0';
-$plugin->version = 2025010901;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_ALPHA;
+
+/**
+ * Setting to control if backup will include coursedynamicrules or not.
+ */
+class backup_coursedynamicrules_setting extends backup_generic_setting {
+}
