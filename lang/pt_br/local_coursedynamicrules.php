@@ -136,3 +136,8 @@ $string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
 $string['gradegreaterthanorequal_help'] = 'A condição é atendida se a nota do usuário for maior ou igual ao valor especificado.';
 $string['gradelessthan'] = 'deve ser <';
 $string['gradelessthan_help'] = 'A condição é atendida se a nota do usuário for menor que o valor especificado.';
+
+// License.
+$string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';
+$string['licencekey_desc'] = 'Chave de licença necessária para usar este plugin';
+
