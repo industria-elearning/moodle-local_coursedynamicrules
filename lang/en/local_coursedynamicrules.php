@@ -148,6 +148,16 @@ $string['hours'] = 'Hours';
 $string['days'] = 'Days';
 $string['weeks'] = 'Weeks';
 $string['months'] = 'Months';
+$string['timeintervals'] = 'Time intervals';
+$string['timeintervals_help'] = 'Comma (,) separated list of time intervals to check users inactivity in the course.';
+$string['course_inactivity_info'] = 'This condition will check which users have had no activity in the course within the specified time intervals.';
+$string['course_inactivity'] = 'Course inactivity in time intervals';
+$string['basedate'] = 'Base Date';
+$string['date_from_enrollment'] = 'From Enrollment Date';
+$string['date_from_course_start'] = 'From Course Start Date';
+$string['date_from_now'] = 'From Now';
+$string['basedate_help'] = 'Select the base date from which the time intervals will be evaluated.';
+$string['invalidbasedate'] = 'Invalid base date type {$a}';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
@@ -156,3 +166,4 @@ $string['licencekey_desc'] = 'License key required to use this plugin';
 $string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['checklicensekey'] = 'Check licence key';
 $string['licensekeyvalid'] = 'License key is valid';
+

@@ -153,6 +153,17 @@ $string['hours'] = 'Horas';
 $string['days'] = 'Días';
 $string['weeks'] = 'Semanas';
 $string['months'] = 'Meses';
+$string['timeintervals'] = 'Intervalos de tiempo';
+$string['timeintervals_help'] = 'Lista de intervalos de tiempo separados por comas (,) para verificar la inactividad de los usuarios en el curso.';
+$string['course_inactivity_info'] = 'Esta condición verificará qué usuarios no han tenido actividad en el curso dentro de los intervalos de tiempo especificados.';
+$string['course_inactivity'] = 'Inactividad en el curso en intervalos de tiempo';
+$string['basedate'] = 'Fecha base';
+$string['date_from_enrollment'] = 'Desde la fecha de inscripción';
+$string['date_from_course_start'] = 'Desde la fecha de inicio del curso';
+$string['date_from_now'] = 'Desde ahora';
+$string['basedate_help'] = 'Seleccione la fecha base desde la cual se evaluarán los intervalos de tiempo.';
+$string['invalidbasedate'] = 'Tipo de fecha base inválido: {$a}';
+
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin no está disponible porque la licencia del producto ha expirado o es inválida. Por favor, visita <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
