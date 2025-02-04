@@ -158,6 +158,7 @@ $string['date_from_course_start'] = 'From Course Start Date';
 $string['date_from_now'] = 'From Now';
 $string['basedate_help'] = 'Select the base date from which the time intervals will be evaluated.';
 $string['invalidbasedate'] = 'Invalid base date type {$a}';
+$string['course_inactivity_task'] = 'Course inactivity task';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
