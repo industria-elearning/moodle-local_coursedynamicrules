@@ -34,6 +34,7 @@ class course_module_completion_updated {
     /**
      * The definition of the event.
      *
+     * @param \core\event\course_module_completion_updated $event The event object
      */
     public static function observe(\core\event\course_module_completion_updated $event) {
         global $DB;
