@@ -135,19 +135,9 @@ class course_inactivity_condition extends condition {
              FROM {user_enrolments} ue
              JOIN {enrol} e ON e.id = ue.enrolid
              WHERE ue.userid = :userid AND e.courseid = :courseid",
-            [$userid, $courseid],
+            ['userid' => $userid, 'courseid' => $courseid],
             MUST_EXIST
         );
-    }
-
-    /**
-     * Get course record from the database
-     * @param int $courseid Course ID
-     */
-    private function get_course_record($courseid) {
-        global $DB;
-
-        return $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
     }
 
     /**
@@ -201,7 +191,7 @@ class course_inactivity_condition extends condition {
                 $basedate->timestart = $enrollment->timestart;
                 break;
             case self::DATE_FROM_COURSE_START:
-                $course = $this->get_course_record($courseid);
+                $course = get_course($courseid);
                 $basedate->timestart = $course->startdate;
                 break;
             case self::DATE_FROM_NOW:
