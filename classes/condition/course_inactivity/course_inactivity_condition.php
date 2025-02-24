@@ -39,6 +39,17 @@ class course_inactivity_condition extends condition {
     /** @var string base date for evaluating the intervals is current date */
     const DATE_FROM_NOW = 'now';
 
+    /**
+     * @var string interval is a custom set of comma-separated values
+     * for interval evaluations. For example, "7,14,30" means the condition will be
+     * evaluated at 7 days, 14 days, and 30 days.
+     */
+    const INTERVAL_CUSTOM = 'custom';
+
+    /** @var string interval is recurring based on the specified date type, e.g., every 7 days */
+    const INTERVAL_RECURRING = 'recurring';
+
+
     /** @var string type of condition */
     protected $type = "course_inactivity";
 

@@ -36,6 +36,16 @@ class course_inactivity_form extends condition_form {
     /** @var string base date for evaluating the intervals is current date */
     const DATE_FROM_NOW = course_inactivity_condition::DATE_FROM_NOW;
 
+    /**
+     * @var string interval is a custom set of comma-separated values
+     * for interval evaluations. For example, "7,14,30" means the condition will be
+     * evaluated at 7 days, 14 days, and 30 days.
+     */
+    const INTERVAL_CUSTOM = course_inactivity_condition::INTERVAL_CUSTOM;
+
+    /** @var string interval is recurring based on the specified date type, e.g., every 7 days */
+    const INTERVAL_RECURRING = course_inactivity_condition::INTERVAL_RECURRING;
+
     /** @var string type of condition */
     protected $type = "course_inactivity";
 
@@ -59,19 +69,29 @@ class course_inactivity_form extends condition_form {
         );
         $mform->addElement('html', $notification);
 
-        $periodgroup = [];
-        $periodgroup[] = $mform->createElement('text', 'timeintervals');
-        $periodgroup[] = $mform->createElement('select', 'intervalunit', '', [
+         $intervaltypeoptions = [
+            self::INTERVAL_CUSTOM => get_string('customintervals', $pluginname),
+            self::INTERVAL_RECURRING => get_string('recurringinterval', $pluginname),
+         ];
+         $mform->addElement('select', 'intervaltype', get_string('intervaltype', $pluginname), $intervaltypeoptions);
+         $mform->addHelpButton('intervaltype', 'intervaltype', $pluginname);
+
+         $mform->addElement('text', 'customintervals', get_string('customintervals', $pluginname));
+         $mform->addHelpButton('customintervals', 'customintervals', $pluginname);
+         $mform->hideIf('customintervals', 'intervaltype', 'neq', self::INTERVAL_CUSTOM);
+
+         $mform->addElement('text', 'recurringinterval', get_string('recurringinterval', $pluginname));
+         $mform->addHelpButton('recurringinterval', 'recurringinterval', $pluginname);
+         $mform->hideIf('recurringinterval', 'intervaltype', 'neq', self::INTERVAL_RECURRING);
+
+         $mform->addElement('select', 'intervalunit', get_string('intervalunit', $pluginname), [
             'minutes' => get_string('minutes', $pluginname),
             'hours' => get_string('hours', $pluginname),
             'days' => get_string('days', $pluginname),
             'weeks' => get_string('weeks', $pluginname),
-        ]);
+         ]);
+        $mform->addHelpButton('intervalunit', 'intervalunit', $pluginname);
 
-        $mform->addGroup($periodgroup, 'timeintervals_group', get_string('timeintervals', $pluginname), '', false);
-        $mform->addHelpButton('timeintervals_group', 'timeintervals', $pluginname);
-
-        // Base date for evaluating the intervals.
         $basedateoptions = [
             self::DATE_FROM_ENROLLMENT => get_string('date_from_enrollment', $pluginname),
             self::DATE_FROM_COURSE_START => get_string('date_from_course_start', $pluginname),
