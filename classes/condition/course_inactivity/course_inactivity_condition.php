@@ -151,7 +151,7 @@ class course_inactivity_condition extends condition {
         $timeintervals = explode(',', $this->params->timeintervals);
         $intervalunit = $this->params->intervalunit;
 
-        $now = time();
+        $now = $this->get_current_time();
         $prevtimeinterval = 0;
 
         foreach ($timeintervals as $timeinterval) {
@@ -170,6 +170,15 @@ class course_inactivity_condition extends condition {
         }
 
         return false;
+    }
+
+    /**
+     * Get the current date.
+     *
+     * @return int
+     */
+    public function get_current_time() {
+        return time();
     }
 
     /**
@@ -195,7 +204,7 @@ class course_inactivity_condition extends condition {
                 $basedate->timestart = $course->startdate;
                 break;
             case self::DATE_FROM_NOW:
-                $basedate->timestart = time();
+                $basedate->timestart = $this->get_current_time();
                 break;
             default:
                 throw new \moodle_exception('invalidbasedate', 'local_coursedynamicrules', '', $basedatetype);
