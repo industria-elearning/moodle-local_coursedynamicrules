@@ -39,6 +39,9 @@ class course_inactivity_condition extends condition {
     /** @var string base date for evaluating the intervals is current date */
     const DATE_FROM_NOW = 'now';
 
+    /** @var int indicate time in hours to interval window */
+    const CRON_INTERVAL_HOURS = 6;
+
     /**
      * @var string interval is a custom set of comma-separated values
      * for interval evaluations. For example, "7,14,30" means the condition will be
@@ -107,11 +110,6 @@ class course_inactivity_condition extends condition {
 
         $lastaccess = $this->get_user_last_access($courseid, $userid);
 
-        // If user has never accessed the course.
-        if (!$lastaccess) {
-            return true;
-        }
-
         $basedate = $this->get_basedate($courseid, $userid);
 
         return $this->check_inactivity_intervals($lastaccess, $basedate);
@@ -168,19 +166,25 @@ class course_inactivity_condition extends condition {
         foreach ($timeintervals as $timeinterval) {
             $startinterval = $this->calculate_interval($basedate->timestart, $prevtimeinterval, $intervalunit);
             $endinterval = $this->calculate_interval($basedate->timestart, $timeinterval, $intervalunit);
+            $timewindow = strtotime('+' . self::CRON_INTERVAL_HOURS . 'hours', $endinterval);
 
-            if (!$this->is_within_interval($now, $endinterval)) {
-                return false;
-            }
-
-            if ($this->is_user_inactive($lastaccess, $startinterval)) {
-                return true;
+            if ($this->is_within_interval_window($now, $endinterval, $timewindow)) {
+                if ($this->is_user_inactive($lastaccess, $startinterval)) {
+                    return true;
+                }
             }
 
             $prevtimeinterval = $timeinterval;
         }
 
         return false;
+    }
+
+    private function check_recurring_inactivity($lastaccess, $basedate) {
+        $interval = $this->params->recurringinterval;
+        $intervalunit = $this->params->intervalunit;
+
+        $now = $this->get_current_time();
     }
 
     /**
@@ -239,24 +243,30 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Check if the current time is within the interval.
+     * Check if the current time is within the interval window
+     * This is used to avoid evaluating the condition as true every time it is run
      *
-     * @param int $now The current time.
-     * @param int $endinterval Time at which the interval ends
-     * @return bool True if within the interval, false otherwise.
+     * @param int $now Current time
+     * @param int $endinterval Time at wich is expected to evaluate the condition for the interval
+     * @param int $timewindow Adittional time to avoid exacly match the end of interval
+     * @return bool True if the current time is within the interval window, false otherwise
      */
-    private function is_within_interval($now, $endinterval) {
-        return $now >= $endinterval;
+    private function is_within_interval_window($now, $endinterval, $timewindow) {
+        return $now >= $endinterval && $now <= $timewindow;
     }
 
     /**
      * Check if user is inactive during specific interval
      *
-     * @param int $lastaccess User last access in timestamp
+     * @param int|null $lastaccess User last access in timestamp or null if user has never accessed the course
      * @param int $startinterval Timestamp from which the interval starts
      * @return bool True if user is inactive during the interval, false otherwise
      */
     private function is_user_inactive($lastaccess, $startinterval) {
+        // If user has never accessed the course.
+        if (!$lastaccess) {
+            return true;
+        }
         return $lastaccess < $startinterval;
     }
 
@@ -267,8 +277,12 @@ class course_inactivity_condition extends condition {
     public function save_condition($formdata) {
         global $DB;
 
+        $timeintervals = $formdata->intervaltype == self::INTERVAL_CUSTOM ?
+            $formdata->customintervals : $formdata->recurringinterval;
+
         $params = [
-            'timeintervals' => $formdata->timeintervals,
+            'intervaltype' => $formdata->intervaltype,
+            'timeintervals' => $timeintervals,
             'intervalunit' => $formdata->intervalunit,
             'basedate' => $formdata->basedate,
         ];
@@ -298,16 +312,6 @@ class course_inactivity_condition extends condition {
      * @return string
      */
     public function get_description() {
-        $periodvalue = $this->params->periodvalue;
-        $periodunit = $this->params->periodunit;
-
-        $periodunitstr = get_string($periodunit, 'local_coursedynamicrules');
-        $options = [
-            'periodvalue' => $periodvalue,
-            'periodunit' => strtolower($periodunitstr),
-        ];
-        $description = get_string('no_course_access_description', 'local_coursedynamicrules', $options);
-
-        return $description;
+        return 'Course inactivity condition';
     }
 }
