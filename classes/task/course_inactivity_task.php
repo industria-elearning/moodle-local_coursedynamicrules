@@ -71,6 +71,11 @@ class course_inactivity_task extends \core\task\scheduled_task {
 
         // Iterate through each rule and execute if conditions are met.
         foreach ($rules as $rule) {
+
+            if (!$this->is_time_to_execute($rule)) {
+                continue;
+            }
+
             $completion = new \completion_info(get_course($rule->courseid));
             $users = enrol_get_course_users($rule->courseid, true);
             $userswithoutcompletion = array_filter($users, function($user) use ($completion) {
@@ -80,6 +85,26 @@ class course_inactivity_task extends \core\task\scheduled_task {
             $ruleinstance = new rule($rule, $userswithoutcompletion);
             $ruleinstance->execute();
         }
+    }
+
+    /**
+     * Check if it is time to execute the rule.
+     *
+     * @param object $rule Rule object.
+     * @return bool True if it is time to execute the rule, false otherwise.
+     */
+    private function is_time_to_execute($rule) {
+        global $DB;
+        $courseid = $rule->courseid;
+        $now = time();
+
+        $course = get_course($courseid);
+
+        if ($course->enddate && $now > $course->enddate) {
+            return false;
+        }
+
+        return $now >= $course->startdate;
     }
 
 
