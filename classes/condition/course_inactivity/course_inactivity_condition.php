@@ -69,14 +69,6 @@ class course_inactivity_condition extends condition {
      */
     public function __construct($record, $courseid = null, $currenttime = null) {
         parent::__construct($record, $courseid);
-        $this->set_currenttime($currenttime);
-    }
-
-    /**
-     * Set the current time for testing purposes
-     * @param int $currenttime
-     */
-    public function set_currenttime($currenttime) {
         $this->currenttime = $currenttime ?? time();
     }
 
@@ -188,7 +180,7 @@ class course_inactivity_condition extends condition {
      * @return bool True if user is inactive during the interval, false otherwise
      */
     private function check_inactivity_intervals($lastaccess, $basedate) {
-        $timeintervals = explode(',', $this->params->customintervals);
+        $timeintervals = explode(',', $this->params->timeintervals);
         $intervalunit = $this->params->intervalunit;
 
         $prevtimeinterval = 0;
@@ -217,7 +209,7 @@ class course_inactivity_condition extends condition {
      * @return bool True if user is inactive during the interval, false otherwise
      */
     private function check_recurring_inactivity($lastaccess, $basetime) {
-        $interval = $this->params->recurringinterval;
+        $interval = $this->params->timeintervals;
         $intervalunit = $this->params->intervalunit;
 
         // Calculate expected execution time of the first interval.
@@ -256,16 +248,16 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Determines how many full intervals have passed since the enrollment date.
+     * Determines how many full intervals have passed since the basetime
      *
      * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
-     * @param int $currentdate Current timestamp
+     * @param int $currenttime Current timestamp
      * @param int $firstintervaltime Timestamp of the expected execution time of the first interval
      * @return int Number of completed intervals
      */
-    private function count_completed_intervals($basetime, $currentdate, $firstintervaltime) {
+    private function count_completed_intervals($basetime, $currenttime, $firstintervaltime) {
         $intervalduration = $firstintervaltime - $basetime; // Duration of one interval.
-        $elapsedtime = $currentdate - $basetime; // Time elapsed since basetime.
+        $elapsedtime = $currenttime - $basetime; // Time elapsed since basetime.
         return floor($elapsedtime / $intervalduration); // Number of completed intervals.
     }
 
@@ -280,7 +272,7 @@ class course_inactivity_condition extends condition {
         $basedate = new stdClass();
         $basedate->timestart = 0;
 
-        $basedatetype = $this->params->basedate;
+        $basedatetype = $this->params->basedatetype;
 
         switch ($basedatetype) {
             case self::DATE_FROM_ENROLLMENT:
@@ -359,7 +351,7 @@ class course_inactivity_condition extends condition {
             'intervaltype' => $formdata->intervaltype,
             'timeintervals' => $timeintervals,
             'intervalunit' => $formdata->intervalunit,
-            'basedate' => $formdata->basedate,
+            'basedatetype' => $formdata->basedatetype,
         ];
 
         $condition = new stdClass();
