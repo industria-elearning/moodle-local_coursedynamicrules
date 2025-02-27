@@ -85,10 +85,9 @@ class course_inactivity_form extends condition_form {
          $mform->hideIf('recurringinterval', 'intervaltype', 'neq', self::INTERVAL_RECURRING);
 
          $mform->addElement('select', 'intervalunit', get_string('intervalunit', $pluginname), [
-            'minutes' => get_string('minutes', $pluginname),
-            'hours' => get_string('hours', $pluginname),
             'days' => get_string('days', $pluginname),
             'weeks' => get_string('weeks', $pluginname),
+            'months' => get_string('months', $pluginname),
          ]);
         $mform->addHelpButton('intervalunit', 'intervalunit', $pluginname);
 
