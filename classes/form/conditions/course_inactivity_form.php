@@ -91,13 +91,13 @@ class course_inactivity_form extends condition_form {
          ]);
         $mform->addHelpButton('intervalunit', 'intervalunit', $pluginname);
 
-        $basedateoptions = [
+        $basedatetypeoptions = [
             self::DATE_FROM_ENROLLMENT => get_string('date_from_enrollment', $pluginname),
             self::DATE_FROM_COURSE_START => get_string('date_from_course_start', $pluginname),
             self::DATE_FROM_NOW => get_string('date_from_now', $pluginname),
         ];
-        $mform->addElement('select', 'basedate', get_string('basedate', $pluginname), $basedateoptions);
-        $mform->addHelpButton('basedate', 'basedate', $pluginname);
+        $mform->addElement('select', 'basedatetype', get_string('basedate', $pluginname), $basedatetypeoptions);
+        $mform->addHelpButton('basedatetype', 'basedate', $pluginname);
 
         parent::definition();
     }
