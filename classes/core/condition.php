@@ -45,7 +45,7 @@ abstract class condition {
     /** @var int rule id */
     protected $ruleid;
 
-    /** @var int $lastexecutiontime Indicate time of last finished execution */
+    /** @var int|null $lastexecutiontime Indicate time of last finished execution */
     protected $lastexecutiontime;
 
     /**
@@ -99,7 +99,7 @@ abstract class condition {
         $this->type = $record->conditiontype;
         $this->courseid = $courseid;
         $this->ruleid = $record->ruleid;
-        $this->lastexecutiontime = $record->lastexecutiontime;
+        $this->lastexecutiontime = $record->lastexecutiontime ?? null;
         $this->params = json_decode($record->params);
     }
 
