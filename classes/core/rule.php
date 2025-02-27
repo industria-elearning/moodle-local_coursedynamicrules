@@ -405,6 +405,14 @@ class rule {
     public function set_last_execution_time($time) {
         global $DB;
         $DB->set_field('cdr_rule', 'lastexecutiontime', $time, ['id' => $this->id]);
+
+        foreach ($this->conditions as $condition) {
+            $condition->set_last_execution_time($time);
+        }
+
+        foreach ($this->actions as $action) {
+            $action->set_last_execution_time($time);
+        }
     }
 
     /**
