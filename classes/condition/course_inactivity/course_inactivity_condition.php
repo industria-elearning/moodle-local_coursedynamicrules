@@ -57,6 +57,30 @@ class course_inactivity_condition extends condition {
     protected $type = "course_inactivity";
 
     /**
+     * @var int $currenttime The current timestamp, used for more consistence in time calculations
+     */
+    protected $currenttime;
+
+    /**
+     * course_inactivity_condition constructor.
+     * @param object $record Record of the condition stored in DB
+     * @param int $courseid the course id where the action is applied.
+     * @param int $currenttime Only for testing purposes, to set the current time
+     */
+    public function __construct($record, $courseid = null, $currenttime = null) {
+        parent::__construct($record, $courseid);
+        $this->set_currenttime($currenttime);
+    }
+
+    /**
+     * Set the current time for testing purposes
+     * @param int $currenttime
+     */
+    public function set_currenttime($currenttime) {
+        $this->currenttime = $currenttime ?? time();
+    }
+
+    /**
      * Creates and returns an instance of the form for editing the item
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
@@ -95,7 +119,7 @@ class course_inactivity_condition extends condition {
      * Evaluate the condition and return true if the condition is met
      *
      * @param object $context Context of the rule
-     * @return bool
+     * @return bool True if the condition is met, false otherwise
      */
     public function evaluate($context) {
         global $DB;
@@ -112,7 +136,14 @@ class course_inactivity_condition extends condition {
 
         $basedate = $this->get_basedate($courseid, $userid);
 
-        return $this->check_inactivity_intervals($lastaccess, $basedate);
+        if ($this->params->intervaltype == self::INTERVAL_CUSTOM) {
+            return $this->check_inactivity_intervals($lastaccess, $basedate);
+        } else if ($this->params->intervaltype == self::INTERVAL_RECURRING) {
+            return $this->check_recurring_inactivity($lastaccess, $basedate);
+        }
+
+        return false;
+
     }
 
     /**
@@ -150,28 +181,26 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Check if user is inactive during specific interval based on the last access and enrollment start
+     * Check if user is inactive during the intervals
      *
      * @param int $lastaccess User last access in timestamp
-     * @param stdClass $basedate Enrollment start in timestamp
+     * @param stdClass $basedate Base date to calculate the intervals
      * @return bool True if user is inactive during the interval, false otherwise
      */
     private function check_inactivity_intervals($lastaccess, $basedate) {
-        $timeintervals = explode(',', $this->params->timeintervals);
+        $timeintervals = explode(',', $this->params->customintervals);
         $intervalunit = $this->params->intervalunit;
 
-        $now = $this->get_current_time();
         $prevtimeinterval = 0;
 
         foreach ($timeintervals as $timeinterval) {
-            $startinterval = $this->calculate_interval($basedate->timestart, $prevtimeinterval, $intervalunit);
-            $endinterval = $this->calculate_interval($basedate->timestart, $timeinterval, $intervalunit);
-            $timewindow = strtotime('+' . self::CRON_INTERVAL_HOURS . 'hours', $endinterval);
+            $startinterval = $this->add_time_interval($basedate->timestart, $prevtimeinterval, $intervalunit);
+            $endinterval = $this->add_time_interval($basedate->timestart, $timeinterval, $intervalunit);
+            $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
 
-            if ($this->is_within_interval_window($now, $endinterval, $timewindow)) {
-                if ($this->is_user_inactive($lastaccess, $startinterval)) {
-                    return true;
-                }
+            if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
+                && $this->is_user_inactive($lastaccess, $startinterval)) {
+                return true;
             }
 
             $prevtimeinterval = $timeinterval;
@@ -180,20 +209,64 @@ class course_inactivity_condition extends condition {
         return false;
     }
 
-    private function check_recurring_inactivity($lastaccess, $basedate) {
+    /**
+     * Check if user is inactive during the recurring interval
+     *
+     * @param int $lastaccess User last access in timestamp
+     * @param stdClass $basedate Base date to calculate the intervals
+     * @return bool True if user is inactive during the interval, false otherwise
+     */
+    private function check_recurring_inactivity($lastaccess, $basetime) {
         $interval = $this->params->recurringinterval;
         $intervalunit = $this->params->intervalunit;
 
-        $now = $this->get_current_time();
+        // Calculate expected execution time of the first interval.
+        $firstintervaltime = $this->add_time_interval($basetime, $interval, $intervalunit);
+        $intervalspassed = $this->count_completed_intervals($basetime, $this->currenttime, $firstintervaltime);
+
+        $currentinterval = $intervalspassed * $interval;
+        $prevtimeinterval = $currentinterval - $interval;
+
+        $startinterval = $this->add_time_interval($basetime, $prevtimeinterval, $intervalunit);
+        $endinterval = $this->add_time_interval($basetime, $currentinterval, $intervalunit);
+
+        $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
+
+        return $this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
+            && $this->is_user_inactive($lastaccess, $startinterval);
+
     }
 
     /**
-     * Get the current date.
+     * Calculates the next execution time based on the base timestamp,
+     * the current time, and a given interval in a specified time unit.
      *
-     * @return int
+     * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
+     * @param int $currenttime Current timestamp
+     * @param int $interval Interval value (e.g., 7 for 7 days)
+     * @param string $unit Time unit ('days', 'weeks', 'months', etc.)
+     * @return int Timestamp of the last valid execution time
      */
-    public function get_current_time() {
-        return time();
+    private function get_next_execution_time($basetime, $currenttime, $interval, $unit) {
+
+        // Calculate expected execution time of the first interval.
+        $firstintervaltime = $this->add_time_interval($basetime, $interval, $unit);
+        $intervalspassed = $this->count_completed_intervals($basetime, $currenttime, $firstintervaltime);
+        return calculate_last_execution_time($basetime, $intervalspassed, $interval, $unit);
+    }
+
+    /**
+     * Determines how many full intervals have passed since the enrollment date.
+     *
+     * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
+     * @param int $currentdate Current timestamp
+     * @param int $firstintervaltime Timestamp of the expected execution time of the first interval
+     * @return int Number of completed intervals
+     */
+    private function count_completed_intervals($basetime, $currentdate, $firstintervaltime) {
+        $intervalduration = $firstintervaltime - $basetime; // Duration of one interval.
+        $elapsedtime = $currentdate - $basetime; // Time elapsed since basetime.
+        return floor($elapsedtime / $intervalduration); // Number of completed intervals.
     }
 
     /**
@@ -219,7 +292,7 @@ class course_inactivity_condition extends condition {
                 $basedate->timestart = $course->startdate;
                 break;
             case self::DATE_FROM_NOW:
-                $basedate->timestart = $this->get_current_time();
+                $basedate->timestart = $this->currenttime;
                 break;
             default:
                 throw new \moodle_exception('invalidbasedate', 'local_coursedynamicrules', '', $basedatetype);
@@ -230,29 +303,31 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Calculate the interval based on the start time, interval and unit
-     * This function adds the interval to the base time
+     * Calculates a future timestamp by adding a specific time interval to a base time.
      *
-     * @param int $basetime Base time
-     * @param int $interval Interval
-     * @param string $unit Unit e.g. days, weeks, months
-     * @return int
+     * This function takes a base timestamp and adds a specified amount of time
+     * (e.g., days, weeks, months) to it, returning the resulting timestamp.
+     *
+     * @param int $basetime The starting timestamp from which the additional time will be added.
+     * @param int $additionaltime The amount of time to be added (e.g., 7 for 7 days).
+     * @param string $unit The unit of time (e.g., 'days', 'weeks', 'months').
+     * @return int The resulting timestamp after adding the interval.
      */
-    private function calculate_interval($basetime, $interval, $unit) {
-        return strtotime("+$interval $unit", $basetime);
+    private function add_time_interval($basetime, $additionaltime, $unit) {
+        return strtotime("+$additionaltime $unit", $basetime);
     }
 
     /**
      * Check if the current time is within the interval window
      * This is used to avoid evaluating the condition as true every time it is run
      *
-     * @param int $now Current time
+     * @param int $currenttime Current time
      * @param int $endinterval Time at wich is expected to evaluate the condition for the interval
      * @param int $timewindow Adittional time to avoid exacly match the end of interval
      * @return bool True if the current time is within the interval window, false otherwise
      */
-    private function is_within_interval_window($now, $endinterval, $timewindow) {
-        return $now >= $endinterval && $now <= $timewindow;
+    private function is_within_interval_window($currenttime, $endinterval, $timewindow) {
+        return $currenttime >= $endinterval && $currenttime <= $timewindow;
     }
 
     /**
