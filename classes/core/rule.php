@@ -92,7 +92,7 @@ class rule {
         $licencekey = $config->licencekey;
 
         $licensestatus = new stdClass();
-        $licensestatus->success = true;
+        $licensestatus->success = false;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
