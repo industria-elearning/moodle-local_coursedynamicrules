@@ -46,6 +46,9 @@ abstract class action {
     /** @var int rule id */
     protected $ruleid;
 
+    /** @var int $lastexecutiontime Indicate time of last finished execution */
+    protected $lastexecutiontime;
+
     /**
      * Action constructor.
      * @param object $record Record of the action stored in DB
@@ -101,6 +104,24 @@ abstract class action {
     }
 
     /**
+     * Return last execution time of this action
+     */
+    public function get_last_execution_time() {
+        return $this->lastexecutiontime;
+    }
+
+    /**
+     * Set the last execution time of the action in the DB
+     *
+     * @param int $time the time to set
+     */
+    public function set_last_execution_time($time) {
+        global $DB;
+        $this->lastexecutiontime = $time;
+        $DB->set_field('cdr_action', 'lastexecutiontime', $time, ['id' => $this->id]);
+    }
+
+    /**
      * Set the action data
      *
      * @param stdClass $record the action data to set
@@ -111,6 +132,7 @@ abstract class action {
         $this->type = $record->actiontype;
         $this->courseid = $courseid;
         $this->ruleid = $record->ruleid;
+        $this->lastexecutiontime = $record->lastexecutiontime;
         $this->params = json_decode($record->params);
     }
 
