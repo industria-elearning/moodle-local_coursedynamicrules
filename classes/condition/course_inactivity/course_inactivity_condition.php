@@ -129,9 +129,9 @@ class course_inactivity_condition extends condition {
         $basedate = $this->get_basedate($courseid, $userid);
 
         if ($this->params->intervaltype == self::INTERVAL_CUSTOM) {
-            return $this->check_inactivity_intervals($lastaccess, $basedate);
+            return $this->check_inactivity_intervals($lastaccess, $basedate->timestart);
         } else if ($this->params->intervaltype == self::INTERVAL_RECURRING) {
-            return $this->check_recurring_inactivity($lastaccess, $basedate);
+            return $this->check_recurring_inactivity($lastaccess, $basedate->timestart);
         }
 
         return false;
@@ -176,18 +176,18 @@ class course_inactivity_condition extends condition {
      * Check if user is inactive during the intervals
      *
      * @param int $lastaccess User last access in timestamp
-     * @param stdClass $basedate Base date to calculate the intervals
+     * @param int $basetime Base timestamp to calculate the intervals, e.g., enrollment date, course start date, etc.
      * @return bool True if user is inactive during the interval, false otherwise
      */
-    private function check_inactivity_intervals($lastaccess, $basedate) {
+    private function check_inactivity_intervals($lastaccess, $basetime) {
         $timeintervals = explode(',', $this->params->timeintervals);
         $intervalunit = $this->params->intervalunit;
 
         $prevtimeinterval = 0;
 
         foreach ($timeintervals as $timeinterval) {
-            $startinterval = $this->add_time_interval($basedate->timestart, $prevtimeinterval, $intervalunit);
-            $endinterval = $this->add_time_interval($basedate->timestart, $timeinterval, $intervalunit);
+            $startinterval = $this->add_time_interval($basetime, $prevtimeinterval, $intervalunit);
+            $endinterval = $this->add_time_interval($basetime, $timeinterval, $intervalunit);
             $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
 
             if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
@@ -205,7 +205,7 @@ class course_inactivity_condition extends condition {
      * Check if user is inactive during the recurring interval
      *
      * @param int $lastaccess User last access in timestamp
-     * @param stdClass $basedate Base date to calculate the intervals
+     * @param int $basetime Base date to calculate the intervals, e.g., enrollment date, course start date, etc.
      * @return bool True if user is inactive during the interval, false otherwise
      */
     private function check_recurring_inactivity($lastaccess, $basetime) {
