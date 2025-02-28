@@ -358,6 +358,10 @@ class rule {
             return;
         }
 
+        if (empty($this->conditions) || empty($this->conditions)) {
+            return;
+        }
+
         foreach ($this->users as $user) {
             $rulecontext = (object)[
                 'courseid' => $this->courseid,
