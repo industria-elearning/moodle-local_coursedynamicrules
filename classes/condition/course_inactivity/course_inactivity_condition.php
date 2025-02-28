@@ -388,6 +388,50 @@ class course_inactivity_condition extends condition {
      * @return string
      */
     public function get_description() {
-        return 'Course inactivity condition';
+        $stringoptions = [
+            'intervals' => str_replace(',', ', ', $this->params->timeintervals),
+            'unit' => strtolower(get_string($this->params->intervalunit, 'local_coursedynamicrules')),
+            'basedate' => strtolower($this->get_basedate_string($this->params->basedatetype)),
+        ];
+
+        if ($this->params->intervaltype == self::INTERVAL_CUSTOM) {
+            return get_string(
+                'course_inactivity_custom_description',
+                'local_coursedynamicrules',
+                $stringoptions
+            );
+        }
+
+        return get_string(
+            'course_inactivity_recurring_description',
+            'local_coursedynamicrules',
+            $stringoptions
+        );
+    }
+
+
+    /**
+     * Returns a string representation of the base date type.
+     *
+     * This function takes a base date type and returns the corresponding
+     * localized string representation for that date type.
+     *
+     * @param int $basedatetype The type of the base date. Possible values are:
+     *                          - self::DATE_FROM_ENROLLMENT: Enrollment date.
+     *                          - self::DATE_FROM_COURSE_START: Course start date.
+     *                          - self::DATE_FROM_NOW: Current date.
+     * @return string The localized string representation of the base date type.
+     */
+    private function get_basedate_string($basedatetype) {
+        switch ($basedatetype) {
+            case self::DATE_FROM_ENROLLMENT:
+                return get_string('enrollmentdate', 'local_coursedynamicrules');
+            case self::DATE_FROM_COURSE_START:
+                return get_string('coursestartdate', 'local_coursedynamicrules');
+            case self::DATE_FROM_NOW:
+                return get_string('now', 'local_coursedynamicrules');
+            default:
+                return '';
+        }
     }
 }
