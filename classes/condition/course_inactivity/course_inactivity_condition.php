@@ -192,9 +192,10 @@ class course_inactivity_condition extends condition {
             $endinterval = $this->add_time_interval($basetime, $timeinterval, $intervalunit);
             $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
 
-            if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
-                && $this->is_user_inactive($lastaccess, $startinterval)) {
-                return true;
+            if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow) || $this->is_first_execution()) {
+                if ($this->is_user_inactive($lastaccess, $startinterval)) {
+                    return true;
+                }
             }
 
             $prevtimeinterval = $timeinterval;
@@ -226,27 +227,9 @@ class course_inactivity_condition extends condition {
 
         $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
 
-        return $this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
+        return ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow) || $this->is_first_execution())
             && $this->is_user_inactive($lastaccess, $startinterval);
 
-    }
-
-    /**
-     * Calculates the next execution time based on the base timestamp,
-     * the current time, and a given interval in a specified time unit.
-     *
-     * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
-     * @param int $currenttime Current timestamp
-     * @param int $interval Interval value (e.g., 7 for 7 days)
-     * @param string $unit Time unit ('days', 'weeks', 'months', etc.)
-     * @return int Timestamp of the last valid execution time
-     */
-    private function get_next_execution_time($basetime, $currenttime, $interval, $unit) {
-
-        // Calculate expected execution time of the first interval.
-        $firstintervaltime = $this->add_time_interval($basetime, $interval, $unit);
-        $intervalspassed = $this->count_completed_intervals($basetime, $currenttime, $firstintervaltime);
-        return calculate_last_execution_time($basetime, $intervalspassed, $interval, $unit);
     }
 
     /**
@@ -309,6 +292,19 @@ class course_inactivity_condition extends condition {
      */
     private function add_time_interval($basetime, $additionaltime, $unit) {
         return strtotime("+$additionaltime $unit", $basetime);
+    }
+
+
+    /**
+     * Checks if this is the first execution of the condition.
+     *
+     * This method determines whether the condition is being executed for the first time
+     * by checking if there is a recorded last execution time.
+     *
+     * @return bool True if this is the first execution, false otherwise.
+     */
+    private function is_first_execution() {
+        return !$this->get_last_execution_time();
     }
 
     /**
