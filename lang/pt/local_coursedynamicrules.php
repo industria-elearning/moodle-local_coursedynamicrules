@@ -136,8 +136,6 @@ $string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
 $string['gradegreaterthanorequal_help'] = 'A condição é satisfeita se a nota do utilizador for maior ou igual ao valor especificado.';
 $string['gradelessthan'] = 'deve ser <';
 $string['gradelessthan_help'] = 'A condição é satisfeita se a nota do utilizador for menor que o valor especificado.';
-$string['timeintervals'] = 'Intervalos de tempo';
-$string['timeintervals_help'] = 'Lista de intervalos de tempo separados por vírgulas (,) para verificar a inatividade dos usuários no curso.';
 $string['course_inactivity_info'] = 'Esta condição verificará quais usuários não tiveram atividade no curso dentro dos intervalos de tempo especificados.';
 $string['course_inactivity'] = 'Inatividade no curso em intervalos de tempo';
 $string['basedate'] = 'Data base';
@@ -146,6 +144,11 @@ $string['date_from_course_start'] = 'Desde a data de início do curso';
 $string['date_from_now'] = 'A partir de agora';
 $string['basedate_help'] = 'Selecione a data base a partir da qual os intervalos de tempo serão avaliados.';
 $string['invalidbasedate'] = 'Tipo de data base inválido: {$a}';
+$string['course_inactivity_custom_description'] = 'Utilizadores sem atividade no curso durante intervalos de {$a->intervals} {$a->unit} desde {$a->basedate}';
+$string['course_inactivity_recurring_description'] = 'Utilizadores sem atividade no curso em intervalos recorrentes de {$a->intervals} {$a->unit} desde {$a->basedate}';
+$string['enrollmentdate'] = 'Data de inscrição';
+$string['coursestartdate'] = 'Data de início do curso';
+$string['now'] = 'Agora';
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';

@@ -172,6 +172,11 @@ $string['intervalunit_help'] = 'Select the unit of time for the intervals.';
 $string['date_from_enrollment'] = 'From enrolment date';
 $string['date_from_course_start'] = 'From course start date';
 $string['date_from_now'] = 'From now';
+$string['course_inactivity_custom_description'] = 'Users without activity in the course for intervals of {$a->intervals} {$a->unit} from {$a->basedate}';
+$string['course_inactivity_recurring_description'] = 'Users without activity in the course at recurring intervals of {$a->intervals} {$a->unit} from {$a->basedate}';
+$string['enrollmentdate'] = 'Enrollment date';
+$string['coursestartdate'] = 'Course start date';
+$string['now'] = 'Now';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
