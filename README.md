@@ -97,9 +97,47 @@ Una vez que el plugin esté instalado, será necesario activarlo utilizando la l
 
 ## Condiciones disponibles
 
+### Inactividad en el curso en intervalos de tiempo
+
+#### Descripción
+
+Esta condición permite identificar fácilmente a los estudiantes que no han accedido al curso durante períodos específicos de tiempo a partir de una fecha base, como su fecha de matriculación. Se puede configurar para enviar recordatorios automáticos a aquellos que llevan 7, 15, 22 días (o el intervalo que deseado) sin ingresar al curso, ayudándote a mantener su compromiso y reducir la inactividad.
+
+Ya sea que mediante una evaluación en intervalos personalizados o un monitoreo recurrente cada cierto tiempo, esta condición ayudará a que los estudiantes se mantengan comprometidos y activos en el curso.
+
+Esta condición se ejecuta de forma recurrente todos los dias a las `00:00`, `06:00`, `12:00` y `18:00` mediante la tarea programada `local_coursedynamicrules\task\course_inactivity_task`.
+
+**IMPORTANTE!**: El tiempo de ejecuión ésta tarea programada no se debe modificar ya que puede generar inconsistencias en la evaluación de la condición.
+
+#### Configuración de la condición
+
+1. **Intevalos personalizados**:
+    Nos permite ingresar multiples intervalos de tiempo separados por coma `(,)`, por ejemplo: `7,15,22`. Esto significa que la condición se evaluará en los intervalos de tiempo especificados, en este caso cada 7, 15 y 22 `dias` o `semanas` o `meses` según la unidad de tiempo seleccionada.
+    
+     ![Custom intervals](__docs/images/local_cdr_custom-intervals.png)
+
+2. **Intevalo recurrente**:
+   Nos permite ingresar un intervalo de tiempo para que la condición se evalúe de forma recurrente en el tiempo especificado, por ejemplo: `7`, lo que significa que la condición se evaluará cada 7 `dias` o `semanas` o `meses` según la unidad de tiempo seleccionada.
+
+    ![Recurrent intervals](__docs/images/local_cdr_recurrent-intervals.png)
+
+3. **Unidad de tiempo**:
+   Nos permite seleccionar la unidad de tiempo en la que se evaluará la condición, las opciones disponibles son: `dias`, `semanas`, `meses`.
+
+    ![Time unit](__docs/images/local_cdr_time-unit.png)
+
+4. **Fecha base**:
+   Nos permite seleccionar la fecha base a partir de la cual se evaluará la condición, las opciones disponibles son: 
+   - `Desde la fecha de matriculación`: Los intervalos de tiempo se contarán a partir de la fecha de matriculación de cada usuario en el curso.
+   - `Desde la fecha de inicio del curso`: Los intervalos de tiempo se contarán a partir de la fecha de inicio del curso.
+   - `Desde ahora`: Los intervalos de tiempo se contarán a partir de la fecha en la que estamos creando la regla.
+
+    ![Base date](__docs/images/local_cdr_base-date.png)
+   
 ### Calificación en actividad
 
 #### Descripción  
+
 Esta condición se utiliza para evaluar las calificaciones de los usuarios en una actividad que requiere calificación. Si la actividad seleccionada tiene múltiples ítems de calificación, se mostrará una lista desplegable con los ítems disponibles.  
 
 Por ejemplo, en el caso del módulo `Foro`, los ítems de calificación disponibles podrían incluir:  
