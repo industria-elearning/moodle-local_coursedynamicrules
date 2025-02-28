@@ -45,9 +45,12 @@ abstract class condition {
     /** @var int rule id */
     protected $ruleid;
 
+    /** @var int|null $lastexecutiontime Indicate time of last finished execution */
+    protected $lastexecutiontime;
+
     /**
      * Action constructor.
-     * @param object $record Record of the action stored in DB
+     * @param object $record Record of the condition stored in DB
      * @param int $courseid the course id where the action is applied.
      */
     public function __construct($record, $courseid = null) {
@@ -59,6 +62,24 @@ abstract class condition {
      */
     public function get_type() {
         return $this->type;
+    }
+
+    /**
+     * Return last execution time of this condition
+     */
+    public function get_last_execution_time() {
+        return $this->lastexecutiontime;
+    }
+
+    /**
+     * Set last execution time of this condition in DB
+     * @param int $time
+     */
+    public function set_last_execution_time($time) {
+        global $DB;
+        $this->lastexecutiontime = $time;
+
+        $DB->set_field('cdr_condition', 'lastexecutiontime', $time, ['id' => $this->id]);
     }
 
     /**
@@ -74,10 +95,11 @@ abstract class condition {
      * @param int $courseid the course id
      */
     public function set_data($record, $courseid = null) {
-        $this->id = $record->id;
+        $this->id = $record->id ?? null;
         $this->type = $record->conditiontype;
         $this->courseid = $courseid;
         $this->ruleid = $record->ruleid;
+        $this->lastexecutiontime = $record->lastexecutiontime ?? null;
         $this->params = json_decode($record->params);
     }
 

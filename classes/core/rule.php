@@ -41,14 +41,14 @@ class rule {
     /** @var action[] List of actions instances */
     private $actions = [];
 
-    /** @var array List of users to validate this rule */
+    /** @var stdClass[] List of users to validate this rule */
     private $users;
 
     /**
      * Rule constructor.
      * @param object $rule
-     * @param array $users List of users to validate this rule
-     * @param array $conditiontypes list of conditions to include in the executions
+     * @param stdClass[] $users List of users to validate this rule
+     * @param string[] $conditiontypes list of conditions to include in the executions
      * of rules if not pass all conditions for each rule of the course are added
      */
     public function __construct($rule, $users, $conditiontypes=[]) {
@@ -405,6 +405,14 @@ class rule {
     public function set_last_execution_time($time) {
         global $DB;
         $DB->set_field('cdr_rule', 'lastexecutiontime', $time, ['id' => $this->id]);
+
+        foreach ($this->conditions as $condition) {
+            $condition->set_last_execution_time($time);
+        }
+
+        foreach ($this->actions as $action) {
+            $action->set_last_execution_time($time);
+        }
     }
 
     /**

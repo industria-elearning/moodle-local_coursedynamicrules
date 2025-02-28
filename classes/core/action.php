@@ -28,7 +28,7 @@ use stdClass;
  */
 abstract class action {
 
-    /** @var int ID of the action on the DB */
+    /** @var int|null ID of the action on the DB */
     private $id;
 
     /** @var action_form|null */
@@ -45,6 +45,9 @@ abstract class action {
 
     /** @var int rule id */
     protected $ruleid;
+
+    /** @var int|null $lastexecutiontime Indicate time of last finished execution */
+    protected $lastexecutiontime;
 
     /**
      * Action constructor.
@@ -101,16 +104,35 @@ abstract class action {
     }
 
     /**
+     * Return last execution time of this action
+     */
+    public function get_last_execution_time() {
+        return $this->lastexecutiontime;
+    }
+
+    /**
+     * Set the last execution time of the action in the DB
+     *
+     * @param int $time the time to set
+     */
+    public function set_last_execution_time($time) {
+        global $DB;
+        $this->lastexecutiontime = $time;
+        $DB->set_field('cdr_action', 'lastexecutiontime', $time, ['id' => $this->id]);
+    }
+
+    /**
      * Set the action data
      *
      * @param stdClass $record the action data to set
      * @param int $courseid the course id
      */
     public function set_data($record, $courseid = null) {
-        $this->id = $record->id;
+        $this->id = $record->id ?? null;
         $this->type = $record->actiontype;
         $this->courseid = $courseid;
         $this->ruleid = $record->ruleid;
+        $this->lastexecutiontime = $record->lastexecutiontime ?? null;
         $this->params = json_decode($record->params);
     }
 

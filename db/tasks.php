@@ -48,4 +48,14 @@ $tasks = [
         'month' => '*',
         'disabled' => 0,
     ],
+    [
+        'classname' => 'local_coursedynamicrules\task\course_inactivity_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '*/6',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => 0,
+    ],
 ];

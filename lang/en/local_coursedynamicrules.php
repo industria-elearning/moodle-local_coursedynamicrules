@@ -148,6 +148,35 @@ $string['hours'] = 'Hours';
 $string['days'] = 'Days';
 $string['weeks'] = 'Weeks';
 $string['months'] = 'Months';
+$string['course_inactivity_info'] = 'This condition will check which users have had no activity in the course within the specified time intervals.';
+$string['course_inactivity'] = 'Course inactivity in time intervals';
+$string['basedate'] = 'Base date';
+$string['basedate_help'] = 'Choose the reference date for evaluating inactivity:
+
+* **From enrolment date**: Calculates from when the user enrolled.
+* **From course start date**: Calculates from the course start date.
+* **From now**: Calculates from the current date.';
+$string['invalidbasedate'] = 'Invalid base date type {$a}';
+$string['course_inactivity_task'] = 'Course inactivity task';
+$string['intervaltype'] = 'Interval type';
+$string['intervaltype_help'] = 'Select how the interval will be evaluated:
+
+* **Custom intervals**: To add comma-separated values (e.g., 7,14,30) to evaluate inactivity at specific time points.
+* **Recurring interval**: To evaluate inactivity at recurring intervals (e.g., every 7 days).';
+$string['customintervals'] = 'Custom intervals';
+$string['customintervals_help'] = 'Enter comma-separated numbers representing inactivity periods (e.g., "7,14,30").';
+$string['recurringinterval'] = 'Recurring interval';
+$string['recurringinterval_help'] = 'Enter an numeric value representing a recurring inactivity interval (e.g., "7" for every 7 days of inactivity).';
+$string['intervalunit'] = 'Interval unit';
+$string['intervalunit_help'] = 'Select the unit of time for the intervals.';
+$string['date_from_enrollment'] = 'From enrolment date';
+$string['date_from_course_start'] = 'From course start date';
+$string['date_from_now'] = 'From now';
+$string['course_inactivity_custom_description'] = 'Users without activity in the course for intervals of {$a->intervals} {$a->unit} from {$a->basedate}';
+$string['course_inactivity_recurring_description'] = 'Users without activity in the course at recurring intervals of {$a->intervals} {$a->unit} from {$a->basedate}';
+$string['enrollmentdate'] = 'Enrollment date';
+$string['coursestartdate'] = 'Course start date';
+$string['now'] = 'Now';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
@@ -156,3 +185,5 @@ $string['licencekey_desc'] = 'License key required to use this plugin';
 $string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['checklicensekey'] = 'Check licence key';
 $string['licensekeyvalid'] = 'License key is valid';
+
+

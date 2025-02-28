@@ -45,7 +45,7 @@ $PAGE->set_heading(get_string('checklicensekey', $pluginname));
 echo $OUTPUT->header();
 
 $licensestatus = rule::validate_licence_status();
-if ($licensestatus->success) {
+if ($licensestatus->success && empty($licensestatus->message)) {
     echo $OUTPUT->notification(get_string('licensekeyvalid', $pluginname), 'success', false);
 } else {
     echo $OUTPUT->notification(get_string('licensekeyinvalid', $pluginname), 'error', false);

@@ -135,5 +135,29 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025010600, 'local', 'coursedynamicrules');
     }
 
+    if ($oldversion < 2025022601) {
+
+        // Define field lastexecutiontime to be added to cdr_condition.
+        $table = new xmldb_table('cdr_condition');
+        $field = new xmldb_field('lastexecutiontime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'params');
+
+        // Conditionally launch add field lastexecutiontime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field lastexecutiontime to be added to cdr_action.
+        $table = new xmldb_table('cdr_action');
+        $field = new xmldb_field('lastexecutiontime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'params');
+
+        // Conditionally launch add field lastexecutiontime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Coursedynamicrules savepoint reached.
+        upgrade_plugin_savepoint(true, 2025022601, 'local', 'coursedynamicrules');
+    }
+
     return true;
 }

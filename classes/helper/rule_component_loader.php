@@ -64,7 +64,8 @@ class rule_component_loader {
      *
      * @param object $actionrecord record of action stored in DB
      * @param int $courseid course id
-     * @return action instance of action. Example: instace of local_coursedynamicrules\condition\sendnotification\sendnotification_action.
+     * @return action instance of action. Example: instace of
+     * local_coursedynamicrules\condition\sendnotification\sendnotification_action.
      * @throws moodle_exception For invalid type
      */
     public static function create_action_instance($actionrecord, $courseid = null) {

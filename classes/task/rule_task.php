@@ -31,7 +31,9 @@ class rule_task extends \core\task\adhoc_task {
 
     /**
      * Return a instance of rule_task with custom data added
-     * @param object $customadata
+     *
+     * @param object $customdata Custom data to pass to the task
+     * @return rule_task
      */
     public static function instance($customdata): self {
         $task = new self();
