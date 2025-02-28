@@ -1,9 +1,12 @@
 name: Encode with IonCube
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Moodle Plugin CI"]
+    types:
+      - completed
     branches:
-      - 'main'
+      - main
   workflow_dispatch:
 
 jobs:
