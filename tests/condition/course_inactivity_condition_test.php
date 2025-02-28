@@ -55,7 +55,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
 
         $this->currenttime = strtotime('2025-01-17 12:00:00');
         $this->coursestarttime = strtotime('2025-01-01 12:00:00');
-        $this->courseendtime = strtotime('2025-01-31 12:00:00');
+        $this->courseendtime = strtotime('2025-02-10 12:00:00');
         $this->enrolltime = strtotime('2025-01-10 8:00:00');
 
         $course = $this->getDataGenerator()->create_course(['startdate' => $this->coursestarttime]);
@@ -79,7 +79,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         // Default parameters.
         $defaultparams = [
             'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-            'timeintervals' => '7,12,20',
+            'timeintervals' => '7,14,21',
             'intervalunit' => 'days',
             'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
         ];
@@ -105,7 +105,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         global $DB;
 
         $intervaltype = course_inactivity_condition::INTERVAL_CUSTOM;
-        $customintervals = '7,12,20';
+        $customintervals = '7,14,21';
         $intervalunit = 'days';
         $basedatetype = course_inactivity_condition::DATE_FROM_NOW;
 
@@ -141,102 +141,119 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      */
     public static function evaluate_provider(): array {
         // First interval: 7 days ends on 2025-01-17 12:00:00.
-        // Second interval: 12 days ends on 2025-01-22 12:00:00.
-        // Third interval: 20 days ends on 2025-01-30 12:00:00.
+        // Second interval: 14 days ends on 2025-01-24 12:00:00.
+        // Third interval: 21 days ends on 2025-01-31 12:00:00.
         return [
             'before course start' => [
-                strtotime('2024-12-31 12:00:00'), // One day before the course start.
-                strtotime('2025-01-11 08:00:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
+                strtotime('2024-12-31 12:00:00'), // Current time, one day before the course start.
+                0, // Last access time.
                 false, // Expected result.
             ],
             'after course end' => [
-                strtotime('2025-02-01 12:00:00'), // One day after the course end.
-                strtotime('2025-01-11 08:10:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
+                strtotime('2025-02-11 12:00:00'), // Current time, one day after the course end.
+                strtotime('2025-01-30 08:00:00'), // Last access time.
                 false, // Expected result.
             ],
             'before intervals start' => [
-                strtotime('2025-01-09 12:00:00'), // One day before intervals start.
+                strtotime('2025-01-09 12:00:00'), // Current time, one day before intervals start.
                 strtotime('2025-01-11 08:10:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
                 false, // Expected result.
             ],
             'before first interval' => [
-                strtotime('2025-01-16 12:00:00'), // One day before the end of the first interval.
+                strtotime('2025-01-16 12:00:00'), // Current time, one day before the end of the first interval.
                 strtotime('2025-01-11 08:20:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
                 false, // Expected result.
             ],
             'before second interval' => [
-                strtotime('2025-01-21 12:00:00'), // One day before the end of the second interval.
+                strtotime('2025-01-21 12:00:00'), // Current time, one day before the end of the second interval.
                 strtotime('2025-01-11 08:30:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
                 false, // Expected result.
             ],
             'after last interval' => [
-                strtotime('2025-01-31 12:00:00'), // One day after the end of the third interval.
+                strtotime('2025-02-01 12:00:00'), // One day after the end of the third interval.
                 strtotime('2025-01-11 08:40:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
                 false, // Expected result.
             ],
-            'without access' => [
-                strtotime('2025-01-17 12:00:00'), // Current time.
-                0, // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
-                true, // Expected result.
-            ],
             'access in first interval' => [
-                strtotime('2025-01-17 12:00:00'), // Current time.
-                strtotime('2025-01-11 08:20:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
+                strtotime('2025-01-17 12:00:00'), // Current time, 7 days after the first interval starts.
+                strtotime('2025-01-11 08:00:00'), // Last access time, one day after the first interval starts.
                 false, // Expected result.
             ],
             'access in second interval' => [
-                strtotime('2025-01-17 12:00:00'), // Current time.
-                strtotime('2025-01-11 08:30:00'), // Last access time.
-                [
-                    'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
-                    'basedatetype' => course_inactivity_condition::DATE_FROM_ENROLLMENT,
-                ],
+                strtotime('2025-01-24 12:00:00'), // Current time, 14 days after the first interval starts.
+                strtotime('2025-01-18 08:00:00'), // Last access time, one day after the second interval starts.
                 false, // Expected result.
+            ],
+            'hour 00:00' => [
+                strtotime('2025-01-17 00:00:00'), // Current time, 7 days after the first interval starts at 00:00.
+                strtotime('2025-01-11 08:00:00'), // Last access time, one day after the first interval starts.
+                false, // Expected result.
+            ],
+            'hour 06:00' => [
+                strtotime('2025-01-17 06:00:00'), // Current time, 7 days after the first interval starts at 06:00.
+                strtotime('2025-01-11 08:00:00'), // Last access time, one day after the first interval starts.
+                false, // Expected result.
+            ],
+            'hour 18:00' => [
+                strtotime('2025-01-17 18:00:00'), // Current time, 7 days after the first interval starts at 18:00.
+                strtotime('2025-01-11 08:00:00'), // Last access time, one day after the first interval starts.
+                false, // Expected result.
+            ],
+            'without access' => [
+                strtotime('2025-01-17 12:00:00'), // Current time, 7 days after the first interval starts.
+                0, // Last access time.
+                true, // Expected result.
+            ],
+            'access in first but not in second interval' => [
+                strtotime('2025-01-24 12:00:00'), // Current time, 14 days after the first interval starts.
+                strtotime('2025-01-11 08:00:00'), // Last access time, one day after the first interval starts.
+                true, // Expected result.
             ],
         ];
     }
 
     /**
-     * Test evaluate method.
+     * Test for evaluate method with custom intervals.
      *
      * @dataProvider evaluate_provider
      */
-    public function test_evaluate($currentime, $lastaccess, $params, $expected) {
+    public function test_evaluate_for_custom_intervals($currentime, $lastaccess, $expected) {
         // Create the condition.
+        $params = [
+            'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
+        ];
         $condition = $this->create_test_condition($params, $currentime);
-        $course = $this->getDataGenerator()->create_course(['startdate' => $this->coursestarttime]);
+        $course = $this->getDataGenerator()->create_course(
+            ['startdate' => $this->coursestarttime, 'enddate' => $this->courseendtime]
+        );
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student', 'manual', $this->enrolltime);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('local_coursedynamicrules');
+        $generator->create_user_lastaccess($user->id, $course->id, $lastaccess);
+
+        // Evaluate the condition.
+        $result = $condition->evaluate((object) ['courseid' => $course->id, 'userid' => $user->id]);
+
+        // Verify the result.
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test for evaluate method with custom intervals.
+     *
+     * @dataProvider evaluate_provider
+     */
+    public function test_evaluate_for_recurring_interval($currentime, $lastaccess, $expected) {
+        // Create the condition.
+        $params = [
+            'intervaltype' => course_inactivity_condition::INTERVAL_RECURRING,
+            'timeintervals' => '7',
+        ];
+        $condition = $this->create_test_condition($params, $currentime);
+        $course = $this->getDataGenerator()->create_course(
+            ['startdate' => $this->coursestarttime, 'enddate' => $this->courseendtime]
+        );
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student', 'manual', $this->enrolltime);
 
