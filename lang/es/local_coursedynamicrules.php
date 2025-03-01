@@ -153,19 +153,32 @@ $string['hours'] = 'Horas';
 $string['days'] = 'Días';
 $string['weeks'] = 'Semanas';
 $string['months'] = 'Meses';
-$string['course_inactivity_info'] = 'Esta condición verificará qué usuarios no han tenido actividad en el curso dentro de los intervalos de tiempo especificados.';
-$string['course_inactivity'] = 'Inactividad en el curso en intervalos de tiempo';
-$string['basedate'] = 'Fecha base';
-$string['date_from_enrollment'] = 'Desde la fecha de inscripción';
+$string['course_inactivity_task'] = 'Tarea de inactividad en el curso';
+$string['intervaltype'] = 'Tipo de intervalo';
+$string['intervaltype_help'] = 'Selecciona cómo se evaluará el intervalo:
+
+* **Intervalos personalizados**: Para agregar valores separados por comas (ej. 7,14,30) y evaluar la inactividad en puntos de tiempo específicos.
+* **Intervalo recurrente**: Para evaluar la inactividad en intervalos recurrentes (ej. cada 7 días).';
+$string['customintervals'] = 'Intervalos personalizados';
+$string['customintervals_help'] = 'Ingresa números separados por comas que representen períodos de inactividad (ej. "7,14,30").';
+$string['recurringinterval'] = 'Intervalo recurrente';
+$string['recurringinterval_help'] = 'Ingresa un valor numérico que represente un intervalo recurrente de inactividad (ej. "7" para cada 7 días de inactividad).';
+$string['intervalunit'] = 'Unidad de tiempo';
+$string['intervalunit_help'] = 'Selecciona la unidad de tiempo para los intervalos.';
+$string['date_from_enrollment'] = 'Desde la fecha de matriculación';
 $string['date_from_course_start'] = 'Desde la fecha de inicio del curso';
 $string['date_from_now'] = 'Desde ahora';
-$string['basedate_help'] = 'Seleccione la fecha base desde la cual se evaluarán los intervalos de tiempo.';
-$string['invalidbasedate'] = 'Tipo de fecha base inválido: {$a}';
 $string['course_inactivity_custom_description'] = 'Usuarios sin actividad en el curso durante intervalos de {$a->intervals} {$a->unit} desde {$a->basedate}';
 $string['course_inactivity_recurring_description'] = 'Usuarios sin actividad en el curso en intervalos recurrentes de {$a->intervals} {$a->unit} desde {$a->basedate}';
 $string['enrollmentdate'] = 'Fecha de matriculación';
 $string['coursestartdate'] = 'Fecha de inicio del curso';
 $string['now'] = 'Ahora';
+$string['course_inactivity_info'] = 'Esta condición verificará qué usuarios no han tenido actividad en el curso dentro de los intervalos de tiempo especificados.';
+$string['course_inactivity'] = 'Inactividad en el curso en intervalos de tiempo';
+$string['basedate'] = 'Fecha base';
+
+
+
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin no está disponible porque la licencia del producto ha expirado o es inválida. Por favor, visita <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
