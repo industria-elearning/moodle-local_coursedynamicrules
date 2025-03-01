@@ -165,7 +165,7 @@ class course_inactivity_condition extends condition {
         global $DB;
 
         return $DB->get_record_sql(
-            "SELECT timestart
+            "SELECT ue.timestart, ue.timecreated
              FROM {user_enrolments} ue
              JOIN {enrol} e ON e.id = ue.enrolid
              WHERE ue.userid = :userid AND e.courseid = :courseid",
@@ -267,7 +267,7 @@ class course_inactivity_condition extends condition {
         switch ($basedatetype) {
             case self::DATE_FROM_ENROLLMENT:
                 $enrollment = $this->get_user_enrollment($userid, $courseid);
-                $basedate->timestart = $enrollment->timestart;
+                $basedate->timestart = $enrollment->timestart ?? $enrollment->timcreated;
                 break;
             case self::DATE_FROM_COURSE_START:
                 $course = get_course($courseid);
