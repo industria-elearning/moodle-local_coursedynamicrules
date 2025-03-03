@@ -73,9 +73,11 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * Create a test condition instance.
      *
      * @param array $params Custom parameters (optional)
+     * @param int $currentime Current time (optional)
+     * @param int $lastexecutiontime Last execution time (optional)
      * @return course_inactivity_condition
      */
-    private function create_test_condition($params = [], $currentime = null) {
+    private function create_test_condition($params = [], $currentime = null, $lastexecutiontime = null) {
         // Default parameters.
         $defaultparams = [
             'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
@@ -90,6 +92,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
             'ruleid' => 1,
             'conditiontype' => 'course_inactivity',
             'params' => json_encode($params),
+            'lastexecutiontime' => $lastexecutiontime,
         ];
 
         $currentime = $currentime ?? $this->currenttime;
@@ -128,6 +131,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         $record = reset($records);
         $this->assertEquals($this->type, $record->conditiontype);
         $this->assertEquals($this->ruleid, $record->ruleid);
+        $this->assertNull($record->lastexecutiontime);
 
         $params = json_decode($record->params);
         $this->assertEquals($intervaltype, $params->intervaltype);
@@ -140,6 +144,9 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * Provider for test_evaluate.
      */
     public static function evaluate_provider(): array {
+        // Course start: 2025-01-01 12:00:00.
+        // Course end: 2025-02-10 12:00:00.
+        // User enrollment: 2025-01-10 08:00:00.
         // First interval: 7 days ends on 2025-01-17 12:00:00.
         // Second interval: 14 days ends on 2025-01-24 12:00:00.
         // Third interval: 21 days ends on 2025-01-31 12:00:00.
@@ -216,6 +223,10 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * Test for evaluate method with custom intervals.
      *
      * @dataProvider evaluate_provider
+     *
+     * @param int $currentime Current time.
+     * @param int $lastaccess Last user access time.
+     * @param bool $expected Expected result.
      */
     public function test_evaluate_for_custom_intervals($currentime, $lastaccess, $expected) {
         // Create the condition.
@@ -243,6 +254,10 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * Test for evaluate method with custom intervals.
      *
      * @dataProvider evaluate_provider
+     *
+     * @param int $currentime Current time.
+     * @param int $lastaccess Last user access time.
+     * @param bool $expected Expected result.
      */
     public function test_evaluate_for_recurring_interval($currentime, $lastaccess, $expected) {
         // Create the condition.

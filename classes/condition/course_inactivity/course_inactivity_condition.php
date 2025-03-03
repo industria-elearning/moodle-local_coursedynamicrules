@@ -165,7 +165,7 @@ class course_inactivity_condition extends condition {
         global $DB;
 
         return $DB->get_record_sql(
-            "SELECT timestart
+            "SELECT ue.timestart, ue.timecreated
              FROM {user_enrolments} ue
              JOIN {enrol} e ON e.id = ue.enrolid
              WHERE ue.userid = :userid AND e.courseid = :courseid",
@@ -192,9 +192,10 @@ class course_inactivity_condition extends condition {
             $endinterval = $this->add_time_interval($basetime, $timeinterval, $intervalunit);
             $timewindow = $this->add_time_interval($endinterval, self::CRON_INTERVAL_HOURS, 'hours');
 
-            if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
-                && $this->is_user_inactive($lastaccess, $startinterval)) {
-                return true;
+            if ($this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)) {
+                if ($this->is_user_inactive($lastaccess, $startinterval)) {
+                    return true;
+                }
             }
 
             $prevtimeinterval = $timeinterval;
@@ -232,24 +233,6 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Calculates the next execution time based on the base timestamp,
-     * the current time, and a given interval in a specified time unit.
-     *
-     * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
-     * @param int $currenttime Current timestamp
-     * @param int $interval Interval value (e.g., 7 for 7 days)
-     * @param string $unit Time unit ('days', 'weeks', 'months', etc.)
-     * @return int Timestamp of the last valid execution time
-     */
-    private function get_next_execution_time($basetime, $currenttime, $interval, $unit) {
-
-        // Calculate expected execution time of the first interval.
-        $firstintervaltime = $this->add_time_interval($basetime, $interval, $unit);
-        $intervalspassed = $this->count_completed_intervals($basetime, $currenttime, $firstintervaltime);
-        return calculate_last_execution_time($basetime, $intervalspassed, $interval, $unit);
-    }
-
-    /**
      * Determines how many full intervals have passed since the basetime
      *
      * @param int $basetime Base timestamp example: enrollment date, course start date, etc.
@@ -264,11 +247,16 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Get the base date to calculate the intervals
+     * Get the base date to calculate the intervals based on the specified type.
      *
-     * @param int $courseid Course ID
-     * @param int $userid User ID
-     * @return stdClass
+     * This function determines the base date for interval calculations by checking the type of base date
+     * specified in the parameters. It can be based on the user's enrollment date, the course start date,
+     * or the current time.
+     *
+     * @param int $courseid The ID of the course.
+     * @param int $userid The ID of the user.
+     * @return stdClass An object containing the base date information with a property 'timestart'.
+     * @throws \moodle_exception If an invalid base date type is specified.
      */
     private function get_basedate($courseid, $userid) {
         $basedate = new stdClass();
@@ -279,7 +267,7 @@ class course_inactivity_condition extends condition {
         switch ($basedatetype) {
             case self::DATE_FROM_ENROLLMENT:
                 $enrollment = $this->get_user_enrollment($userid, $courseid);
-                $basedate->timestart = $enrollment->timestart;
+                $basedate->timestart = $enrollment->timestart ?? $enrollment->timcreated;
                 break;
             case self::DATE_FROM_COURSE_START:
                 $course = get_course($courseid);
@@ -325,11 +313,15 @@ class course_inactivity_condition extends condition {
     }
 
     /**
-     * Check if user is inactive during specific interval
+     * Determines if a user is inactive in a course based on their last access time and a specified inactivity interval.
      *
-     * @param int|null $lastaccess User last access in timestamp or null if user has never accessed the course
-     * @param int $startinterval Timestamp from which the interval starts
-     * @return bool True if user is inactive during the interval, false otherwise
+     * This method checks whether the user's last access timestamp is earlier than the provided start interval timestamp.
+     * If the user has never accessed the course (i.e., $lastaccess is 0 or null), they are considered inactive.
+     *
+     * @param int $lastaccess The Unix timestamp of the user's last access to the course. A value of 0 or null indicates no access.
+     * @param int $startinterval The Unix timestamp representing the start of the inactivity interval.
+     * @return bool True if the user is inactive
+     * (i.e., their last access is before the start interval or they have never accessed the course), false otherwise.
      */
     private function is_user_inactive($lastaccess, $startinterval) {
         // If user has never accessed the course.
