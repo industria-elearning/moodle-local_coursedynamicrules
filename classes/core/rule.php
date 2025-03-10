@@ -105,7 +105,7 @@ class rule {
             $companyid = iomad::get_my_companyid(context_system::instance());
             $company = new company($companyid);
             $companyname = $company->get_name();
-        
+
             $licensekeyname = "licensekey_{$companyid}";
             $licensekey = $config->$licensekeyname;
         }
