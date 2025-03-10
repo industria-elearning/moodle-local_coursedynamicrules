@@ -133,7 +133,7 @@ $string['enableactivity_action_info'] = 'Esta acción habilitará los módulos d
 $string['grade_in_activity_condition_info'] = 'Esta condición verificará cuál usuario ha obtenido la calificación especificada en el módulo de actividad seleccionado.';
 $string['no_complete_activity_condition_info'] = 'Esta condición verificará cuál usuario no ha completado el módulo de actividad seleccionado después de la fecha especificada.';
 $string['passgrade_condition_info'] = 'Esta condición verificará cuál usuario ha completado el módulo de actividad seleccionado con una calificación aprobatoria.';
-$string['licencekey'] = 'Clave de licencia';
+$string['licensekey'] = 'Clave de licencia';
 $string['generalsettings'] = 'Configuración general';
 $string['checklicensekey'] = 'Verificar clave de licencia';
 $string['licensekeyvalid'] = 'La clave de licencia es válida';
@@ -182,7 +182,7 @@ $string['basedate'] = 'Fecha base';
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin no está disponible porque la licencia del producto ha expirado o es inválida. Por favor, visita <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
-$string['licencekey_desc'] = 'Clave de licencia requerida para utilizar este plugin.';
+$string['licensekey_desc'] = 'Clave de licencia requerida para utilizar este plugin.';
 
 
 
