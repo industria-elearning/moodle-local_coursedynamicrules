@@ -15,6 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_coursedynamicrules\core;
+use company;
+use context_system;
+use iomad;
 use local_coursedynamicrules\helper\rule_component_loader;
 use stdClass;
 
@@ -85,29 +88,45 @@ class rule {
      * - message {string} - Message to show when validation is not correct
      */
     public static function validate_licence_status() {
+        global $DB, $CFG;
 
         $pluginname = 'local_coursedynamicrules';
 
         $config = get_config($pluginname);
-        $licencekey = $config->licencekey;
+        $licensekey = $config->licencekey;
+        $localkeyname = 'localkey';
+        $initiallicensekeyname = 'initiallicensekey';
+
+        // Check if this moodle instance is an iomad.
+        if ($DB->record_exists('config_plugins', ['plugin' => 'local_iomad', 'name' => 'version'])) {
+            require($CFG->dirroot . '/local/iomad/lib/iomad.php');
+            require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+
+            $companyid = iomad::get_my_companyid(context_system::instance());
+            $company = new company($companyid);
+            $companyname = $company->get_name();
+        
+            $licensekeyname = "licensekey_{$companyid}";
+            $licensekey = $config->$licensekeyname;
+        }
 
         $licensestatus = new stdClass();
-        $licensestatus->success = false;
+        $licensestatus->success = true;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
-            if (!empty($licencekey)) {
-                $localkey = $config->localkey ?? '';
+            if (!empty($licensekey)) {
+                $localkey = $config->$localkeyname ?? '';
 
-                $initiallicensekey = get_config($pluginname, 'initiallicensekey');
+                $initiallicensekey = get_config($pluginname, $initiallicensekeyname);
 
                 // When licence key is changed set localkey to empty to force remote validation.
-                if ($licencekey != $initiallicensekey) {
-                    set_config('initiallicensekey', $licencekey, $pluginname);
+                if ($licensekey != $initiallicensekey) {
+                    set_config($initiallicensekeyname, $licensekey, $pluginname);
                     $localkey = '';
                 }
 
-                $licencedata = self::validate_licence($licencekey, $localkey);
+                $licencedata = self::validate_licence($licensekey, $localkey);
 
                 // When check is remote licencedata contain localkey.
                 if (!empty($licencedata["remotecheck"])) {
@@ -115,7 +134,7 @@ class rule {
                 }
 
                 if ($licencedata['status'] == 'Active') {
-                    set_config('localkey', $localkey, $pluginname);
+                    set_config($localkeyname, $localkey, $pluginname);
                     $licensestatus->success = true;
                     $licensestatus->message = '';
                 }
