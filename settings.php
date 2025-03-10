@@ -38,11 +38,26 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage("{$pluginname}_settings", get_string('generalsettings', $pluginname));
     $ADMIN->add($pluginname, $settings);
 
+    $licensekey = 'licencekey';
+    $licensekeystring = get_string('licensekey', $pluginname);
+    $licensekeydescstring = get_string('licensekey_desc', $pluginname);
+
+    // Check if this moodle instance is an iomad.
+    if ($DB->record_exists('config_plugins', ['plugin' => 'local_iomad', 'name' => 'version'])) {
+        $companyid = iomad::get_my_companyid(context_system::instance());
+        $company = new company($companyid);
+        $companyname = $company->get_name();
+
+        $licensekey = "licensekey_{$companyid}";
+        $licensekeystring = get_string('licensekeycompany', $pluginname, $companyname);
+        $licensekeydescstring = get_string('licensekeycompany_desc', $pluginname, $companyname);
+    }
+
     // Add license key setting.
     $settings->add(new admin_setting_configtext(
-        'local_coursedynamicrules/licencekey',
-        get_string('licencekey', $pluginname),
-        get_string('licencekey_desc', $pluginname),
+        "local_coursedynamicrules/{$licensekey}",
+        $licensekeystring,
+        $licensekeydescstring,
         '',
     ));
 
