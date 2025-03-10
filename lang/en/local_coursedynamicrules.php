@@ -180,10 +180,13 @@ $string['now'] = 'Now';
 
 // License.
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
-$string['licencekey'] = 'License Key';
-$string['licencekey_desc'] = 'License key required to use this plugin';
+$string['licensekey'] = 'License Key';
+$string['licensekeycompany'] = 'License Key for: {$a}';
+$string['licensekeycompany_desc'] = 'License key required to use this plugin for company: {$a}';
+$string['licensekey_desc'] = 'License key required to use this plugin';
 $string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['checklicensekey'] = 'Check licence key';
 $string['licensekeyvalid'] = 'License key is valid';
+
 
 
