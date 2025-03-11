@@ -106,6 +106,7 @@ class rule {
 
             $licensekeyname = "licensekey_{$companyid}";
             $licensekey = $config->$licensekeyname;
+            $initiallicensekeyname = "initiallicensekey_{$companyid}";
         }
 
         $licensestatus = new stdClass();
