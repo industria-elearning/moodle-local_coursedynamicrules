@@ -15,9 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_coursedynamicrules\core;
-use company;
 use context_system;
-use iomad;
 use local_coursedynamicrules\helper\rule_component_loader;
 use stdClass;
 
@@ -99,11 +97,11 @@ class rule {
 
         // Check if this moodle instance is an iomad.
         if ($DB->record_exists('config_plugins', ['plugin' => 'local_iomad', 'name' => 'version'])) {
-            require($CFG->dirroot . '/local/iomad/lib/iomad.php');
+            require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
             require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 
-            $companyid = iomad::get_my_companyid(context_system::instance());
-            $company = new company($companyid);
+            $companyid = \iomad::get_my_companyid(context_system::instance());
+            $company = new \company($companyid);
             $companyname = $company->get_name();
 
             $licensekeyname = "licensekey_{$companyid}";
@@ -111,7 +109,7 @@ class rule {
         }
 
         $licensestatus = new stdClass();
-        $licensestatus->success = true;
+        $licensestatus->success = false;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
