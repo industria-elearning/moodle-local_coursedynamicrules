@@ -42,7 +42,9 @@ para completar la instalación desde la línea de comandos.
 
 ## Activación del plugin
 
-Una vez que el plugin esté instalado, será necesario activarlo utilizando la llave de licencia proporcionada en la tienda del plugin, para ellos hacemos lo siguiente:
+Para utilizar el plugin, es necesario activarlo con una llave de licencia proporcionada en la tienda. La licencia solo es válida para un único dominio Moodle. En caso de utilizar Moodle IOMAD y requerir activación en múltiples tenants, será necesario adquirir una licencia por cada tenant.
+
+### Obtener la clave de licencia
 
 1. Accedemos a [https://shop.datacurso.com/clientarea.php](https://shop.datacurso.com/clientarea.php) y damos click sobre el servicio que queremos activar en este caso `Reglas dinámicas del Curso para Moodle LMS`.
    
@@ -52,22 +54,43 @@ Una vez que el plugin esté instalado, será necesario activarlo utilizando la l
 
     ![Shop licence key](__docs/images/local_cdr_shop-license-key.png)
 
-3. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general` 
+
+### Activar la licencia en Moodle
+
+1. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general`.
    
     ![Local plugins](__docs/images/local_cdr_general-settings.png)
 
-4. Pegamos la llave de licencia en el campo `Clave de licencia` y damos click en `Guardar cambios`.
+2. Pegamos la llave de licencia en el campo `Clave de licencia` y damos click en `Guardar cambios`.
 
     ![Plugin activation](__docs/images/local_cdr_plugin-activation.png)
 
+### Activación de la licencia para Moodle IOAMAD
 
-4. Para validar si la licencia fue activada correctamente, accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Verificar clave de licencia`
+En Moodle IOMAD, cada tenant funciona como una instancia independiente. Para activar el plugin en múltiples tenants, se debe ingresar una licencia para cada uno de ellos.
+
+1. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general`.
+   
+    ![Local plugins](__docs/images/local_cdr_general-settings.png)
+
+2. En la sección de configuración, se mostrará un campo de licencia para cada tenant registrado en la plataforma.
+
+    ![Tenant activation](__docs/images/local_cdr_tenant-activation.png)
+
+3. Ingresamos una clave de licencia válida en cada tenant donde se vaya a activar el plugin.
+
+### Validación de la licencia
+
+1. Para validar si la licencia fue activada correctamente, accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Verificar clave de licencia`
    
     ![Verify licence](__docs/images/local_cdr_verify-licence.png)
 
-5. Si la licencia fue activada correctamente, veremos un mensaje de confirmación.
+2. Si la licencia fue activada correctamente, veremos un mensaje de confirmación.
 
     ![Licence activated](__docs/images/local_cdr_licence-activated.png)
+
+**NOTA:** Para validar la licencia en IOMAD se debe acceder a cada tenant y verificar la licencia de forma individual.
+
 
 
 ## Agregar reglas dinámicas a un curso
