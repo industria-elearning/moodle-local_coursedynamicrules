@@ -38,14 +38,39 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage("{$pluginname}_settings", get_string('generalsettings', $pluginname));
     $ADMIN->add($pluginname, $settings);
 
-    // Add license key setting.
-    $settings->add(new admin_setting_configtext(
-        'local_coursedynamicrules/licencekey',
-        get_string('licencekey', $pluginname),
-        get_string('licencekey_desc', $pluginname),
-        '',
-    ));
+    // Check if this moodle instance is an iomad.
+    if ($DB->record_exists('config_plugins', ['plugin' => 'local_iomad', 'name' => 'version'])) {
 
+        $companylist = company::get_companies_select();
+
+        foreach ($companylist as $id => $name) {
+            $licensekey = "licensekey_{$id}";
+            $licensekeystring = get_string('licensekeycompany', $pluginname, $name);
+            $licensekeydescstring = get_string('licensekeycompany_desc', $pluginname, $name);
+
+            // Add license key setting for each company.
+            $settings->add(new admin_setting_configtext(
+                "local_coursedynamicrules/{$licensekey}",
+                $licensekeystring,
+                $licensekeydescstring,
+                '',
+            ));
+        }
+    } else {
+        $licensekey = 'licencekey';
+        $licensekeystring = get_string('licensekey', $pluginname);
+        $licensekeydescstring = get_string('licensekey_desc', $pluginname);
+
+        // Add license key setting.
+        $settings->add(new admin_setting_configtext(
+            "local_coursedynamicrules/{$licensekey}",
+            $licensekeystring,
+            $licensekeydescstring,
+            '',
+        ));
+    }
+
+    // Add check license key page.
     $url = new moodle_url('/local/coursedynamicrules/checklicensekey.php', []);
     $ADMIN->add(
         $pluginname,
