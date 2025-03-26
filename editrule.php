@@ -71,6 +71,7 @@ if ($ruleform->is_cancelled()) {
     redirect($rulesurl);
 } else if ($data = $ruleform->get_data()) {
     $data->timemodified = time();
+    $data->active = $data->active ?? 0;
     if (empty($data->id)) {
         $data->timecreated = time();
         $DB->insert_record('cdr_rule', $data);

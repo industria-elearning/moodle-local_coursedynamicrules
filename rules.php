@@ -141,7 +141,16 @@ foreach ($rules as $rule) {
 
     $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
 
-
+    if (!$rule->active) {
+        $rule->name .= " ". html_writer::span(
+            get_string('ruleinactive', 'local_coursedynamicrules'),
+            'badge badge-secondary'
+        );
+    } else {
+        $rule->name .= " ". html_writer::span(
+            get_string('ruleactive', 'local_coursedynamicrules'), 'badge badge-success'
+        );
+    }
     $table->data[] = [
         new html_table_cell($rule->name),
         new html_table_cell($conditionstext),
