@@ -49,6 +49,7 @@ $string['conditions'] = 'Condições';
 $string['actions'] = 'Ações';
 $string['ruleactive'] = 'Ativo';
 $string['ruleactive_help'] = 'Ativar ou desativar a regra';
+$string['ruleinactive'] = 'Inativa';
 $string['ruleadd'] = 'Adicionar regra';
 $string['ruleaddedsuccessfully'] = 'Regra adicionada com sucesso';
 $string['editrule'] = 'Editar regra';

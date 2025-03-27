@@ -18,7 +18,7 @@ namespace local_coursedynamicrules\form\conditions;
 
 use cm_info;
 use context;
-use context_system;
+use context_course;
 use core_form\dynamic_form;
 use core_grades\component_gradeitems;
 use grade_item;
@@ -244,7 +244,8 @@ class dynamic_grade_in_activity_form extends dynamic_form {
      * @return context
      */
     protected function get_context_for_dynamic_submission(): context {
-        return context_system::instance();
+        $courseid = $this->optional_param('courseid', 0, PARAM_INT);
+        return context_course::instance($courseid);
     }
 
     /**
@@ -258,7 +259,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
      *     require_capability('dosomething', $this->get_context_for_dynamic_submission());
      */
     protected function check_access_for_dynamic_submission(): void {
-        require_capability('moodle/site:config', $this->get_context_for_dynamic_submission());
+        require_capability('local/coursedynamicrules:managecondition', $this->get_context_for_dynamic_submission());
     }
 
     /**

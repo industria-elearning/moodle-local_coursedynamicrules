@@ -52,6 +52,7 @@ $string['actions'] = 'Actions';
 $string['actions_help'] = 'Actions are used to define the actions that will be executed when the rule conditions are met';
 $string['ruleactive'] = 'Active';
 $string['ruleactive_help'] = 'Enable or disable the rule';
+$string['ruleinactive'] = 'Inactive';
 $string['ruleadd'] = 'Add rule';
 $string['ruleaddedsuccessfully'] = 'Rule added successfully';
 $string['editrule'] = 'Edit rule';
@@ -187,6 +188,7 @@ $string['licensekey_desc'] = 'License key required to use this plugin';
 $string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['checklicensekey'] = 'Check licence key';
 $string['licensekeyvalid'] = 'License key is valid';
+
 
 
 
