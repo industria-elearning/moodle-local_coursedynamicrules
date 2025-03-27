@@ -52,6 +52,7 @@ $string['actions'] = 'Acciones';
 $string['actions_help'] = 'Las acciones se utilizan para definir las acciones que se ejecutarán cuando se cumplan las condiciones de la regla';
 $string['ruleactive'] = 'Activa';
 $string['ruleactive_help'] = 'Habilitar o deshabilitar la regla';
+$string['ruleinactive'] = 'Inactiva';
 $string['ruleadd'] = 'Agregar regla';
 $string['ruleaddedsuccessfully'] = 'Regla añadida con éxito';
 $string['editrule'] = 'Editar regla';
