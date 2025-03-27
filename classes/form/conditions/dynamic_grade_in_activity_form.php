@@ -258,7 +258,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
      *     require_capability('dosomething', $this->get_context_for_dynamic_submission());
      */
     protected function check_access_for_dynamic_submission(): void {
-        require_capability('moodle/site:config', $this->get_context_for_dynamic_submission());
+        require_capability('local/coursedynamicrules:managecondition', $this->get_context_for_dynamic_submission());
     }
 
     /**
