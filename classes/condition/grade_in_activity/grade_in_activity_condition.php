@@ -20,6 +20,7 @@ use cm_info;
 use core_grades\component_gradeitems;
 use grade_grade;
 use grade_item;
+use local_coursedynamicrules\api_client;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
@@ -48,67 +49,57 @@ class grade_in_activity_condition extends condition {
      */
     public function evaluate($context) {
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return false;
-        }
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
         $gradeitemsconditions = $this->params->gradeitemsconditions;
 
         $cminfo = get_coursemodule_from_id(null, $cmid, $courseid);
-        if (!$cminfo || $cminfo->deletioninprogress) {
-            return false;
-        }
-
-        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
-            return false;
-        }
-
-        $hasgraderequire = false;
-        $allitemconditionsmet = true;
 
         /** @var grade_item[]  $gradeitems */
         $gradeitems = grade_item::fetch_all(['iteminstance' => $cminfo->instance, 'itemmodule' => $cminfo->modname]);
 
+        $gradeconditions = [];
         foreach ($gradeitems as $gradeitem) {
-            $gradeitemid = $gradeitem->id;
+            $gradegtekey = 'gradegte' . '_' . $gradeitem->id;
+            $gradeltkey = 'gradelt' . '_' . $gradeitem->id;
+            $gradegte = $gradeitemsconditions->$gradegtekey;
+            $gradelt = $gradeitemsconditions->$gradeltkey;
 
             $grade = grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $userid]);
             $finalgrade = $grade->finalgrade;
 
-            $gradegtekey = 'gradegte' . '_' . $gradeitemid;
-            $gradegte = $gradeitemsconditions->$gradegtekey;
+            $gradecondition = [
+                'gradeitemid' => $gradeitem->id,
+                'finalgrade' => $finalgrade,
+                'gradegte' => null,
+                'gradelt' => null,
+            ];
 
             if ($gradegte) {
                 $gradegtebounded = $gradeitem->bounded_grade($gradegte->value);
-                if ($finalgrade >= $gradegtebounded) {
-                    $hasgraderequire = true;
-                } else {
-                    $allitemconditionsmet = false;
-                }
+                $gradecondition['gradegte'] = $gradegtebounded;
             }
-
-            $gradeltkey = 'gradelt' . '_' . $gradeitemid;
-            $gradelt = $gradeitemsconditions->$gradeltkey;
 
             if ($gradelt) {
                 $gradeltbounded = $gradeitem->bounded_grade($gradelt->value);
-                if ($finalgrade < $gradeltbounded) {
-                    $hasgraderequire = true;
-                } else {
-                    $allitemconditionsmet = false;
-                }
+                $gradecondition['gradelt'] = $gradeltbounded;
             }
 
-            if (!$allitemconditionsmet) {
-                break;
-            }
+            $gradeconditions[] = $gradecondition;
         }
 
-        return $hasgraderequire && $allitemconditionsmet;
+        $payload['gradeconditions'] = $gradeconditions;
+        $payload['cminfo'] = [
+            'id' => $cminfo->id,
+            'completion' => $cminfo->completion,
+            'deletioninprogress' => $cminfo->deletioninprogress,
+        ];
 
+        $client = new api_client();
+        $response = $client->post('grade_in_activity_condition/evaluate', $payload);
+
+        return $response['success'] == true && $response['result']['success'] == true;
     }
 
     /**
