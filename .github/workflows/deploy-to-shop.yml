@@ -1,4 +1,4 @@
-name: Encode with IonCube
+name: Deploy to Shop
 
 on:
   workflow_run:
@@ -19,5 +19,5 @@ jobs:
           curl -X POST \
           -H "Content-Type: application/json" \
           -H "Authorization: ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_TOKEN }}" \
-          -d '{"repository":"${{ github.repository }}", "branch":"${{ github.ref_name }}"}' \
+          -d '{"repository":"${{ github.repository }}", "branch":"${{ github.ref_name }}", "encrypt_required": "false"}' \
           ${{ secrets.RD_MOODLE_PLUGINS_WEBHOOK_URL }}
