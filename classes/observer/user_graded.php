@@ -29,6 +29,8 @@ class user_graded {
     /** @var array $conditions list of conditions to include in the executions for this event observer */
     private static $conditiontypes = [
         'grade_in_activity',
+        'passgrade',
+        'complete_activity', // When module has competion with grade only this event has been trigger.
     ];
 
     /**
