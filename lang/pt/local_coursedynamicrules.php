@@ -150,6 +150,10 @@ $string['course_inactivity_recurring_description'] = 'Utilizadores sem atividade
 $string['enrollmentdate'] = 'Data de inscrição';
 $string['coursestartdate'] = 'Data de início do curso';
 $string['now'] = 'Agora';
+$string['complete_activity_description'] = 'Utilizadores que concluíram o módulo de atividade do curso \'{$a->moddescription}\'';
+$string['complete_activity_condition_info'] = 'Esta condição irá verificar quais os utilizadores que concluíram o módulo de atividade selecionado.';
+$string['complete_activity'] = 'Atividade concluída';
+
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';
