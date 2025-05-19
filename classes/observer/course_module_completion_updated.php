@@ -28,8 +28,8 @@ use local_coursedynamicrules\task\rule_task;
 class course_module_completion_updated {
     /** @var array $conditions list of conditions to include in the executions for this event observer */
     private static $conditiontypes = [
-        'passgrade',
         'no_complete_activity',
+        'complete_activity',
     ];
     /**
      * The definition of the event.
