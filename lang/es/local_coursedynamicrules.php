@@ -177,9 +177,9 @@ $string['now'] = 'Ahora';
 $string['course_inactivity_info'] = 'Esta condición verificará qué usuarios no han tenido actividad en el curso dentro de los intervalos de tiempo especificados.';
 $string['course_inactivity'] = 'Inactividad en el curso en intervalos de tiempo';
 $string['basedate'] = 'Fecha base';
-
-
-
+$string['complete_activity_description'] = 'Usuarios que han completado el módulo de actividad del curso \'{$a->moddescription}\'';
+$string['complete_activity_condition_info'] = 'Esta condición verificará qué usuario ha completado el módulo de actividad seleccionado.';
+$string['complete_activity'] = 'Actividad completada';
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin no está disponible porque la licencia del producto ha expirado o es inválida. Por favor, visita <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
