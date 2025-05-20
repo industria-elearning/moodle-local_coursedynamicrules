@@ -16,6 +16,7 @@
 
 namespace local_coursedynamicrules\form\actions;
 
+use context_course;
 use moodle_url;
 
 /**
@@ -39,6 +40,7 @@ class sendnotification_form extends action_form {
         $mform = $this->_form;
         $customdata = $this->_customdata;
         $ruleid = $customdata['ruleid'];
+        $courseid = $customdata['courseid'];
 
         $notification = $OUTPUT->notification(
             get_string('notification_action_info', 'local_coursedynamicrules'),
@@ -101,11 +103,48 @@ class sendnotification_form extends action_form {
 
         $mform->addElement('static', 'messagebody_static', '', $placeholderstext);
 
+        $roles = get_default_enrol_roles(context_course::instance($courseid));
+        $checkboxes = [];
+        foreach ($roles as $roleid => $rolename) {
+            $checkboxes[] = $mform->createElement('advcheckbox', $roleid, '', $rolename);
+            $mform->setType($roleid, PARAM_INT);
+        }
+        $mform->addGroup($checkboxes, 'roles', get_string('rolestonotify', 'local_coursedynamicrules'), '<br />');
+        // Add help button for roles.
+        $mform->addHelpButton('roles', 'rolestonotify', 'local_coursedynamicrules');
+
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);
         $mform->setType('type', PARAM_TEXT);
         $mform->setType('ruleid', PARAM_INT);
 
         parent::definition();
+    }
+
+    /**
+     * Validate the form data.
+     *
+     * @param array $data The form data.
+     * @param array $files The uploaded files.
+     * @return array An array of validation errors.
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        $roles = $data['roles'];
+        // Check if at least one role checkbox was selected.
+        $atleastoneselected = false;
+        foreach ($roles as $roleid => $value) {
+            if ($value == 1) {
+                $atleastoneselected = true;
+                break;
+            }
+        }
+
+        if (!$atleastoneselected) {
+            $errors['roles'] = get_string('mustselectonerole', 'local_coursedynamicrules');
+        }
+
+        return $errors;
     }
 }
