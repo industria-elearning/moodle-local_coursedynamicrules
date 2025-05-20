@@ -16,6 +16,7 @@
 
 namespace local_coursedynamicrules\action\sendnotification;
 
+use html_writer;
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\sendnotification_form;
@@ -53,7 +54,7 @@ class sendnotification_action extends action {
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
         $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
-        $courselink = '<a href="'.$courseurl->out(false).'">'.$courseurl->out(false).'</a>';
+        $courselink = html_writer::link($courseurl, $course->fullname);
 
         $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
         $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
