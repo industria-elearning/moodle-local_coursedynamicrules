@@ -97,17 +97,7 @@ class sendnotification_form extends action_form {
         $mform->addRule('messagebody', null, 'required', null, 'client');
         $mform->addHelpButton('messagebody', 'messagebody', 'local_coursedynamicrules');
 
-        $placeholderstext = '
-        <div>
-            <strong>' . get_string('availableplaceholders', 'local_coursedynamicrules') . ':</strong>
-            <ul>
-                <li>{$a->coursename} - ' . get_string('coursename', 'local_coursedynamicrules') . '</li>
-                <li>{$a->courselink} - ' . get_string('courselink', 'local_coursedynamicrules') . '</li>
-                <li>{$a->fullname} - ' . get_string('fullname', 'local_coursedynamicrules') . '</li>
-                <li>{$a->firstname} - ' . get_string('firstname', 'local_coursedynamicrules') . '</li>
-                <li>{$a->lastname} - ' . get_string('lastname', 'local_coursedynamicrules') . '</li>
-            </ul>
-        </div>';
+        $placeholderstext = $OUTPUT->render_from_template('local_coursedynamicrules/notification_placeholders', []);
 
         $mform->addElement('static', 'messagebody_static', '', $placeholderstext);
 
