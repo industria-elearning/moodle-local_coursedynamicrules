@@ -6,17 +6,13 @@ Este plugin permite a los administradores y profesores definir reglas personaliz
 
 1. Tener minimo la versión de PHP 8.1 instalada en el servidor.
 
-2. Tener la versión de Moodle 4.1.14 o superior instalada en el servidor.
+2. Tener la versión de Moodle 4.1.14 o superior, hasta la versión 4.5.
    
 3. Tener el cron de Moodle configurado y ejecutándose correctamente.
-
-4. Tener instalada y activada la extensión ioncube loader en su versión 12 o superior en el servidor 
-      - desde CPanel podemos hacerlo siguiendo las indicaciones del siguiente enlace: [https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel](https://support.cpanel.net/hc/en-us/articles/360062075814-How-to-enable-Ioncube-for-cPanel).
-      - Alternativamente podemos realizar la instalación de forma manual siguiendo las instrucciones del siguiente enlace: [https://kinsta.com/blog/ioncube-loader/](https://kinsta.com/blog/ioncube-loader/)
    
-5. Comprar plugin `Reglas dinámicas del Curso para Moodle LMS` desde nuestra tienda en la sección de complementos para Moodle https://shop.datacurso.com/index.php?rp=/store/plugins-moodle
+4. Comprar plugin `Reglas dinámicas del Curso para Moodle LMS` desde nuestra tienda en la sección de complementos para Moodle https://shop.datacurso.com/index.php?rp=/store/plugins-moodle
 
-6. Tener instalado el plugin de Moodle `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+5. Tener instalado el plugin de Moodle `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 
 ## Instalación mediante archivo ZIP subido
 
@@ -91,8 +87,6 @@ En Moodle IOMAD, cada tenant funciona como una instancia independiente. Para act
 
 **NOTA:** Para validar la licencia en IOMAD se debe acceder a cada tenant y verificar la licencia de forma individual.
 
-
-
 ## Agregar reglas dinámicas a un curso
 
 1. Accedemos al curso en el que queremos agregar reglas dinámicas y damos click en `Reglas dinámicas del curso` en el menú de administración del curso.
@@ -119,6 +113,18 @@ En Moodle IOMAD, cada tenant funciona como una instancia independiente. Para act
     ![Conditions list](__docs/images/local_cdr_conditions-list.png)
 
 ## Condiciones disponibles
+
+### Actividad completada (NUEVO desde la version 1.5.0)
+
+#### Descripción
+
+Esta condición permite identificar fácilmente a los estudiantes que han completado una actividad específica en el curso. Se puede configurar para enviar recordatorios automáticos a aquellos que hayan completado la actividad, ayudándote a mantener su compromiso y reducir la inactividad.
+
+#### Configuración de la condición
+
+1. **Buscar módulos de actividad del curso**: Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad que deseamos verificar que se haya completado.
+   
+   ![Activity completion search](__docs/images/local_cdr_activity-completion-search.png)
 
 ### Inactividad en el curso en intervalos de tiempo
 
@@ -204,7 +210,7 @@ Una vez que se evalúe la condición y se ejecutan las acciones de la regla, la 
 #### Configuración de la condición
 
 1. **Buscar módulos de actividad del curso**:
-   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar que no se haya completado.
 
    ![No complete activity search](__docs/images/local_cdr_no-complete-activity-search.png)
    
@@ -319,7 +325,7 @@ Para obtener mas información puede visitar la pagina de documentación [https:/
 
     ![Send notification](__docs/images/local_cdr_send-notification.png)
 
-3. **Marcadores de posición**:
+3. **Marcadores de posición** (Desde la version 1.5.1):
     Podemos utilizar marcadores de posición en el cuerpo de la notificación para que el mensaje sea mas personalizado para cada usuario, los marcadores de posición disponibles son:
 
     - `{$a->coursename}` - Nombre del curso
@@ -329,6 +335,11 @@ Para obtener mas información puede visitar la pagina de documentación [https:/
     - `{$a->lastname}` - Apellido del usuario
     
      ![Notification placeholders](__docs/images/local_cdr_notification-placeholders.png)
+
+4. **Roles a notificar** (Desde la version 1.5.1):
+   Seleccionamos los roles de los cuales el usuario debe tener al menos uno asignado en el curso para que se le envíe la notificación. Por ejemplo si queremos que solo los usuarios que tengan el rol de estudiante en el curso se le envíe la notificación, marcamos la casilla `Estudiante`.
+
+    ![Notification roles](__docs/images/local_cdr_notification-roles.png)
 
 
 
