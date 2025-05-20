@@ -16,6 +16,8 @@
 
 namespace local_coursedynamicrules\action\sendnotification;
 
+use context_course;
+use html_writer;
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\sendnotification_form;
@@ -49,11 +51,20 @@ class sendnotification_action extends action {
 
         $messagesubject = $this->params->messagesubject;
         $messagebody = $this->params->messagebody;
+        $roleids = $this->params->roleids;
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+
+        $coursecontext = context_course::instance($course->id);
+        $roleassigns = get_user_roles($coursecontext, $userid);
+
+        if (!$this->has_required_roles($roleassigns, $roleids)) {
+            return false;
+        }
+
         $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
-        $courselink = '<a href="'.$courseurl->out(false).'">'.$courseurl->out(false).'</a>';
+        $courselink = html_writer::link($courseurl, $course->fullname);
 
         $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
         $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
@@ -126,9 +137,13 @@ class sendnotification_action extends action {
             return;
         }
 
+        $roles = $formdata->roles;
+        $roleids = array_keys($roles, 1);
+
         $params = [
             'messagesubject' => $formdata->messagesubject,
             'messagebody' => format_text($formdata->messagebody['text'], FORMAT_HTML),
+            'roleids' => $roleids,
         ];
 
         $action = new stdClass();
@@ -183,5 +198,22 @@ class sendnotification_action extends action {
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
 
         return $text;
+    }
+
+    /**
+     * Checks if the user has the required roles to retrieve the message.
+     *
+     * @param array $roleassigns The role assignments for the user.
+     * @param array $roleids The required role IDs.
+     * @return bool True if the user has all required roles, false otherwise.
+     */
+    private function has_required_roles($roleassigns, $roleids) {
+        foreach ($roleassigns as $roleassign) {
+            $roleid = $roleassign->roleid;
+            if (!in_array($roleid, $roleids)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

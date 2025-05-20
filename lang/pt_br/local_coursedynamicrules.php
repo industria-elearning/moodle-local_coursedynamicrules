@@ -153,6 +153,11 @@ $string['now'] = 'Agora';
 $string['complete_activity_description'] = 'Usuários que concluíram o módulo de atividade do curso \'{$a->moddescription}\'';
 $string['complete_activity_condition_info'] = 'Esta condição verificará quais usuários concluíram o módulo de atividade selecionado.';
 $string['complete_activity'] = 'Atividade concluída';
+$string['copytoclipboard'] = 'Copiar para a área de transferência';
+$string['copiedtoclipboard'] = 'Copiado para a área de transferência';
+$string['rolestonotify'] = 'Papéis a serem notificados';
+$string['rolestonotify_help'] = 'Selecione os papéis que o usuário deve ter para receber a notificação. Você deve selecionar pelo menos um.';
+$string['mustselectonerole'] = 'Você deve selecionar pelo menos um papel.';
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';

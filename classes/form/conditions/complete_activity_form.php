@@ -49,7 +49,7 @@ class complete_activity_form extends condition_form {
         $cms = $modinfo->get_cms();
         $options = [];
         foreach ($cms as $cm) {
-            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && !$cm->deletioninprogress) {
+            if ($this->is_completion_enabled($cm) && !$cm->deletioninprogress) {
                 $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
             }
         }
@@ -70,4 +70,15 @@ class complete_activity_form extends condition_form {
 
         parent::definition();
     }
+
+    /**
+     * Validate if the completion is enabled for the course module
+     *
+     * @param object $cminfo Course module information
+     * @return bool True if the completion is enabled, false otherwise
+     */
+    private function is_completion_enabled($cminfo) {
+        return $cminfo->completion == COMPLETION_TRACKING_MANUAL || $cminfo->completion == COMPLETION_TRACKING_AUTOMATIC;
+    }
+
 }

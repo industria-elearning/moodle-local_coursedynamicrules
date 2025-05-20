@@ -180,6 +180,11 @@ $string['basedate'] = 'Fecha base';
 $string['complete_activity_description'] = 'Usuarios que han completado el módulo de actividad del curso \'{$a->moddescription}\'';
 $string['complete_activity_condition_info'] = 'Esta condición verificará qué usuario ha completado el módulo de actividad seleccionado.';
 $string['complete_activity'] = 'Actividad completada';
+$string['copytoclipboard'] = 'Copiar al portapapeles';
+$string['copiedtoclipboard'] = 'Copiado al portapapeles';
+$string['rolestonotify'] = 'Roles a notificar';
+$string['rolestonotify_help'] = 'Seleccione los roles que el usuario debe tener para recibir la notificación. Debe seleccionar al menos uno.';
+$string['mustselectonerole'] = 'Debe seleccionar al menos un rol.';
 
 // License.
 $string['pluginnotavailable'] = 'Este plugin no está disponible porque la licencia del producto ha expirado o es inválida. Por favor, visita <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar o comprar una nueva licencia.';
