@@ -101,7 +101,7 @@ class complete_activity_condition extends condition {
             (object)['id' => $cmid], false, $userid
         );
 
-        if (self::is_completion_enabled($cminfo) && self::is_cm_completed($completiondata)) {
+        if ($this->is_completion_enabled($cminfo) && $this->is_cm_completed($completiondata)) {
             return true;
         }
 
@@ -166,7 +166,7 @@ class complete_activity_condition extends condition {
      * @param object $cminfo Course module information
      * @return bool True if the completion is enabled, false otherwise
      */
-    public static function is_completion_enabled($cminfo) {
+    private function is_completion_enabled($cminfo) {
         return $cminfo->completion == COMPLETION_TRACKING_MANUAL || $cminfo->completion == COMPLETION_TRACKING_AUTOMATIC;
     }
 
@@ -176,7 +176,7 @@ class complete_activity_condition extends condition {
      * @param object $completiondata Completion data
      * @return bool True if the user has completed the activity module, false otherwise
      */
-    public static function is_cm_completed($completiondata) {
+    private function is_cm_completed($completiondata) {
         return
             $completiondata->completionstate == COMPLETION_COMPLETE ||
             $completiondata->completionstate == COMPLETION_COMPLETE_PASS;
