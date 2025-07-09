@@ -75,6 +75,11 @@ class passgrade_condition extends condition {
         $userid = $context->userid;
         $cmid = $this->params->cmid;
 
+        // This is for evaluate the condition only for the course module obtained from event observer related data.
+        if (isset($context->cmid) && $context->cmid != $cmid) {
+            return false;
+        }
+
         $licensestatus = rule::validate_licence_status();
         if (!$licensestatus->success) {
             return false;
