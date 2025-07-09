@@ -48,28 +48,43 @@ class rule_task extends \core\task\adhoc_task {
     public function execute() {
         global $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            throw new \moodle_exception('pluginnotavailable', 'local_coursedynamicrules');
+        try {
+            $licensestatus = rule::validate_licence_status();
+            if (!$licensestatus->success) {
+                throw new \moodle_exception('pluginnotavailable', 'local_coursedynamicrules');
+            }
+
+            $customdata = $this->get_custom_data();
+
+            $courseid = $customdata->courseid;
+            $userid = $customdata->userid;
+            $conditiontypes = $customdata->conditiontypes;
+
+            $user = $DB->get_record('user', ['id' => $userid]);
+
+            // Make array to pass to rule class in second param.
+            $users = [$user];
+
+            // Get active rules for the course.
+            $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
+
+            $additionaldata = [];
+
+            if (isset($customdata->completionid)) {
+                $additionaldata['completionid'] = $customdata->completionid;
+            }
+            if (isset($customdata->gradeid)) {
+                $additionaldata['gradeid'] = $customdata->gradeid;
+            }
+
+            foreach ($rules as $rule) {
+                $ruleinstance = new rule($rule, $users, $conditiontypes, $additionaldata);
+                $ruleinstance->execute();
+            }
+
+        } catch (\Exception $e) {
+            mtrace($e);
         }
 
-        $customdata = $this->get_custom_data();
-
-        $courseid = $customdata->courseid;
-        $userid = $customdata->userid;
-        $conditiontypes = $customdata->conditiontypes;
-
-        $user = $DB->get_record('user', ['id' => $userid]);
-
-        // Make array to pass to rule class in second param.
-        $users = [$user];
-
-        // Get active rules for the course.
-        $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
-
-        foreach ($rules as $rule) {
-            $ruleinstance = new rule($rule, $users, $conditiontypes);
-            $ruleinstance->execute();
-        }
     }
 }

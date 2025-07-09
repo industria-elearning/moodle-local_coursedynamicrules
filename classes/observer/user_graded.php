@@ -30,7 +30,9 @@ class user_graded {
     private static $conditiontypes = [
         'grade_in_activity',
         'passgrade',
-        'complete_activity', // When module has competion with grade only this event has been trigger.
+        // When modules with manual grading are completed e.g assignments
+        // the \core\event\course_module_completion_updated is not triggered.
+        'complete_activity',
     ];
 
     /**
@@ -40,7 +42,8 @@ class user_graded {
     public static function observe(\core\event\user_graded $event) {
         $eventdata = $event->get_data();
 
-        $gradeitemtype = $event->get_grade()->grade_item->itemtype;
+        $grade = $event->get_grade();
+        $gradeitemtype = $grade->grade_item->itemtype;
         // This validation is because this event is also triggered with the course grade.
         if ($gradeitemtype == 'mod') {
 
@@ -48,13 +51,18 @@ class user_graded {
             // User that completed the module.
             $userid = $eventdata["relateduserid"];
 
+            // Create an instance of the custom adhoc task with required data, including grade ID.
+            // The grade ID is used to ensure the uniqueness of the task based on the specific grade_grade record.
             $task = rule_task::instance((object)[
+                'gradeid' => $grade->id,
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'conditiontypes' => self::$conditiontypes,
             ]);
 
-            \core\task\manager::queue_adhoc_task($task);
+            // Queue the adhoc task for execution. The second parameter 'true' ensures that only one
+            // unique task is queued for the given grade ID, preventing duplicate executions.
+            \core\task\manager::queue_adhoc_task($task, true);
         }
     }
 }

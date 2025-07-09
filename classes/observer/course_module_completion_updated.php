@@ -28,7 +28,6 @@ use local_coursedynamicrules\task\rule_task;
 class course_module_completion_updated {
     /** @var array $conditions list of conditions to include in the executions for this event observer */
     private static $conditiontypes = [
-        'no_complete_activity',
         'complete_activity',
     ];
     /**
@@ -40,17 +39,38 @@ class course_module_completion_updated {
         global $DB;
         $eventdata = $event->get_data();
 
+        $completion = $event->get_record_snapshot('course_modules_completion', $eventdata["objectid"]);
+
+        // When completiongrade or passgrade is set, it means that the completion is based on grade.
+        // In this case, we don't need to execute the rules in this observer.
+        // This is to avoid executing the same rules twice.
+        if (isset($completion->completiongrade) || isset($completion->passgrade)) {
+            return;
+        }
+
+        // If the completion state is incomplete, it means that the user has not completed the module.
+        // This is when a module has more than one completion state
+        // e.g for assignments with completion set to View and make submission.
+        if ($completion->completionstate == COMPLETION_INCOMPLETE) {
+            return;
+        }
+
         $courseid = $eventdata["courseid"];
 
         // User that completed the module.
         $userid = $eventdata["relateduserid"];
 
+        // Create an instance of the custom adhoc task with required data, including completion ID.
+        // The completion ID is used to ensure the uniqueness of the task based on the specific completion record.
         $task = rule_task::instance((object)[
             'courseid' => $courseid,
             'userid' => $userid,
             'conditiontypes' => self::$conditiontypes,
+            'completionid' => $completion->id,
         ]);
 
-        \core\task\manager::queue_adhoc_task($task);
+        // Queue the adhoc task for execution. The second parameter 'true' ensures that only one
+        // unique task is queued for the given completion ID, preventing duplicate executions.
+        \core\task\manager::queue_adhoc_task($task, true);
     }
 }

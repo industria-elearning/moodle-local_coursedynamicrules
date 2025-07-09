@@ -77,7 +77,7 @@ class sendnotification_action extends action {
         $message->component = 'local_coursedynamicrules';
         // Notification name from message.php.
         $message->name = 'coursedynamicrules_notification';
-        $message->userfrom = $message->userfrom = \core_user::get_support_user();
+        $message->userfrom = \core_user::get_support_user();
         $message->userto = $userid;
         $message->subject = $messagesubject;
         $message->fullmessage = html_to_text($messagebody);

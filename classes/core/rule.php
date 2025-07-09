@@ -45,19 +45,24 @@ class rule {
     /** @var stdClass[] List of users to validate this rule */
     private $users;
 
+    /** @var array Additional data to add extra checks in conditions to avoid unexpected executions */
+    private $additionaldata;
+
     /**
      * Rule constructor.
      * @param object $rule
      * @param stdClass[] $users List of users to validate this rule
      * @param string[] $conditiontypes list of conditions to include in the executions
+     * @param array $additionaldata additional data to add extra checks in conditions to avoid unexpected executions
      * of rules if not pass all conditions for each rule of the course are added
      */
-    public function __construct($rule, $users, $conditiontypes=[]) {
+    public function __construct($rule, $users, $conditiontypes=[], $additionaldata=[]) {
         global $DB;
         $this->id = $rule->id;
         $this->courseid = $rule->courseid;
         $this->users = $users;
         $this->active = $rule->active;
+        $this->additionaldata = $additionaldata;
 
         // Load conditions and actions from the DB.
         $conditions = $DB->get_records('cdr_condition', ['ruleid' => $this->id]);
@@ -74,7 +79,6 @@ class rule {
         foreach ($actions as $actionrecord) {
             $this->actions[] = rule_component_loader::create_action_instance($actionrecord, $this->courseid);
         }
-
     }
 
     /**
@@ -110,7 +114,7 @@ class rule {
         }
 
         $licensestatus = new stdClass();
-        $licensestatus->success = false;
+        $licensestatus->success = true;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
@@ -166,6 +170,10 @@ class rule {
     public function evaluate_conditions($rulecontext) {
         if (empty($this->conditions)) {
             return false;
+        }
+        $cmid = $this->get_cmid_from_additionaldata();
+        if ($cmid) {
+            $rulecontext->cmid = $cmid;
         }
         foreach ($this->conditions as $condition) {
             if (!$condition->evaluate($rulecontext)) {
@@ -376,7 +384,7 @@ class rule {
             return;
         }
 
-        if (empty($this->conditions) || empty($this->conditions)) {
+        if (empty($this->conditions) || empty($this->actions)) {
             return;
         }
 
@@ -384,6 +392,7 @@ class rule {
             $rulecontext = (object)[
                 'courseid' => $this->courseid,
                 'userid' => $user->id,
+                'additionaldata' => $this->additionaldata,
             ];
 
             // Validate if all conditions of the rule are true for the user.
@@ -463,6 +472,61 @@ class rule {
         }
 
         return $DB->delete_records('cdr_rule', ['id' => $this->id]);
+    }
+
+    /**
+     * Retrieves the course module ID (cmid) from the additional data.
+     * Tries using completion ID first, then grade ID.
+     *
+     * @return int|null Course module ID if found, or null if not available.
+     */
+    private function get_cmid_from_additionaldata() {
+        global $DB;
+        if (isset($this->additionaldata['completionid'])) {
+            return $this->get_cmid_from_completionid();
+        }
+        if (isset($this->additionaldata['gradeid'])) {
+            return $this->get_cmid_from_gradeid();
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the course module ID using the completion ID.
+     *
+     * @return int|false Course module ID if found, or false if not found.
+     */
+    private function get_cmid_from_completionid() {
+        global $DB;
+        return $DB->get_field('course_modules_completion', 'coursemoduleid', ['id' => $this->additionaldata['completionid']]);
+    }
+
+    /**
+     * Retrieves the course module ID using the grade ID.
+     * Joins grade_grades, grade_items, modules, and course_modules to find the related cmid.
+     *
+     * @return int|null Course module ID if found, or null if not found.
+     */
+    private function get_cmid_from_gradeid() {
+        global $DB;
+        $record = $DB->get_record_sql(
+            "SELECT cm.id AS cmid
+            FROM
+                {grade_grades} gg
+                JOIN {grade_items} gi ON gi.id = gg.itemid
+                JOIN {modules} m ON m.name = gi.itemmodule
+                JOIN {course_modules} cm ON cm.module = m.id
+                AND cm.instance = gi.iteminstance
+            WHERE
+                gg.id = :gradegradeid
+                AND gi.itemtype = :itemtype",
+            [
+                'gradegradeid' => $this->additionaldata['gradeid'],
+                'itemtype' => 'mod',
+            ]
+        );
+
+        return $record->cmid;
     }
 
 }
