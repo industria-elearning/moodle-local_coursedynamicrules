@@ -68,8 +68,17 @@ class rule_task extends \core\task\adhoc_task {
             // Get active rules for the course.
             $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
 
+            $additionaldata = [];
+
+            if (isset($customdata->completionid)) {
+                $additionaldata['completionid'] = $customdata->completionid;
+            }
+            if (isset($customdata->gradeid)) {
+                $additionaldata['gradeid'] = $customdata->gradeid;
+            }
+
             foreach ($rules as $rule) {
-                $ruleinstance = new rule($rule, $users, $conditiontypes);
+                $ruleinstance = new rule($rule, $users, $conditiontypes, $additionaldata);
                 $ruleinstance->execute();
             }
 
