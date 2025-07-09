@@ -45,7 +45,7 @@ class rule {
     /** @var stdClass[] List of users to validate this rule */
     private $users;
 
-    /** @var array Additional data to restrict the execution of the rule */
+    /** @var array Additional data to add extra checks in conditions to avoid unexpected executions */
     private $additionaldata;
 
     /**
@@ -53,6 +53,7 @@ class rule {
      * @param object $rule
      * @param stdClass[] $users List of users to validate this rule
      * @param string[] $conditiontypes list of conditions to include in the executions
+     * @param array $additionaldata additional data to add extra checks in conditions to avoid unexpected executions
      * of rules if not pass all conditions for each rule of the course are added
      */
     public function __construct($rule, $users, $conditiontypes=[], $additionaldata=[]) {
