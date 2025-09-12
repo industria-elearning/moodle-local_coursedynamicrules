@@ -69,6 +69,16 @@ class no_complete_activity_condition extends condition {
     }
 
     /**
+     * Determines if the provided completion state represents a completed activity.
+     *
+     * @param int $completionstate Completion state constant.
+     * @return bool True when the state is one of the completed states.
+     */
+    private function is_completed_state(int $completionstate): bool {
+        return $completionstate == COMPLETION_COMPLETE || $completionstate == COMPLETION_COMPLETE_PASS;
+    }
+
+    /**
      * Evaluate the condition and return true if the condition is met
      *
      * @param object $context Context of the rule
@@ -106,13 +116,7 @@ class no_complete_activity_condition extends condition {
         );
 
         // Return false if the user has completed the activity module because is not necessary execute the actions of the rule.
-        if ($cminfo->completion == COMPLETION_TRACKING_MANUAL && $completiondata->completionstate == COMPLETION_COMPLETE) {
-            return false;
-        }
-
-        // Return false if the user has completed the activity module with a passing grade
-        // because is not necessary execute the actions of the rule.
-        if ($cminfo->completion == COMPLETION_TRACKING_AUTOMATIC && $completiondata->completionstate == COMPLETION_COMPLETE_PASS) {
+        if ($this->is_completed_state($completiondata->completionstate)) {
             return false;
         }
 
