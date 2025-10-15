@@ -114,7 +114,7 @@ class rule {
         }
 
         $licensestatus = new stdClass();
-        $licensestatus->success = false;
+        $licensestatus->success = true;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {

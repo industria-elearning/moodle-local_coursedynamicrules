@@ -75,6 +75,8 @@ $string['messagebody_help'] = 'Os seguintes marcadores podem ser incluídos na m
 * Nome da instância do módulo de atividade do curso {$a->moduleinstancename}';
 $string['sendnotification'] = 'Enviar notificação';
 $string['sendnotification_description'] = 'Enviar notificação \'{$a}\' aos usuários';
+$string['createaiactivity'] = 'Criar atividade de reforço com IA';
+$string['createaiactivity_description'] = 'Gerar uma atividade de reforço com IA na seção "{$a->section}" usando o prompt "{$a->prompt}"';
 $string['addactions'] = 'Adicionar ações';
 $string['editactions'] = 'Editar ações';
 $string['backtolistrules'] = 'Voltar à lista de regras';
@@ -111,6 +113,7 @@ $string['errornegativegrade'] = 'A nota deve ser 0 ou maior.';
 $string['errormaxgradeexceeded'] = 'A nota não pode exceder a nota máxima para a atividade.';
 $string['enableactivity'] = 'Ativar atividade';
 $string['enableactivity_description'] = 'Ativar atividades \'{$a}\'';
+$string['createaiactivity_action_info'] = 'Esta ação solicitará ao serviço de IA gerar uma atividade de reforço personalizada para os usuários que atenderem às condições da regra.';
 $string['errorgradeoutofrange'] = 'O valor deve estar entre {$a->min} e {$a->max}.';
 $string['notification_action_info'] = 'Esta ação enviará uma notificação aos usuários que atendam aos critérios das condições da regra.';
 $string['missing_plugins_warning'] = '🔔 Melhore suas notificações! Nossos plugins <strong>Datacurso Message Hub</strong> permitem enviar notificações via WhatsApp e SMS usando provedores como Twilio.
@@ -125,6 +128,15 @@ $string['rules_help'] = 'Regras são usadas para definir um conjunto de condiç�
 $string['missing_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja instalado e habilitado. Por favor, faça o download em <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instale-o.';
 $string['disabled_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja habilitado. Por favor, acesse a página <a href="{$a}" target="_blank">Gerenciar restrições</a>, procure por <strong>Restrição por usuário</strong> e habilite-o.';
 $string['enableactivity_action_info'] = 'Esta ação habilitará os módulos de atividades selecionados para os usuários que atenderem aos critérios das condições da regra.';
+$string['createaiactivity_prompt'] = 'Prompt para IA';
+$string['createaiactivity_prompt_help'] = 'Escreva a instrução que será enviada ao serviço de IA. Você pode incluir marcadores que serão substituídos antes de enviar o prompt.';
+$string['createaiactivity_generateimages'] = 'Gerar imagens com IA';
+$string['createaiactivity_generateimages_label'] = 'Permitir que a IA inclua imagens geradas quando disponível.';
+$string['createaiactivity_section'] = 'Seção do curso';
+$string['createaiactivity_beforemod'] = 'Posicionar antes da atividade';
+$string['createaiactivity_beforemod_help'] = 'Selecione a atividade que o novo recurso deve preceder ou mantenha a opção padrão para adicioná-lo ao final da seção.';
+$string['createaiactivity_beforemod_none'] = 'Não posicionar antes de outra atividade';
+$string['createaiactivity_placeholders_info'] = 'Marcadores disponíveis: <code>{$a->coursename}</code>, <code>{$a->courseurl}</code>, <code>{$a->fullname}</code>, <code>{$a->firstname}</code>, <code>{$a->lastname}</code>.';
 $string['grade_in_activity_condition_info'] = 'Esta condição verificará qual usuário obteve a nota especificada no módulo de atividade selecionado.';
 $string['no_complete_activity_condition_info'] = 'Esta condição verificará qual usuário não completou o módulo de atividade selecionado após a data especificada.';
 $string['passgrade_condition_info'] = 'Esta condição verificará qual usuário completou o módulo de atividade selecionado com uma nota de aprovação.';
@@ -162,4 +174,3 @@ $string['mustselectonerole'] = 'Você deve selecionar pelo menos um papel.';
 // License.
 $string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';
 $string['licensekey_desc'] = 'Chave de licença necessária para usar este plugin';
-

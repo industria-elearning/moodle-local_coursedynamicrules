@@ -1,0 +1,305 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace local_coursedynamicrules\action\createaiactivity;
+
+use aiprovider_datacurso\httpclient\ai_course_api;
+use core_availability\tree;
+use local_coursedynamicrules\core\action;
+use local_coursedynamicrules\core\rule;
+use local_coursedynamicrules\form\actions\createaiactivity_form;
+use moodle_url;
+use stdClass;
+
+/**
+ * Class createaiactivity_action
+ *
+ * @package    local_coursedynamicrules
+ * @copyright  2025 Industria Elearning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class createaiactivity_action extends action {
+    /** @var string type of the action */
+    protected $type = 'createaiactivity';
+
+    /**
+     * Execute the action
+     *
+     * @param object $context Context of the rule
+     */
+    public function execute($context) {
+        global $CFG, $DB;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
+
+        if (!class_exists(ai_course_api::class)) {
+            debugging('Missing Datacurso AI provider to execute createaiactivity action.', DEBUG_DEVELOPER);
+            return;
+        }
+
+        if (!class_exists('\\local_coursegen\\utils\\text_editor_parameter_cleaner')) {
+            debugging('local_coursegen plugin is required to execute createaiactivity action.', DEBUG_DEVELOPER);
+            return;
+        }
+
+        $courseid = $context->courseid;
+        $userid = $context->userid;
+
+        $message = $this->params->message ?? '';
+        if (trim($message) === '') {
+            debugging('createaiactivity action executed without a valid prompt message.', DEBUG_DEVELOPER);
+            return;
+        }
+
+        try {
+            require_once($CFG->dirroot . '/course/lib.php');
+            require_once($CFG->dirroot . '/course/modlib.php');
+
+            $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+            $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+
+            $sectionnum = (int) ($this->params->sectionnum ?? 0);
+            $beforemod = $this->params->beforemod ?? null;
+            $beforemod = $beforemod ? (int) $beforemod : null;
+            $generateimages = !empty($this->params->generateimages);
+
+            $prompt = $this->build_prompt($message, $course, $user);
+
+            $aicontext = $DB->get_record_sql(
+                'SELECT cc.context_type, m.name
+                   FROM {local_coursegen_course_context} cc
+              LEFT JOIN {local_coursegen_model} m ON cc.model_id = m.id
+                  WHERE cc.courseid = ?',
+                [$courseid]
+            );
+
+            $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+
+            $payload = [
+                'message' => $prompt,
+                'course_id' => $courseid,
+                'userid' => (string) $userid,
+                'generate_images' => $generateimages,
+                'url' => $courseurl->out(false),
+                'context_type' => $aicontext->context_type ?? null,
+            ];
+
+            if (!empty($aicontext->name)) {
+                $payload['model_name'] = $aicontext->name;
+            }
+
+            // These calls may take a long time depending on prompt complexity.
+            \core_php_time_limit::raise();
+            raise_memory_limit(MEMORY_EXTRA);
+            \core\session\manager::write_close();
+
+            $client = new ai_course_api();
+            $result = $client->request('POST', '/resources/create-mod', $payload);
+
+            if (!isset($result['result']['resource_type'])) {
+                debugging(
+                    "Invalid response from AI service (create-mod). Response: " . json_encode($result),
+                    DEBUG_DEVELOPER
+                );
+                return;
+            }
+
+            $modname = $result['result']['resource_type'];
+            $modmoodleform = "{$CFG->dirroot}/mod/{$modname}/mod_form.php";
+            if (!file_exists($modmoodleform)) {
+                debugging("Form file not found for module: {$modname}", DEBUG_DEVELOPER);
+                return;
+            }
+
+            require_once($modmoodleform);
+
+            [
+                $module,
+                $modulecontext,
+                $cw,
+                $cm,
+                $data
+            ] = prepare_new_moduleinfo_data($course, $modname, $sectionnum);
+
+            $mformclassname = 'mod_' . $modname . '_mod_form';
+            $mform = new $mformclassname($data, $cw->section, $cm, $course);
+
+            if (!isset($result['result']['parameters'])) {
+                debugging("Missing parameters in service response: " . json_encode($result), DEBUG_DEVELOPER);
+                return;
+            }
+
+            $cleanedparameters = \local_coursegen\utils\text_editor_parameter_cleaner::clean_text_editor_objects(
+                $result['result']['parameters']
+            );
+            $parameters = (object) $cleanedparameters;
+            $parameters->section = $sectionnum;
+            $parameters->beforemod = $beforemod;
+            $parameters->module = $module->id;
+
+            $paramclass = '\\local_coursegen\\mod_parameters\\' . $modname . '_parameters';
+            if (class_exists($paramclass) &&
+                is_subclass_of($paramclass, '\\local_coursegen\\mod_parameters\\base_parameters')) {
+                /** @var \local_coursegen\mod_parameters\base_parameters $paraminstance */
+                $paraminstance = new $paramclass($parameters);
+                $parameters = $paraminstance->get_parameters();
+            }
+
+            $newcm = add_moduleinfo($parameters, $course, $mform);
+
+            $modsettings = $parameters->mod_settings ?? null;
+            $settingsclass = '\\local_coursegen\\mod_settings\\' . $modname . '_settings';
+            if (!empty($modsettings) &&
+                class_exists($settingsclass) &&
+                class_exists('\\local_coursegen\\mod_settings\\base_settings') &&
+                is_subclass_of($settingsclass, '\\local_coursegen\\mod_settings\\base_settings')) {
+                /** @var \local_coursegen\mod_settings\base_settings $modsettingsinstance */
+                $modsettingsinstance = new $settingsclass($newcm, $modsettings);
+                $modsettingsinstance->add_settings();
+            }
+
+            // Restrict the new activity to the current user only.
+            $availabilityoptions = (object) [
+                'type' => 'user',
+                'userids' => [$userid],
+            ];
+            $availability = tree::get_root_json([$availabilityoptions], tree::OP_AND, false);
+
+            $DB->set_field(
+                'course_modules',
+                'availability',
+                json_encode($availability),
+                ['id' => $newcm->coursemodule]
+            );
+
+            set_coursemodule_visible($newcm->coursemodule, 1);
+            rebuild_course_cache($courseid, true);
+        } catch (\Throwable $e) {
+            debugging(
+                'Unexpected error while creating AI reinforcement activity: ' . $e->getMessage(),
+                DEBUG_DEVELOPER
+            );
+        }
+    }
+
+    /**
+     * Creates and returns an instance of the form for editing the action.
+     *
+     * @param mixed $action the action attribute for the form.
+     * @param mixed $customdata form custom data.
+     * @param string $method form method.
+     * @param string $target form target.
+     * @param mixed $attributes form attributes.
+     * @param bool $editable whether the form is editable.
+     * @param array|null $ajaxformdata ajax form data.
+     */
+    public function build_editform(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
+        $this->actionform = new createaiactivity_form(
+            $action,
+            $customdata,
+            $method,
+            $target,
+            $attributes,
+            $editable,
+            $ajaxformdata
+        );
+    }
+
+    /**
+     * Saves the action after it has been created or edited.
+     *
+     * @param object $formdata
+     */
+    public function save_action($formdata) {
+        global $DB;
+
+        $licensestatus = rule::validate_licence_status();
+        if (!$licensestatus->success) {
+            return;
+        }
+
+        $params = [
+            'message' => trim($formdata->message),
+            'generateimages' => !empty($formdata->generateimages),
+            'sectionnum' => (int) $formdata->sectionnum,
+            'beforemod' => empty($formdata->beforemod) ? null : (int) $formdata->beforemod,
+        ];
+
+        $action = new stdClass();
+        $action->ruleid = $formdata->ruleid;
+        $action->actiontype = $this->type;
+        $action->params = json_encode($params);
+
+        $this->set_data($action);
+        $DB->insert_record('cdr_action', $action);
+    }
+
+    /**
+     * Returns the description of the action to visualization.
+     *
+     * @return string
+     */
+    public function get_description() {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $course = get_course($this->courseid);
+        $sectionnum = (int) ($this->params->sectionnum ?? 0);
+        $sectionname = get_section_name($course, $sectionnum);
+        $prompt = $this->params->message ?? '';
+        $shortprompt = shorten_text($prompt, 80);
+
+        $data = (object) [
+            'section' => $sectionname,
+            'prompt' => $shortprompt,
+        ];
+
+        return get_string('createaiactivity_description', 'local_coursedynamicrules', $data);
+    }
+
+    /**
+     * Build the AI prompt replacing placeholders.
+     *
+     * @param string $message
+     * @param \stdClass $course
+     * @param \stdClass $user
+     * @return string
+     */
+    protected function build_prompt(string $message, \stdClass $course, \stdClass $user): string {
+        $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
+
+        $placeholders = [
+            '{$a->coursename}' => format_string($course->fullname),
+            '{$a->courseurl}' => $courseurl->out(false),
+            '{$a->fullname}' => fullname($user),
+            '{$a->firstname}' => $user->firstname,
+            '{$a->lastname}' => $user->lastname,
+        ];
+
+        return strtr($message, $placeholders);
+    }
+}

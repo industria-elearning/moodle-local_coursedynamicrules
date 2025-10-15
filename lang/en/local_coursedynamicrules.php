@@ -78,6 +78,8 @@ $string['messagebody_help'] = 'The following placeholders may be included in the
 * Course activity module instance name {$a->moduleinstancename}';
 $string['sendnotification'] = 'Send notification';
 $string['sendnotification_description'] = 'Send notification \'{$a}\' to users';
+$string['createaiactivity'] = 'Create AI reinforcement activity';
+$string['createaiactivity_description'] = 'Generate an AI reinforcement activity in section "{$a->section}" using prompt "{$a->prompt}"';
 $string['addactions'] = 'Add actions';
 $string['editactions'] = 'Edit actions';
 $string['backtolistrules'] = 'Back to list rules';
@@ -116,6 +118,7 @@ $string['errornegativegrade'] = 'The grade must be 0 or greater.';
 $string['errormaxgradeexceeded'] = 'The grade cannot exceed the maximum grade for the activity.';
 $string['enableactivity'] = 'Enable activity';
 $string['enableactivity_description'] = 'Enable activities \'{$a}\'';
+$string['createaiactivity_action_info'] = 'This action will request the AI service to generate a personalised reinforcement activity for users who meet the rule conditions.';
 $string['errorgradeoutofrange'] = 'The value must be between {$a->min} and {$a->max}.';
 $string['notification_action_info'] = 'This action will send a notification to users who meet the rule conditions criteria.';
 $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <strong>Datacurso Message Hub</strong> plugins let you send notifications via WhatsApp and SMS using providers like Twilio.
@@ -130,6 +133,15 @@ $string['rules_help'] = 'Rules are used to define set of conditions and actions 
 $string['missing_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be installed and enabled. Please download it from <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> and install it.';
 $string['disabled_availability_user'] = 'This action requires the plugin <strong>Restriction by user</strong> to be enabled. Please access to the <a href="{$a}" target="_blank">Manage restrictions</a> page, search <strong>Restriction by user</strong> and enable it.';
 $string['enableactivity_action_info'] = 'This action will enable selected activities modules for users who meet the rule conditions criteria.';
+$string['createaiactivity_prompt'] = 'AI prompt';
+$string['createaiactivity_prompt_help'] = 'Write the instruction that will be sent to the AI service. You can include placeholders that will be replaced before sending the prompt.';
+$string['createaiactivity_generateimages'] = 'Generate images with AI';
+$string['createaiactivity_generateimages_label'] = 'Allow the AI to include generated images when supported.';
+$string['createaiactivity_section'] = 'Course section';
+$string['createaiactivity_beforemod'] = 'Place before activity';
+$string['createaiactivity_beforemod_help'] = 'Select the activity that the new resource should precede, or keep the default option to add it at the end of the section.';
+$string['createaiactivity_beforemod_none'] = 'Do not position before another activity';
+$string['createaiactivity_placeholders_info'] = 'Available placeholders: <code>{$a->coursename}</code>, <code>{$a->courseurl}</code>, <code>{$a->fullname}</code>, <code>{$a->firstname}</code>, <code>{$a->lastname}</code>.';
 $string['grade_in_activity_condition_info'] = 'This condition will check which user has obtained the specified grade in the selected activity module.';
 $string['no_complete_activity_condition_info'] = 'This condition will check which user has not completed the selected activity module after the specified date.';
 $string['passgrade_condition_info'] = 'This condition will check which user has completed the selected activity module with a passing grade.';
@@ -196,7 +208,4 @@ $string['licensekey_desc'] = 'License key required to use this plugin';
 $string['licensekeyinvalid'] = 'License key has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['checklicensekey'] = 'Check licence key';
 $string['licensekeyvalid'] = 'License key is valid';
-
-
-
 
