@@ -84,12 +84,9 @@ class createaiactivity_action extends action {
                 'userid' => (string) $userid,
                 'generate_images' => $generateimages,
                 'url' => $courseurl->out(false),
-                'context_type' => $aicontext->context_type ?? null,
+                'context_type' => $aicontext ? $aicontext->context_type : null,
+                'model_name' => $aicontext ? $aicontext->name : null,
             ];
-
-            if (!empty($aicontext->name)) {
-                $payload['model_name'] = $aicontext->name;
-            }
 
             // These calls may take a long time depending on prompt complexity.
             \core_php_time_limit::raise();
