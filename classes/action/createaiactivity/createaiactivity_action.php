@@ -21,6 +21,8 @@ use core_availability\tree;
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\createaiactivity_form;
+use local_coursegen\ai_context;
+use local_coursegen\mod_manager;
 use moodle_url;
 use stdClass;
 
@@ -43,17 +45,8 @@ class createaiactivity_action extends action {
     public function execute($context) {
         global $CFG, $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
-
-        if (!class_exists(ai_course_api::class)) {
-            debugging('Missing Datacurso AI provider to execute createaiactivity action.', DEBUG_DEVELOPER);
-            return;
-        }
-
-        if (!class_exists('\\local_coursegen\\utils\\text_editor_parameter_cleaner')) {
+        $plugininfo = \core_plugin_manager::instance()->get_plugin_info('local_coursegen');
+        if (!$plugininfo) {
             debugging('local_coursegen plugin is required to execute createaiactivity action.', DEBUG_DEVELOPER);
             return;
         }
@@ -81,13 +74,7 @@ class createaiactivity_action extends action {
 
             $prompt = $this->build_prompt($message, $course, $user);
 
-            $aicontext = $DB->get_record_sql(
-                'SELECT cc.context_type, m.name
-                   FROM {local_coursegen_course_context} cc
-              LEFT JOIN {local_coursegen_model} m ON cc.model_id = m.id
-                  WHERE cc.courseid = ?',
-                [$courseid]
-            );
+            $aicontext = ai_context::get_course_context_info($courseid);
 
             $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
@@ -112,67 +99,7 @@ class createaiactivity_action extends action {
             $client = new ai_course_api();
             $result = $client->request('POST', '/resources/create-mod', $payload);
 
-            if (!isset($result['result']['resource_type'])) {
-                debugging(
-                    "Invalid response from AI service (create-mod). Response: " . json_encode($result),
-                    DEBUG_DEVELOPER
-                );
-                return;
-            }
-
-            $modname = $result['result']['resource_type'];
-            $modmoodleform = "{$CFG->dirroot}/mod/{$modname}/mod_form.php";
-            if (!file_exists($modmoodleform)) {
-                debugging("Form file not found for module: {$modname}", DEBUG_DEVELOPER);
-                return;
-            }
-
-            require_once($modmoodleform);
-
-            [
-                $module,
-                $modulecontext,
-                $cw,
-                $cm,
-                $data
-            ] = prepare_new_moduleinfo_data($course, $modname, $sectionnum);
-
-            $mformclassname = 'mod_' . $modname . '_mod_form';
-            $mform = new $mformclassname($data, $cw->section, $cm, $course);
-
-            if (!isset($result['result']['parameters'])) {
-                debugging("Missing parameters in service response: " . json_encode($result), DEBUG_DEVELOPER);
-                return;
-            }
-
-            $cleanedparameters = \local_coursegen\utils\text_editor_parameter_cleaner::clean_text_editor_objects(
-                $result['result']['parameters']
-            );
-            $parameters = (object) $cleanedparameters;
-            $parameters->section = $sectionnum;
-            $parameters->beforemod = $beforemod;
-            $parameters->module = $module->id;
-
-            $paramclass = '\\local_coursegen\\mod_parameters\\' . $modname . '_parameters';
-            if (class_exists($paramclass) &&
-                is_subclass_of($paramclass, '\\local_coursegen\\mod_parameters\\base_parameters')) {
-                /** @var \local_coursegen\mod_parameters\base_parameters $paraminstance */
-                $paraminstance = new $paramclass($parameters);
-                $parameters = $paraminstance->get_parameters();
-            }
-
-            $newcm = add_moduleinfo($parameters, $course, $mform);
-
-            $modsettings = $parameters->mod_settings ?? null;
-            $settingsclass = '\\local_coursegen\\mod_settings\\' . $modname . '_settings';
-            if (!empty($modsettings) &&
-                class_exists($settingsclass) &&
-                class_exists('\\local_coursegen\\mod_settings\\base_settings') &&
-                is_subclass_of($settingsclass, '\\local_coursegen\\mod_settings\\base_settings')) {
-                /** @var \local_coursegen\mod_settings\base_settings $modsettingsinstance */
-                $modsettingsinstance = new $settingsclass($newcm, $modsettings);
-                $modsettingsinstance->add_settings();
-            }
+            $newcm = mod_manager::create_from_ai_result($result, $course, $sectionnum, $beforemod);
 
             // Restrict the new activity to the current user only.
             $availabilityoptions = (object) [
