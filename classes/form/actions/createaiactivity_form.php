@@ -76,8 +76,8 @@ class createaiactivity_form extends action_form {
         $mform->addRule('message', null, 'required', null, 'client');
         $mform->addHelpButton('message', 'createaiactivity_prompt', 'local_coursedynamicrules');
 
-        $placeholdersinfo = get_string('createaiactivity_placeholders_info', 'local_coursedynamicrules');
-        $mform->addElement('static', 'message_placeholders', '', $placeholdersinfo);
+        $placeholderstext = $OUTPUT->render_from_template('local_coursedynamicrules/notification_placeholders', []);
+        $mform->addElement('static', 'message_placeholders', '', $placeholderstext);
 
         $mform->addElement(
             'advcheckbox',
