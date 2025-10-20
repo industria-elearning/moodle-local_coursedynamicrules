@@ -28,7 +28,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class course_inactivity_condition_test extends \advanced_testcase {
-
     /**  @var string  $type Type of the condition */
     private $type = 'course_inactivity';
 
@@ -51,6 +50,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * Test setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         $this->currenttime = strtotime('2025-01-17 12:00:00');
@@ -66,7 +66,6 @@ final class course_inactivity_condition_test extends \advanced_testcase {
 
         $rule = $generator->create_rule($course->id, [$user]);
         $this->ruleid = $rule->get_id();
-
     }
 
     /**
@@ -100,11 +99,10 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         return new course_inactivity_condition($conditionrecord, null, $currentime);
     }
 
-
     /**
      * Test save_condition method.
      */
-    public function test_save_condition() {
+    public function test_save_condition(): void {
         global $DB;
 
         $intervaltype = course_inactivity_condition::INTERVAL_CUSTOM;
@@ -228,7 +226,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * @param int $lastaccess Last user access time.
      * @param bool $expected Expected result.
      */
-    public function test_evaluate_for_custom_intervals($currentime, $lastaccess, $expected) {
+    public function test_evaluate_for_custom_intervals($currentime, $lastaccess, $expected): void {
         // Create the condition.
         $params = [
             'intervaltype' => course_inactivity_condition::INTERVAL_CUSTOM,
@@ -259,7 +257,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * @param int $lastaccess Last user access time.
      * @param bool $expected Expected result.
      */
-    public function test_evaluate_for_recurring_interval($currentime, $lastaccess, $expected) {
+    public function test_evaluate_for_recurring_interval($currentime, $lastaccess, $expected): void {
         // Create the condition.
         $params = [
             'intervaltype' => course_inactivity_condition::INTERVAL_RECURRING,
@@ -281,6 +279,4 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         // Verify the result.
         $this->assertEquals($expected, $result);
     }
-
-
 }

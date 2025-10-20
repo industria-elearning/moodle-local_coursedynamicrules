@@ -27,10 +27,8 @@ use local_coursedynamicrules\core\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class no_complete_activity_task extends \core\task\scheduled_task {
-
     /** @var string type of condition */
     protected $conditiontype = "no_complete_activity";
-
 
     /**
      * Get a descriptive name for this task (shown to admins).

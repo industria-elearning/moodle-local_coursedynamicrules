@@ -206,4 +206,3 @@ $string['sendnotification'] = 'Send notification';
 $string['sendnotification_description'] = 'Send notification \'{$a}\' to users';
 $string['typemissing'] = 'Missing value "type"';
 $string['weeks'] = 'Weeks';
-

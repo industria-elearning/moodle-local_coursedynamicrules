@@ -90,12 +90,19 @@ set_config('confirmdeleterule', $confirmdeleterule, 'local_coursedynamicrules');
 
 $continueurl = new moodle_url(
     '/local/coursedynamicrules/deleterule.php',
-    ['id' => $rule->id, 'delete' => md5($confirmdeleterule), 'courseid' => $courseid]
+    [
+        'id' => $rule->id,
+        'delete' => md5($confirmdeleterule),
+        'courseid' => $courseid,
+    ]
 );
 
 $continuebutton = new single_button(
     $continueurl,
-    get_string('delete'), 'post', false, ['data-action' => 'delete']
+    get_string('delete'),
+    'post',
+    false,
+    ['data-action' => 'delete']
 );
 echo $OUTPUT->confirm($message, $continuebutton, $rulesurl);
 

@@ -39,4 +39,3 @@ function local_coursedynamicrules_extend_navigation_course($navigation, $course,
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
     }
 }
-

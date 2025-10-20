@@ -28,7 +28,6 @@ use local_coursedynamicrules\core\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_task extends \core\task\adhoc_task {
-
     /**
      * Return a instance of rule_task with custom data added
      *
@@ -81,10 +80,8 @@ class rule_task extends \core\task\adhoc_task {
                 $ruleinstance = new rule($rule, $users, $conditiontypes, $additionaldata);
                 $ruleinstance->execute();
             }
-
         } catch (\Exception $e) {
             mtrace($e);
         }
-
     }
 }

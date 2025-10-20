@@ -25,7 +25,6 @@ use local_coursedynamicrules\core\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_coursedynamicrules_generator extends component_generator_base {
-
     /**
      * Create a user last access in a course.
      *
@@ -42,7 +41,6 @@ class local_coursedynamicrules_generator extends component_generator_base {
         $accessrecord->timeaccess = $lastaccess;
 
         $DB->insert_record('user_lastaccess', $accessrecord);
-
     }
 
     /**
@@ -68,6 +66,5 @@ class local_coursedynamicrules_generator extends component_generator_base {
         $record->id = $ruleid;
 
         return new rule($record, $users, $conditiontypes);
-
     }
 }

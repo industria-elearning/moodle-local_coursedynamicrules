@@ -96,4 +96,3 @@ $heading = $ruleid ? get_string('editrule', 'local_coursedynamicrules') : get_st
 echo $OUTPUT->heading($heading);
 $ruleform->display();
 echo $OUTPUT->footer();
-

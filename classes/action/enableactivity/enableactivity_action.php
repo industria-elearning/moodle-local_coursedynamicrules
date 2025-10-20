@@ -57,12 +57,9 @@ class enableactivity_action extends action {
                     'course_modules',
                     'availability',
                     json_encode($availability),
-                    [
-                        'id' => $cmid,
-                    ]
+                    ['id' => $cmid]
                 );
             }
-
         }
 
         rebuild_course_cache($this->courseid, true);
@@ -86,19 +83,18 @@ class enableactivity_action extends action {
      *               Special attribute 'data-double-submit-protection' set to 'off' will turn off
      *               double-submit protection JavaScript - this may be necessary if your form sends
      *               downloadable files in response to a submit button, and can't call
-     *               \core_form\util::form_download_complete(){
-     * }
+     *               \core_form\util::form_download_complete();
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
     public function build_editform(
-        $action=null,
-        $customdata=null,
-        $method='post',
-        $target='',
-        $attributes=null,
-        $editable=true,
-        $ajaxformdata=null
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
     ) {
         $this->actionform = new enableactivity_form(
             $action,
@@ -167,16 +163,12 @@ class enableactivity_action extends action {
                 'course_modules',
                 'availability',
                 $availability,
-                [
-                    'id' => $cmid,
-                ]
+                ['id' => $cmid]
             );
 
             // Set module to visible.
             set_coursemodule_visible($cmid, 1);
-
         }
-
         rebuild_course_cache($formdata->courseid, true);
     }
 
@@ -208,7 +200,6 @@ class enableactivity_action extends action {
      * @throws \dml_exception A DML specific exception is thrown for any errors.
      */
     public function delete() {
-
         global $DB;
         $coursemodules = $this->params->coursemodules;
 
@@ -222,9 +213,7 @@ class enableactivity_action extends action {
                 'course_modules',
                 'availability',
                 null,
-                [
-                    'id' => $cmid,
-                ]
+                ['id' => $cmid]
             );
 
             // Restore coursemodule visibility to initial status.

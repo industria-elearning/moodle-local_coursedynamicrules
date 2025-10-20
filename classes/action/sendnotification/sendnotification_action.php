@@ -70,7 +70,7 @@ class sendnotification_action extends action {
         $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
         $messagebody = str_replace($key, $value, $messagebody);
 
-        $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
+        $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
         $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
 
         $message = new \core\message\message();
@@ -113,16 +113,23 @@ class sendnotification_action extends action {
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
     public function build_editform(
-        $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null) {
-            $this->actionform = new sendnotification_form(
-                $action,
-                $customdata,
-                $method,
-                $target,
-                $attributes,
-                $editable,
-                $ajaxformdata
-            );
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
+        $this->actionform = new sendnotification_form(
+            $action,
+            $customdata,
+            $method,
+            $target,
+            $attributes,
+            $editable,
+            $ajaxformdata
+        );
     }
 
     /**

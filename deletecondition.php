@@ -93,12 +93,20 @@ $hashdelete = md5($confirmdeletecondition);
 
 $continueurl = new moodle_url(
     '/local/coursedynamicrules/deletecondition.php',
-    ['id' => $id, 'delete' => $hashdelete, 'courseid' => $courseid, 'ruleid' => $ruleid]
+    [
+        'id' => $id,
+        'delete' => $hashdelete,
+        'courseid' => $courseid,
+        'ruleid' => $ruleid,
+    ]
 );
 
 $continuebutton = new single_button(
     $continueurl,
-    get_string('delete'), 'post', false, ['data-action' => 'delete']
+    get_string('delete'),
+    'post',
+    false,
+    ['data-action' => 'delete']
 );
 echo $OUTPUT->confirm($message, $continuebutton, $conditionsurl);
 
