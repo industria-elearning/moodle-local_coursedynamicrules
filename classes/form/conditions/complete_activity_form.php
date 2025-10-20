@@ -61,8 +61,10 @@ class complete_activity_form extends condition_form {
         $mform->addElement(
             'autocomplete',
             'coursemodule',
-            get_string('searchcourseactivitymodules',
-            'local_coursedynamicrules'),
+            get_string(
+                'searchcourseactivitymodules',
+                'local_coursedynamicrules'
+            ),
             $options,
             $attributes
         );
@@ -80,5 +82,4 @@ class complete_activity_form extends condition_form {
     private function is_completion_enabled($cminfo) {
         return $cminfo->completion == COMPLETION_TRACKING_MANUAL || $cminfo->completion == COMPLETION_TRACKING_AUTOMATIC;
     }
-
 }

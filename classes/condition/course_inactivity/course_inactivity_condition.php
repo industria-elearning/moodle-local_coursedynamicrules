@@ -29,7 +29,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_inactivity_condition extends condition {
-
     /** @var string base date for evaluating the intervals is start date of user enrolment*/
     const DATE_FROM_ENROLLMENT = 'enrollment';
 
@@ -94,8 +93,15 @@ class course_inactivity_condition extends condition {
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
-    public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-        $ajaxformdata=null) {
+    public function build_editform(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
         $this->conditionform = new course_inactivity_form(
             $action,
             $customdata,
@@ -137,7 +143,6 @@ class course_inactivity_condition extends condition {
         }
 
         return false;
-
     }
 
     /**
@@ -229,7 +234,6 @@ class course_inactivity_condition extends condition {
 
         return $this->is_within_interval_window($this->currenttime, $endinterval, $timewindow)
             && $this->is_user_inactive($lastaccess, $startinterval);
-
     }
 
     /**
@@ -278,7 +282,6 @@ class course_inactivity_condition extends condition {
                 break;
             default:
                 throw new \moodle_exception('invalidbasedate', 'local_coursedynamicrules', '', $basedatetype);
-
         }
 
         return $basedate;

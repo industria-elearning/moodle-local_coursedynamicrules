@@ -56,8 +56,15 @@ class complete_activity_condition extends condition {
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
-    public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-    $ajaxformdata=null) {
+    public function build_editform(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
         $this->conditionform = new complete_activity_form(
             $action,
             $customdata,
@@ -103,7 +110,9 @@ class complete_activity_condition extends condition {
         $completion = new completion_info($modinfo->get_course());
 
         $completiondata = $completion->get_data(
-            (object)['id' => $cmid], false, $userid
+            (object)['id' => $cmid],
+            false,
+            $userid
         );
 
         if ($this->is_completion_enabled($cminfo) && $this->is_cm_completed($completiondata)) {
