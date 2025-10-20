@@ -41,7 +41,6 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
     // You will also have to create the db/install.xml file by using the XMLDB Editor.
     // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
     if ($oldversion < 2024102000) {
-
         // Define table cdr_rule to be created.
         $table = new xmldb_table('cdr_rule');
 
@@ -107,7 +106,6 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
     }
 
     if ($oldversion < 2025010600) {
-
         // Define field lastexecutiontime to be added to cdr_rule.
         $table = new xmldb_table('cdr_rule');
         $field = new xmldb_field('lastexecutiontime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'active');
@@ -136,7 +134,6 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
     }
 
     if ($oldversion < 2025022601) {
-
         // Define field lastexecutiontime to be added to cdr_condition.
         $table = new xmldb_table('cdr_condition');
         $field = new xmldb_field('lastexecutiontime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'params');

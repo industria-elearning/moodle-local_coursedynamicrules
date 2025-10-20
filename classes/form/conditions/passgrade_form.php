@@ -25,7 +25,6 @@ namespace local_coursedynamicrules\form\conditions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class passgrade_form extends condition_form {
-
     /** @var string type of condition */
     protected $type = "passgrade";
     /**
@@ -63,8 +62,10 @@ class passgrade_form extends condition_form {
         $mform->addElement(
             'autocomplete',
             'coursemodule',
-            get_string('searchcourseactivitymodules',
-            'local_coursedynamicrules'),
+            get_string(
+                'searchcourseactivitymodules',
+                'local_coursedynamicrules'
+            ),
             $options,
             $attributes
         );

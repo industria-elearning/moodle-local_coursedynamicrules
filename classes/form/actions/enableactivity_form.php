@@ -77,8 +77,10 @@ class enableactivity_form extends action_form {
         $mform->addElement(
             'autocomplete',
             'coursemodules',
-            get_string('searchcourseactivitymodules',
-            'local_coursedynamicrules'),
+            get_string(
+                'searchcourseactivitymodules',
+                'local_coursedynamicrules'
+            ),
             $options,
             $attributes
         );

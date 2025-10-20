@@ -23,7 +23,7 @@ namespace local_coursedynamicrules\form\conditions;
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_form  extends \moodleform {
+class condition_form extends \moodleform {
     /** @var string type of condition */
     protected $type;
 

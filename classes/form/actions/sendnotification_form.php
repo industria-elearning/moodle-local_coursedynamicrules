@@ -49,8 +49,10 @@ class sendnotification_form extends action_form {
         $mform->addElement('html', $notification);
 
         // Check if the messaging plugins are installed.
-        if (!$DB->record_exists('config_plugins', ['plugin' => 'local_datacurso_msghub', 'name' => 'version']) ||
-            !$DB->record_exists('config_plugins', ['plugin' => 'message_datacurso_msghub', 'name' => 'version'])) {
+        if (
+            !$DB->record_exists('config_plugins', ['plugin' => 'local_datacurso_msghub', 'name' => 'version'])
+            || !$DB->record_exists('config_plugins', ['plugin' => 'message_datacurso_msghub', 'name' => 'version'])
+        ) {
             $plugininfo = $OUTPUT->notification(
                 get_string('missing_plugins_warning', 'local_coursedynamicrules'),
                 \core\output\notification::NOTIFY_WARNING

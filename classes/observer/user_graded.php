@@ -46,7 +46,6 @@ class user_graded {
         $gradeitemtype = $grade->grade_item->itemtype;
         // This validation is because this event is also triggered with the course grade.
         if ($gradeitemtype == 'mod') {
-
             $courseid = $eventdata["courseid"];
             // User that completed the module.
             $userid = $eventdata["relateduserid"];
