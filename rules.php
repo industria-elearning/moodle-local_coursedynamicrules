@@ -102,7 +102,6 @@ foreach ($rules as $rule) {
         $conditionstext = html_writer::div($conditionstext);
         $conditionstext = html_writer::div($conditionstext . $editlink, 'd-flex', ['style' => 'gap: .8rem']);
     }
-
     if (empty($actions)) {
         $actionstext = html_writer::link(
             $actionsurl,
@@ -117,7 +116,6 @@ foreach ($rules as $rule) {
             $description = $actioninstance->get_description();
 
             if (!empty($header) && !empty($description)) {
-
                 $actionstext .= '<p>' . $actioninstance->get_description() . '</p>';
             }
         }
@@ -132,23 +130,24 @@ foreach ($rules as $rule) {
     $deleteruleurl = new moodle_url('/local/coursedynamicrules/deleterule.php', ['id' => $rule->id, 'courseid' => $courseid]);
     $editrulelink = html_writer::link(
         $editruleurl,
-        $OUTPUT->pix_icon('t/edit', get_string('editrule', 'local_coursedynamicrules')),
+        $OUTPUT->pix_icon('t/edit', get_string('editrule', 'local_coursedynamicrules'))
     );
     $deleterulelink = html_writer::link(
         $deleteruleurl,
-        $OUTPUT->pix_icon('t/delete', get_string('deleterule', 'local_coursedynamicrules')),
+        $OUTPUT->pix_icon('t/delete', get_string('deleterule', 'local_coursedynamicrules'))
     );
 
     $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
 
     if (!$rule->active) {
-        $rule->name .= " ". html_writer::span(
+        $rule->name .= ' ' . html_writer::span(
             get_string('ruleinactive', 'local_coursedynamicrules'),
             'badge badge-secondary'
         );
     } else {
-        $rule->name .= " ". html_writer::span(
-            get_string('ruleactive', 'local_coursedynamicrules'), 'badge badge-success'
+        $rule->name .= ' ' . html_writer::span(
+            get_string('ruleactive', 'local_coursedynamicrules'),
+            'badge badge-success'
         );
     }
     $table->data[] = [
@@ -157,7 +156,6 @@ foreach ($rules as $rule) {
         new html_table_cell($actionstext),
         new html_table_cell($ruletext),
     ];
-
 }
 
 $editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);

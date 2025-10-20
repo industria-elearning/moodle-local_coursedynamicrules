@@ -27,7 +27,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class action {
-
     /** @var int|null ID of the action on the DB */
     private $id;
 
@@ -186,8 +185,14 @@ abstract class action {
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
     abstract public function build_editform(
-        $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true, $ajaxformdata=null);
-
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    );
 
     /**
      * Saves the action after it has been edited (or created)

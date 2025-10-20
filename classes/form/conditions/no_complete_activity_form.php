@@ -61,8 +61,10 @@ class no_complete_activity_form extends condition_form {
         $mform->addElement(
             'autocomplete',
             'coursemodule',
-            get_string('searchcourseactivitymodules',
-            'local_coursedynamicrules'),
+            get_string(
+                'searchcourseactivitymodules',
+                'local_coursedynamicrules'
+            ),
             $options,
             $attributes
         );

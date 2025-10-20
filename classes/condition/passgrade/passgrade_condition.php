@@ -55,12 +55,18 @@ class passgrade_condition extends condition {
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
-    public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-    $ajaxformdata=null) {
+    public function build_editform(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
         global $DB, $CFG;
 
         $this->conditionform = new passgrade_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
-
     }
 
     /**
@@ -99,7 +105,9 @@ class passgrade_condition extends condition {
         $completion = new completion_info($modinfo->get_course());
 
         $completiondata = $completion->get_data(
-            (object)['id' => $cmid], false, $userid
+            (object)['id' => $cmid],
+            false,
+            $userid
         );
 
         return $completiondata->completionstate == COMPLETION_COMPLETE_PASS;

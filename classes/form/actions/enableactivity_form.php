@@ -16,6 +16,7 @@
 
 namespace local_coursedynamicrules\form\actions;
 
+use local_coursedynamicrules\helper\form_plugin_validator;
 use moodle_url;
 
 /**
@@ -47,25 +48,10 @@ class enableactivity_form extends action_form {
         );
         $mform->addElement('html', $notification);
 
-        // Check if the availability_user plugins is installed.
-        if (!get_config('availability_user', 'version')) {
+        $requiredplugins = $this->get_required_plugins();
+        $missingplugins = form_plugin_validator::add_notifications_to_form($mform, $requiredplugins);
 
-            $plugininfo = $OUTPUT->notification(
-                get_string('missing_availability_user', 'local_coursedynamicrules'),
-                \core\output\notification::NOTIFY_ERROR,
-                false
-            );
-            $mform->addElement('html', $plugininfo);
-            return;
-        } else if (get_config('availability_user', 'disabled')) {
-            $managerestrictionsurl = new moodle_url('/admin/tool/availabilityconditions/');
-            // Check if the availability_user plugins is enabled.
-            $plugininfo = $OUTPUT->notification(
-                get_string('disabled_availability_user', 'local_coursedynamicrules', $managerestrictionsurl->out()),
-                \core\output\notification::NOTIFY_ERROR,
-                false
-            );
-            $mform->addElement('html', $plugininfo);
+        if (!empty($missingplugins)) {
             return;
         }
 
@@ -91,13 +77,32 @@ class enableactivity_form extends action_form {
         $mform->addElement(
             'autocomplete',
             'coursemodules',
-            get_string('searchcourseactivitymodules',
-            'local_coursedynamicrules'),
+            get_string(
+                'searchcourseactivitymodules',
+                'local_coursedynamicrules'
+            ),
             $options,
             $attributes
         );
         $mform->setType('coursemodule', PARAM_INT);
 
         parent::definition();
+    }
+
+    /**
+     * Returns the required plugins needed by the action.
+     *
+     * @return array
+     */
+    private function get_required_plugins() {
+        $plugins = [
+            [
+                'pluginname' => 'availability_user',
+                'enableurl' => new moodle_url('/admin/tool/availabilityconditions/'),
+                'downloadurl' => 'https://moodle.org/plugins/availability_user/versions',
+            ],
+        ];
+
+        return $plugins;
     }
 }

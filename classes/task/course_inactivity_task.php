@@ -29,7 +29,6 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_inactivity_task extends \core\task\scheduled_task {
-
     /** @var string type of condition */
     protected $conditiontype = "course_inactivity";
 
@@ -71,14 +70,13 @@ class course_inactivity_task extends \core\task\scheduled_task {
 
         // Iterate through each rule and execute if conditions are met.
         foreach ($rules as $rule) {
-
             if (!$this->is_time_to_execute($rule)) {
                 continue;
             }
 
             $completion = new \completion_info(get_course($rule->courseid));
             $users = enrol_get_course_users($rule->courseid, true);
-            $userswithoutcompletion = array_filter($users, function($user) use ($completion) {
+            $userswithoutcompletion = array_filter($users, function ($user) use ($completion) {
                 return !$completion->is_course_complete($user->id);
             });
 
@@ -106,6 +104,4 @@ class course_inactivity_task extends \core\task\scheduled_task {
 
         return $now >= $course->startdate;
     }
-
-
 }

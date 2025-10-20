@@ -54,8 +54,15 @@ class no_course_access_condition extends condition {
      * @param bool $editable
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
-    public function build_editform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-    $ajaxformdata=null) {
+    public function build_editform(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
         $this->conditionform = new no_course_access_form(
             $action,
             $customdata,

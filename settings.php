@@ -40,7 +40,6 @@ if ($hassiteconfig) {
 
     // Check if this moodle instance is an iomad.
     if ($DB->record_exists('config_plugins', ['plugin' => 'local_iomad', 'name' => 'version'])) {
-
         $companylist = company::get_companies_select();
 
         foreach ($companylist as $id => $name) {
@@ -53,7 +52,7 @@ if ($hassiteconfig) {
                 "local_coursedynamicrules/{$licensekey}",
                 $licensekeystring,
                 $licensekeydescstring,
-                '',
+                ''
             ));
         }
     } else {
@@ -66,7 +65,7 @@ if ($hassiteconfig) {
             "local_coursedynamicrules/{$licensekey}",
             $licensekeystring,
             $licensekeydescstring,
-            '',
+            ''
         ));
     }
 
@@ -77,8 +76,7 @@ if ($hassiteconfig) {
         new admin_externalpage(
             "{$pluginname}_checklicensekey",
             get_string('checklicensekey', $pluginname),
-            $url,
+            $url
         )
     );
-
 }

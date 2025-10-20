@@ -37,7 +37,6 @@ require_once($CFG->libdir . '/gradelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_in_activity_condition extends condition {
-
     /** @var string type of condition */
     protected $type = "grade_in_activity";
 
@@ -113,7 +112,6 @@ class grade_in_activity_condition extends condition {
         }
 
         return $hasgraderequire && $allitemconditionsmet;
-
     }
 
     /**
@@ -238,13 +236,13 @@ class grade_in_activity_condition extends condition {
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      */
     public function build_editform(
-        $action=null,
-        $customdata=null,
-        $method='post',
-        $target='',
-        $attributes=null,
-        $editable=true,
-        $ajaxformdata=null
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
     ) {
         $this->conditionform = new grade_in_activity_form(
             $action,
@@ -280,7 +278,6 @@ class grade_in_activity_condition extends condition {
                     'value' => $value,
                 ];
             }
-
         }
 
         $params = [

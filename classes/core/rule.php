@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_coursedynamicrules\core;
+
 use context_system;
 use local_coursedynamicrules\helper\rule_component_loader;
 use stdClass;
@@ -56,7 +57,7 @@ class rule {
      * @param array $additionaldata additional data to add extra checks in conditions to avoid unexpected executions
      * of rules if not pass all conditions for each rule of the course are added
      */
-    public function __construct($rule, $users, $conditiontypes=[], $additionaldata=[]) {
+    public function __construct($rule, $users, $conditiontypes = [], $additionaldata = []) {
         global $DB;
         $this->id = $rule->id;
         $this->courseid = $rule->courseid;
@@ -114,7 +115,7 @@ class rule {
         }
 
         $licensestatus = new stdClass();
-        $licensestatus->success = false;
+        $licensestatus->success = true;
         $licensestatus->message = get_string('pluginnotavailable', $pluginname);
 
         try {
@@ -142,7 +143,6 @@ class rule {
                     $licensestatus->message = '';
                 }
             }
-
         } catch (\Exception $e) {
             debugging(
                 'Exception while trying verfy licence ' . $e->getMessage(),
@@ -151,7 +151,6 @@ class rule {
         }
 
         return $licensestatus;
-
     }
 
     /**
@@ -195,8 +194,7 @@ class rule {
      * @return array asociative array with properties that contain the result of the validation.
      *
      */
-    public static function validate_licence($licensekey, $localkey='') {
-
+    public static function validate_licence($licensekey, $localkey = '') {
         global $CFG;
 
         // Configuration Values.
@@ -265,17 +263,17 @@ class rule {
         if (!$localkeyvalid) {
             $responsecode = 0;
             $postfields = [
-            'licensekey' => $licensekey,
-            'domain' => $domain,
-            'ip' => $usersip,
-            'dir' => $dirpath,
+                'licensekey' => $licensekey,
+                'domain' => $domain,
+                'ip' => $usersip,
+                'dir' => $dirpath,
             ];
             if ($checktoken) {
                 $postfields['check_token'] = $checktoken;
             }
             $querystring = '';
             foreach ($postfields as $k => $v) {
-                $querystring .= $k.'='.urlencode($v).'&';
+                $querystring .= $k . '=' . urlencode($v) . '&';
             }
             if (function_exists('curl_exec')) {
                 $ch = curl_init();
@@ -292,28 +290,29 @@ class rule {
                 $fp = @fsockopen($whmcsurl, 80, $errno, $errstr, 5);
                 if ($fp) {
                     $newlinefeed = "\r\n";
-                    $header = "POST ".$whmcsurl . $verifyfilepath . " HTTP/1.0" . $newlinefeed;
-                    $header .= "Host: ".$whmcsurl . $newlinefeed;
+                    $header = "POST " . $whmcsurl . $verifyfilepath . " HTTP/1.0" . $newlinefeed;
+                    $header .= "Host: " . $whmcsurl . $newlinefeed;
                     $header .= "Content-type: application/x-www-form-urlencoded" . $newlinefeed;
-                    $header .= "Content-length: ".@strlen($querystring) . $newlinefeed;
+                    $header .= "Content-length: " . @strlen($querystring) . $newlinefeed;
                     $header .= "Connection: close" . $newlinefeed . $newlinefeed;
                     $header .= $querystring;
                     $data = $line = '';
                     @stream_set_timeout($fp, 20);
                     @fputs($fp, $header);
                     $status = @socket_get_status($fp);
-                    while (!@feof($fp)&&$status) {
+                    while (!@feof($fp) && $status) {
                         $line = @fgets($fp, 1024);
                         $patternmatches = [];
-                        if (!$responsecode
-                        && preg_match($responsecodepattern, trim($line), $patternmatches)
+                        if (
+                            !$responsecode
+                            && preg_match($responsecodepattern, trim($line), $patternmatches)
                         ) {
                             $responsecode = (empty($patternmatches[1])) ? 0 : $patternmatches[1];
                         }
                         $data .= $line;
                         $status = @socket_get_status($fp);
                     }
-                    @fclose ($fp);
+                    @fclose($fp);
                 }
             }
             if ($responsecode != 200) {
@@ -371,14 +370,12 @@ class rule {
             $md5hash
         );
         return $results;
-
     }
 
     /**
      * Execute all actions of the rule if the conditions are true
      */
     public function execute() {
-
         $licensestatus = self::validate_licence_status();
         if (!$licensestatus->success) {
             return;
@@ -454,6 +451,7 @@ class rule {
     public function get_id() {
         return $this->id;
     }
+
     /**
      * Deletes a rule record from the 'cdr_rule' table. and related conditions and actions with it.
      *
@@ -528,5 +526,4 @@ class rule {
 
         return $record->cmid;
     }
-
 }

@@ -169,7 +169,6 @@ class dynamic_grade_in_activity_form extends dynamic_form {
                 $attributes
             );
         } else {
-
             $identifier = 'gradegte_' . $gradeitem->id;
             $attributes['id'] = $identifier;
             $attributes['data-condition'] = 'gradegte';
@@ -189,7 +188,6 @@ class dynamic_grade_in_activity_form extends dynamic_form {
                 '',
                 $attributes
             );
-
         }
 
         // Create elements for "grade greater than or equal" condition.

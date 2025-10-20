@@ -35,5 +35,3 @@ $observers = [
         'callback' => '\local_coursedynamicrules\observer\user_graded::observe',
     ],
 ];
-
-

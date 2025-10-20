@@ -26,7 +26,6 @@ use local_coursedynamicrules\condition\course_inactivity\course_inactivity_condi
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_inactivity_form extends condition_form {
-
     /** @var string base date for evaluating the intervals is start date of user enrolment*/
     const DATE_FROM_ENROLLMENT = course_inactivity_condition::DATE_FROM_ENROLLMENT;
 
@@ -69,15 +68,15 @@ class course_inactivity_form extends condition_form {
         );
         $mform->addElement('html', $notification);
 
-         $intervaltypeoptions = [
+        $intervaltypeoptions = [
             self::INTERVAL_CUSTOM => get_string('customintervals', $pluginname),
             self::INTERVAL_RECURRING => get_string('recurringinterval', $pluginname),
-         ];
-         $mform->addElement('select', 'intervaltype', get_string('intervaltype', $pluginname), $intervaltypeoptions);
-         $mform->addHelpButton('intervaltype', 'intervaltype', $pluginname);
+        ];
+        $mform->addElement('select', 'intervaltype', get_string('intervaltype', $pluginname), $intervaltypeoptions);
+        $mform->addHelpButton('intervaltype', 'intervaltype', $pluginname);
 
-         $mform->addElement('text', 'customintervals', get_string('customintervals', $pluginname));
-         $mform->addHelpButton('customintervals', 'customintervals', $pluginname);
+        $mform->addElement('text', 'customintervals', get_string('customintervals', $pluginname));
+        $mform->addHelpButton('customintervals', 'customintervals', $pluginname);
          $mform->hideIf('customintervals', 'intervaltype', 'neq', self::INTERVAL_CUSTOM);
 
          $mform->addElement('text', 'recurringinterval', get_string('recurringinterval', $pluginname));
