@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Scheduled task definitions for Course dynamic rules
+ * Scheduled task definitions for Smart Rules AI
  *
  * Documentation: {@link https://moodledev.io/docs/apis/subsystems/task/scheduled}
  *

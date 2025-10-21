@@ -62,14 +62,38 @@ class sendnotification_action extends action {
         $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
         $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
 
-        $recipients = $this->get_recipients_by_roles($roleids, $coursecontext);
+        $messageids = [];
 
+        // Send to the current user if they have at least one of the specified roles.
+        $userroles = get_user_roles($coursecontext, $userid, false);
+        $userroleids = [];
+        foreach ($userroles as $userrole) {
+            if (in_array($userrole->roleid, $roleids)) {
+                $userroleids[] = $userrole->roleid;
+            }
+        }
+
+        if (!empty($userroleids)) {
+            $message = $this->create_message($userid, $messagesubject, $messagebody, $smallmessagetext);
+            $messageids[] = message_send($message);
+        }
+
+        // Delete current user roles from roleids to avoid sending to other users with these roles.
+        $remainingroleids = array_diff($roleids, $userroleids);
+
+        // Get recipients for remaining roles.
+        $recipients = $this->get_recipients_by_roles($remainingroleids, $coursecontext);
+
+        // If there are no recipients, return false to indicate no action.
         if (empty($recipients)) {
             return false;
         }
 
-        $messageids = [];
         foreach ($recipients as $recipient) {
+            // Avoid duplicate send to the current user.
+            if ((int)$recipient->id === (int)$userid) {
+                continue;
+            }
             $message = $this->create_message($recipient->id, $messagesubject, $messagebody, $smallmessagetext);
             $messageids[] = message_send($message);
         }
@@ -125,11 +149,6 @@ class sendnotification_action extends action {
      */
     public function save_action($formdata) {
         global $DB;
-
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
 
         $roles = $formdata->roles;
         $roleids = array_keys($roles, 1);
@@ -249,7 +268,7 @@ class sendnotification_action extends action {
     private function create_message($recipientid, $subject, $fullhtml, $smalltext): \core\message\message {
         $message = new \core\message\message();
         $message->component = 'local_coursedynamicrules';
-        $message->name = 'coursedynamicrules_notification';
+        $message->name = 'smart_rules_ai_notification';
         $message->userfrom = \core_user::get_support_user();
         $message->userto = $recipientid;
         $message->subject = $subject;

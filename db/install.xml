@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="cdr_rule" COMMENT="Course dynamic rule">
+    <TABLE NAME="cdr_rule" COMMENT="Smart Rules AI rule table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -20,7 +20,7 @@
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="cdr_condition" COMMENT="Course dynamic rules condition">
+    <TABLE NAME="cdr_condition" COMMENT="Smart Rules AI condition table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ruleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -35,7 +35,7 @@
         <KEY NAME="ruleid" TYPE="foreign" FIELDS="ruleid" REFTABLE="cdr_rule" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="cdr_action" COMMENT="Course dynamic rules action">
+    <TABLE NAME="cdr_action" COMMENT="Smart Rules AI action table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ruleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

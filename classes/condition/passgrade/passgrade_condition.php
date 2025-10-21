@@ -86,11 +86,6 @@ class passgrade_condition extends condition {
             return false;
         }
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return false;
-        }
-
         $modinfo = get_fast_modinfo($courseid, $userid);
         // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.
         $cminfo = $modinfo->cms[$cmid];

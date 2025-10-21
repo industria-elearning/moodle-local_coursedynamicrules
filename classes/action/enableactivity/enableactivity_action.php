@@ -114,11 +114,6 @@ class enableactivity_action extends action {
     public function save_action($formdata) {
         global $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
-
         $coursemodules = [];
 
         foreach ($formdata->coursemodules as $cmid) {

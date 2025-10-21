@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines message providers (types of messages being sent) for Course dynamic rules
+ * Defines message providers (types of messages being sent) for Smart Rules AI
  *
  * @package    local_coursedynamicrules
  * @category   message
@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 $messageproviders = [
-    'coursedynamicrules_notification' => [
+    'smart_rules_ai_notification' => [
         'capability' => '',
         'defaults' => [
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,

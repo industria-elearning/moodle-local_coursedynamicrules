@@ -161,11 +161,6 @@ class createaiactivity_action extends action {
     public function save_action($formdata) {
         global $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
-
         $params = [
             'message' => trim($formdata->message),
             'generateimages' => !empty($formdata->generateimages),

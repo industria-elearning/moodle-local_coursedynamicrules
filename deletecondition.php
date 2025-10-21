@@ -54,13 +54,6 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$licensestatus = rule::validate_licence_status();
-if (!$licensestatus->success) {
-    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
-    echo $OUTPUT->footer();
-    die();
-}
-
 $condition = $DB->get_record('cdr_condition', ['id' => $id], '*', MUST_EXIST);
 
 $config = get_config('local_coursedynamicrules');

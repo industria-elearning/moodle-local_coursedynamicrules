@@ -47,13 +47,6 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$licensestatus = rule::validate_licence_status();
-if (!$licensestatus->success) {
-    echo $OUTPUT->notification(get_string('pluginnotavailable', 'local_coursedynamicrules'), 'error', false);
-    echo $OUTPUT->footer();
-    die();
-}
-
 $rule = new stdClass();
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');

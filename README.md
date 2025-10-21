@@ -1,356 +1,351 @@
-## Sobre reglas dinámicas del curso
+## Smart Rules AI
 
-Este plugin permite a los administradores y profesores definir reglas personalizadas que automatizan acciones basadas en condiciones específicas relacionadas con las actividades y los usuarios de un curso.
+This plugin allows administrators and teachers to define custom rules that automate actions based on specific conditions related to course activities and users.
 
-## Pre-requisitos
+## Prerequisites
 
-1. Tener minimo la versión de PHP 8.1 instalada en el servidor.
-
-2. Tener la versión de Moodle 4.1.14 o superior, hasta la versión 4.5.
+1. Have Moodle version 4.1.14 or higher.
    
-3. Tener el cron de Moodle configurado y ejecutándose correctamente.
+2. Have Moodle cron configured and running correctly.
    
-4. Comprar plugin `Reglas dinámicas del Curso para Moodle LMS` desde nuestra tienda en la sección de complementos para Moodle https://shop.datacurso.com/index.php?rp=/store/plugins-moodle
+3. **Optional** Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+4. **Optional** Have the Moodle plugin `Course Creator AI` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 
-5. Tener instalado el plugin de Moodle `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+## Installing via uploaded ZIP file
 
-## Instalación mediante archivo ZIP subido
+1. Log in to your Moodle site as an admin and go to `Site administration > Plugins > Install plugins`.
+2. Upload the ZIP file with the plugin code. You should only be prompted to add
+   extra details if your plugin type is not automatically detected.
+3. Check the plugin validation report and finish the installation.
 
-1. Inicie sesión en su sitio Moodle como administrador y vaya a `Administración del sitio > Extensiones > Instalar complementos`.
-2. Suba el archivo ZIP con el código del plugin. Solo se le pedirá que agregue
-    detalles adicionales si el tipo de plugin no se detecta automáticamente.
-3. Verifique el informe de validación del plugin y finalice la instalación.
+## Installing manually
 
-## Instalación manual
+The plugin can be also installed by putting the contents of this directory to
 
-El plugin también se puede instalar colocando el contenido de este directorio en
+`{your/moodle/dirroot}/local/coursedynamicrules`
 
-`{su/moodle/dirroot}/local/coursedynamicrules`
+Afterwards, log in to your Moodle site as an admin and go to `Site administration > Notifications` to complete the installation.
 
-Después, inicie sesión en su sitio Moodle como administrador y vaya a `Administración del sitio > General > Notificaciones` para completar la instalación.
+Alternatively, you can run
 
-Alternativamente, puede ejecutar
 ```bash
 php admin/cli/upgrade.php
 ```
 
-para completar la instalación desde la línea de comandos.
+to complete the installation from the command line.
 
-## Activación del plugin
+## Adding rules to a course
 
-Para utilizar el plugin, es necesario activarlo con una llave de licencia proporcionada en la tienda. La licencia solo es válida para un único dominio Moodle. En caso de utilizar Moodle IOMAD y requerir activación en múltiples tenants, será necesario adquirir una licencia por cada tenant.
-
-### Obtener la clave de licencia
-
-1. Accedemos a [https://shop.datacurso.com/clientarea.php](https://shop.datacurso.com/clientarea.php) y damos click sobre el servicio que queremos activar en este caso `Reglas dinámicas del Curso para Moodle LMS`.
-   
-   ![Service to active](__docs/images/local_cdr_service-to-active.png)
-
-2. Copiamos la clave de licencia.
-
-    ![Shop licence key](__docs/images/local_cdr_shop-license-key.png)
-
-
-### Activar la licencia en Moodle
-
-1. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general`.
-   
-    ![Local plugins](__docs/images/local_cdr_general-settings.png)
-
-2. Pegamos la llave de licencia en el campo `Clave de licencia` y damos click en `Guardar cambios`.
-
-    ![Plugin activation](__docs/images/local_cdr_plugin-activation.png)
-
-### Activación de la licencia para Moodle IOAMAD
-
-En Moodle IOMAD, cada tenant funciona como una instancia independiente. Para activar el plugin en múltiples tenants, se debe ingresar una licencia para cada uno de ellos.
-
-1. En nuestra plataforma de Moodle accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Configuración general`.
-   
-    ![Local plugins](__docs/images/local_cdr_general-settings.png)
-
-2. En la sección de configuración, se mostrará un campo de licencia para cada tenant registrado en la plataforma.
-
-    ![Tenant activation](__docs/images/local_cdr_tenant-activation.png)
-
-3. Ingresamos una clave de licencia válida en cada tenant donde se vaya a activar el plugin.
-
-### Validación de la licencia
-
-1. Para validar si la licencia fue activada correctamente, accedemos a `Administración del sitio > Extensiones > Extensiones locales > Reglas dinámicas del curso > Verificar clave de licencia`
-   
-    ![Verify licence](__docs/images/local_cdr_verify-licence.png)
-
-2. Si la licencia fue activada correctamente, veremos un mensaje de confirmación.
-
-    ![Licence activated](__docs/images/local_cdr_licence-activated.png)
-
-**NOTA:** Para validar la licencia en IOMAD se debe acceder a cada tenant y verificar la licencia de forma individual.
-
-## Agregar reglas dinámicas a un curso
-
-1. Accedemos al curso en el que queremos agregar reglas dinámicas y damos click en `Reglas dinámicas del curso` en el menú de administración del curso.
+1. Access the course in which you want to add smart rules and click on `Smart rules` in the course administration menu.
    
     ![Course administration](__docs/images/local_cdr_course-administration.png)
 
-2. Damos click en `Agregar regla`.
+2. Click on `Add rule`.
    
     ![Add rule](__docs/images/local_cdr_add-rule.png)
 
-3. Ingresamos el nombre de la regla, la descripción marcamos la casilla `Activa`
+3. Enter the name of the rule, the description and check the `Active` box.
    
     ![Rule configuration](__docs/images/local_cdr_rule-configuration.png)
 
     
-## Agregar condiciones a la regla
+## Adding conditions to the rule
 
-1. Damos click en el enlace `Agregar condiciones`.
+1. Click on the link `Add conditions`.
    
     ![Add conditions](__docs/images/local_cdr_add-conditions.png)
 
-2. Nos aparecerá una vista como la siguiente con la lista de condiciones disponibles desde donde podemos seleccionar la que deseamos agregar, la informaciona a cerca de cada condición la podemos encontrar en la siguiente sección [Condiciones disponibles](#condiciones-disponibles).
+2. A view similar to the following will appear with the list of available conditions from which we can select the one we want to add, the information about each condition can be found in the following section [Available conditions](#available-conditions).
    
     ![Conditions list](__docs/images/local_cdr_conditions-list.png)
 
-## Condiciones disponibles
+## Available conditions
 
-### Actividad completada (NUEVO desde la version 1.5.0)
+### Activity completed
 
-#### Descripción
+#### Description
 
-Esta condición permite identificar fácilmente a los estudiantes que han completado una actividad específica en el curso. Se puede configurar para enviar recordatorios automáticos a aquellos que hayan completado la actividad, ayudándote a mantener su compromiso y reducir la inactividad.
+This condition allows you to easily identify students who have completed a specific activity in the course. It can be configured to send automatic reminders to those who have completed the activity, helping you maintain their commitment and reduce inactivity.
 
-#### Configuración de la condición
+#### Condition configuration
 
-1. **Buscar módulos de actividad del curso**: Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad que deseamos verificar que se haya completado.
+1. **Search course activity modules**: From this search field we can select the activity module that we want to verify that it has been completed.
    
    ![Activity completion search](__docs/images/local_cdr_activity-completion-search.png)
 
-### Inactividad en el curso en intervalos de tiempo
+### Course inactivity at time intervals
 
-#### Descripción
+#### Description
 
-Esta condición permite identificar fácilmente a los estudiantes que no han accedido al curso durante períodos específicos de tiempo a partir de una fecha base, como su fecha de matriculación. Se puede configurar para enviar recordatorios automáticos a aquellos que llevan 7, 15, 22 días (o el intervalo que deseado) sin ingresar al curso, ayudándote a mantener su compromiso y reducir la inactividad.
+This condition makes it easy to identify students who have not accessed the course for specific periods of time from a base date, such as their enrolment date. You can configure it to send automatic reminders to those who have gone 7, 15, 22 days (or any desired interval) without entering the course, helping you maintain engagement and reduce inactivity.
 
-Ya sea que mediante una evaluación en intervalos personalizados o un monitoreo recurrente cada cierto tiempo, esta condición ayudará a que los estudiantes se mantengan comprometidos y activos en el curso.
+Whether by evaluating custom intervals or by recurring monitoring at a fixed cadence, this condition helps keep students engaged and active in the course.
 
-Esta condición se ejecuta de forma recurrente todos los dias a las `00:00`, `06:00`, `12:00` y `18:00` mediante la tarea programada `local_coursedynamicrules\task\course_inactivity_task`.
+This condition runs recurrently every day at `00:00`, `06:00`, `12:00`, and `18:00` via the scheduled task `local_coursedynamicrules\task\course_inactivity_task`.
 
-**IMPORTANTE!**: El tiempo de ejecuión ésta tarea programada no se debe modificar ya que puede generar inconsistencias en la evaluación de la condición.
+**IMPORTANT!** Do not modify this scheduled task's execution times, as it may cause inconsistencies when evaluating the condition.
 
-#### Configuración de la condición
+#### Condition configuration
 
-1. **Intevalos personalizados**:
-    Nos permite ingresar multiples intervalos de tiempo separados por coma `(,)`, por ejemplo: `7,15,22`. Esto significa que la condición se evaluará en los intervalos de tiempo especificados, en este caso cada 7, 15 y 22 `dias` o `semanas` o `meses` según la unidad de tiempo seleccionada.
+1. **Custom intervals**:
+    Allows you to enter multiple time intervals separated by commas `(,)`, for example: `7,15,22`. The condition will be evaluated at each specified interval, in this case every 7, 15, and 22 `days` or `weeks` or `months`, depending on the selected time unit.
     
      ![Custom intervals](__docs/images/local_cdr_custom-intervals.png)
 
-2. **Intevalo recurrente**:
-   Nos permite ingresar un intervalo de tiempo para que la condición se evalúe de forma recurrente en el tiempo especificado, por ejemplo: `7`, lo que significa que la condición se evaluará cada 7 `dias` o `semanas` o `meses` según la unidad de tiempo seleccionada.
+2. **Recurring interval**:
+   Allows you to enter a single interval so the condition is evaluated repeatedly at the specified cadence, for example: `7`, which means the evaluation runs every 7 `days` or `weeks` or `months`, depending on the selected time unit.
 
     ![Recurrent intervals](__docs/images/local_cdr_recurrent-intervals.png)
 
-3. **Unidad de tiempo**:
-   Nos permite seleccionar la unidad de tiempo en la que se evaluará la condición, las opciones disponibles son: `dias`, `semanas`, `meses`.
-
+3. **Time unit**:
+   Select the unit of time in which the condition will be evaluated. Available options: `days`, `weeks`, `months`.
+   
     ![Time unit](__docs/images/local_cdr_time-unit.png)
 
-4. **Fecha base**:
-   Nos permite seleccionar la fecha base a partir de la cual se evaluará la condición, las opciones disponibles son: 
-   - `Desde la fecha de matriculación`: Los intervalos de tiempo se contarán a partir de la fecha de matriculación de cada usuario en el curso.
-   - `Desde la fecha de inicio del curso`: Los intervalos de tiempo se contarán a partir de la fecha de inicio del curso.
-   - `Desde ahora`: Los intervalos de tiempo se contarán a partir de la fecha en la que estamos creando la regla.
+4. **Base date**:
+   Select the base date from which the condition will be evaluated. Available options:
+   - `From enrolment date`: Intervals are counted from each user's enrolment date in the course.
+   - `From course start date`: Intervals are counted from the course start date.
+   - `From now`: Intervals are counted from the date the rule is created.
 
     ![Base date](__docs/images/local_cdr_base-date.png)
    
-### Calificación en actividad
+### Grade in activity
 
-#### Descripción  
+#### Description  
+Use this condition to evaluate users' grades in a gradable activity. If the selected activity has multiple grade items, a dropdown will be shown with the available items.  
 
-Esta condición se utiliza para evaluar las calificaciones de los usuarios en una actividad que requiere calificación. Si la actividad seleccionada tiene múltiples ítems de calificación, se mostrará una lista desplegable con los ítems disponibles.  
-
-Por ejemplo, en el caso del módulo `Foro`, los ítems de calificación disponibles podrían incluir:  
-- Evaluación del foro completo  
-- Calificaciones  
+For example, in the `Forum` module, available grade items may include:  
+- Whole forum grading  
+- Grades  
 
 ![Forum whole forum item](__docs/images/local_cdr_forum-whole-forum-item.png)  
 ![Forum grades item](__docs/images/local_cdr_forum-grades-item.png)  
 
-#### Configuración de la condición
+#### Condition configuration
 
-1. **Buscar módulos de actividad del curso**:
-   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+1. **Search course activity modules**:
+   From this search field, select the activity module where you want to check grades. 
 
    ![Grade in activity search](__docs/images/local_cdr_grade-in-activity-search.png)
    
-   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+   **Note**: Only activity modules that have at least the following setting in the `Activity completion` section will appear:
 
     ![Activity completion with require grade](__docs/images/local_cdr_activity-completion-with-require-grade.png)
 
-2. **Opciones de comparación**:  
-   Una vez seleccionada la actividad, podemos definir las condiciones de comparación según los ítems de calificación disponibles. Se ofrecen dos opciones:  
-   - `Debe ser ≥`: La condición se cumple si la calificación del usuario es mayor o igual al valor especificado.  
-   - `Debe ser <`: La condición se cumple si la calificación del usuario es menor al valor especificado.  
+2. **Comparison options**:  
+   After selecting the activity, define the comparison conditions based on the available grade items. Two options are provided:  
+   - `Must be ≥`: The condition is met if the user's grade is greater than or equal to the specified value.  
+   - `Must be <`: The condition is met if the user's grade is less than the specified value.  
   
     ![Comparison options](__docs/images/local_cdr_comparison-options.png)
 
 
-### Actividad no completada
+### Activity not completed
 
-#### Descripción
+#### Description
+Use this condition to evaluate whether a user has not completed a specific activity after a given period of time.
 
-Esta condición se utiliza para evaluar si un usuario no ha completado una actividad específica despues de un período de tiempo determinado.
+This condition runs recurrently via the scheduled task `local_coursedynamicrules\task\no_complete_activity_task`, which by default runs every minute.
 
-Esta condición se ejecuta de forma recurrente mediante la tarea programada `local_coursedynamicrules\task\no_complete_activity_task` que por defecto se ejecuta cada minuto.
+The condition will only evaluate once when the time specified in the configuration has elapsed, as detailed in the section [Condition configuration](#condition-configuration-1).
 
-La condición solo evaluará una vez cuando se haya cumplido el tiempo especificado en la configuración de la condición, la cual se detalla en la siguiente sección [Configuración de la condición](#configuración-de-la-condición-1).
+After the condition is evaluated and the rule's actions are executed, the rule will be automatically deactivated.
 
-Una vez que se evalúe la condición y se ejecutan las acciones de la regla, la regla se desactivará automáticamente.
+#### Condition configuration
 
-#### Configuración de la condición
-
-1. **Buscar módulos de actividad del curso**:
-   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar que no se haya completado.
+1. **Search course activity modules**:
+   From this search field, select the activity module you want to verify has not been completed.
 
    ![No complete activity search](__docs/images/local_cdr_no-complete-activity-search.png)
    
-   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+   **Note**: Only activity modules that have at least the following setting in the `Activity completion` section will appear:
 
     ![Activity completion automatic](__docs/images/local_cdr_activity-completion-automatic.png)
 
-2. **Fecha esperada de finalización**:
-    Definimos la fecha en la que esperamos que los usuarios hayan completado la actividad.
+2. **Expected completion date**:
+    Define the date by which you expect users to have completed the activity.
 
     ![Expected completion date](__docs/images/local_cdr_expected-completion-date.png)
 
 
-### Sin acceso al curso
+### No course access
 
-#### Descripción
+#### Description
+Use this condition to evaluate which users have not accessed a course within a specified period of time.
 
-Esta condición se utiliza para evaluar que usuarios no han accedido a un curso dentro de un período de tiempo determinado.
+This condition runs recurrently via the scheduled task `local_coursedynamicrules\task\no_course_access_task`, which by default runs every minute. 
 
-Esta condición se ejecuta de forma recurrente mediante la tarea programada `local_coursedynamicrules\task\no_course_access_task` que por defecto se ejecuta cada minuto. 
+Once the condition is added to a rule, users matching the condition will start being evaluated and the rule's actions will be executed.
 
-Una vez que se agrega la condición a una regla, se empezará a evaluar a los usuarios que cumplan con la condición y se ejecutarán las acciones asociadas a la regla.
+The condition will be re-evaluated each time the time period specified in the configuration has passed, as detailed in the following section [Condition configuration](#condition-configuration-2).
 
-La condición se volverá a evaluar cada vez que haya pasado el periodo tiempo especificado en la configuración de la condición los cuales se detallan en la siguiente sección [Configuración de la condición](#configuración-de-la-condición-2).
+#### Condition configuration
 
-#### Configuración de la condición
-
-1. **Periodo**:
-   Definimos el periodo de tiempo en el que esperamos que los usuarios hayan accedido al curso en el primer campo ingresamos el valor y en el segundo seleccionamos la unidad de tiempo.
+1. **Period**:
+   Define the time period in which you expect users to have accessed the course. Enter the numeric value in the first field and select the time unit in the second field.
 
     ![Time period](__docs/images/local_cdr_time-period.png)
 
-### Finalización de actividad con calificación aprobatoria
+### Activity completion with passing grade
 
-#### Descripción
+#### Description
+Use this condition to evaluate whether users have completed an activity with a passing grade.
 
-Esta condición se utiliza para evaluar si los usuarios han completado una actividad con una calificación aprobatoria.
+#### Condition configuration
 
-#### Configuración de la condición
-
-1. **Buscar módulos de actividad del curso**:
-   Desde este campo de busqueda podemos podemos seleccionar el módulo de actividad en el que deseamos verificar las calificaciones. 
+1. **Search course activity modules**:
+   From this search field, select the activity module where you want to verify grades. 
 
     ![Pass grade search](__docs/images/local_cdr_pass-grade-search.png)
    
-   **Nota**: Solo aparecerán los modulos de actividad que tengan minimo la siguiente configuración en la sección de `Finalización de actividad`:
+   **Note**: Only activity modules that have at least the following setting in the `Activity completion` section will appear:
 
     ![Pass grade search](__docs/images/local_cdr_activity-completion-with-pass-grade.png)
 
 
-## Agregar acciones a la regla
+## Add actions to the rule
 
-1. Damos click en el enlace `Agregar acciones`.
+1. Click the `Add actions` link.
    
     ![Add actions](__docs/images/local_cdr_add-actions.png)
 
-2. Nos aparecerá una vista como la siguiente con la lista de acciones disponibles desde donde podemos seleccionar la que deseamos agregar, la informaciona a cerca de cada acción la podemos encontrar en la siguiente sección [Acciones disponibles](#acciones-disponibles).
+2. A view like the following will appear with the list of available actions. Select the one you want to add. Details of each action can be found in the next section [Available actions](#available-actions).
    
     ![Actions list](__docs/images/local_cdr_action-lists.png)
 
-## Acciones disponibles
+## Available actions
 
-### Habilitar actividad
+### Create AI reinforcement activity (Only for moodle 4.5 or higher)
 
-#### Descripción
+#### Description
+This action will request the Datacurso AI service to generate a personalised reinforcement activity for users who meet the rule conditions.
 
-Esta acción se utiliza para habilitar actividades específicas en el curso para usuarios que cumplan con las condiciones de la regla.
+#### Pre-requisites
+1. Moodle 4.5 or higher
+2. Have the `Restriction by user` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/availability_user](https://moodle.org/plugins/availability_user).
+3. Have the `Course Creator AI` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/local_coursegen](https://moodle.org/plugins/local_coursegen).
 
-**Nota**: Para poder usar esta acción es necesario instalar el plugin `Restriction by user` el cual se puede descargar de forma gratuita desde el siguiente enlace [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+#### Action configuration
 
-#### Configuración de la acción
+1. **Prompt**:
+   Enter the instruction that the AI will use to generate the reinforcement activity.
 
-1. **Buscar módulos de actividad del curso**:
-   Desde este campo de busqueda podemos podemos seleccionar los modulos de actividad que deseamos habilitar.
+   - You can include placeholders to personalise the prompt for each user. Available placeholders:
+     - `{$a->coursename}` – Course name
+     - `{$a->courseurl}` – Course URL
+     - `{$a->fullname}` – User full name
+     - `{$a->firstname}` – User first name
+     - `{$a->lastname}` – User last name
+
+2. **Generate images**:
+   If enabled, the AI may generate and include images in the created activity when supported by the target activity type.
+
+3. **Section**:
+   Select the course section where the activity will be created.
+
+4. **Insert before**:
+   Optionally choose an existing activity to insert the new activity before. If set to `None`, the new activity will be appended at the end of the selected section.
+
+![Create AI activity](__docs/images/local_cdr_createaiactivity.png)
+
+### Enable activity
+
+#### Description
+Use this action to enable specific activities in the course for users who meet the rule's conditions.
+
+#### Pre-requisites
+
+1. Have the `Restriction by user` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/availability_user](https://moodle.org/plugins/availability_user).
+
+#### Action configuration
+
+1. **Search course activity modules**:
+   From this search field, select the activity modules you want to enable.
 
     ![Enable activity search](__docs/images/local_cdr_enable-activity-search.png)
 
-    Las actividades seleccionadas solo quedarán disponibles para los usuarios que cumplan con las condiciones de la regla, desde la vista del curso para roles con permisos necesarios (profesores, administradores, etc.) se mostrará la siguiente información que indica los usuarios para los cuales la actividad está habilitada:
+    The selected activities will only be available to users who meet the rule's conditions. In the course view for roles with the necessary permissions (teachers, administrators, etc.), the following information will be shown indicating the users for whom the activity is enabled:
 
     ![Restriction by user](__docs/images/local_cdr_restriction-by-user.png)
 
 
-### Enviar notificación
+### Send notification
 
-#### Descripción
+#### Description
+Use this action to send notifications to users who meet the rule's conditions.
 
-Esta acción se utiliza para enviar notificaciones a los usuarios que cumplan con las condiciones de la regla.
+#### Improve notification delivery
 
-#### Mejore el envío de notificaciones
+Enhance your notifications with our <strong>Datacurso Message Hub</strong> plugins, which let you send notifications via WhatsApp and SMS using providers like Twilio. [Click here to purchase and activate now!](https://shop.datacurso.com/clientarea.php)
 
-¡Mejore sus notificaciones! con nuestros plugins de <strong>Datacurso Message Hub</strong> los cuales le permitirán enviar notificaciones por WhatsApp y SMS usando proveedores como Twilio. [Click aquí para comprarlos y activarlos ahora!](https://shop.datacurso.com/clientarea.php)
+For more information, visit the documentation page: [https://docs.datacurso.com/index.php?title=Message_Hub](https://docs.datacurso.com/index.php?title=Message_Hub)
 
-Para obtener mas información puede visitar la pagina de documentación [https://docs.datacurso.com/index.php?title=Message_Hub](https://docs.datacurso.com/index.php?title=Message_Hub)
+#### Configure notification sending (Required only if you have the Datacurso Message Hub plugins installed)
 
-#### Configurar el envío de notificaciones (Necesario solo si no tiene instalado los plugins de Datacurso Message Hub)
-
-1. Acceder a `Administración del sitio > General > Mensajería > Ajustes de notificación`
+1. Go to `Site administration > General > Messaging > Notification settings`
    
     ![Notification settings](__docs/images/local_cdr_notification-settings.png)
 
-2. En la sección `Preferencias de notificación predeterminadas` ubicamos `Notificación de reglas dinámicas del curso` y habilitamos la opción para `Datacurso Message Hub`
+2. In the `Default notification preferences` section, find `Smart Rules AI notification` and enable the option for `Datacurso Message Hub`.
 
+    ![Notification preferences](__docs/images/local_cdr_notification-preferences-enable.png)
     ![Notification preferences](__docs/images/local_cdr_notification-preferences.png)
 
-#### Configuración de la acción
+#### Action configuration
 
-1. **Asunto**:
-   Definimos el asunto de la notificación.
+1. **Subject**:
+   Define the notification subject.
 
-2. **Cuerpo**: 
-   Definimos el cuerpo de la notificación.
+2. **Body**: 
+   Define the notification body.
 
     ![Send notification](__docs/images/local_cdr_send-notification.png)
 
-3. **Marcadores de posición** (Desde la version 1.5.1):
-    Podemos utilizar marcadores de posición en el cuerpo de la notificación para que el mensaje sea mas personalizado para cada usuario, los marcadores de posición disponibles son:
-
-    - `{$a->coursename}` - Nombre del curso
-    - `{$a->courselink}` - Enlace del curso
-    - `{$a->fullname}` - Nombre completo del usuario
-    - `{$a->firstname}` - Nombre del usuario
-    - `{$a->lastname}` - Apellido del usuario
+3. **Placeholders**
+    You can use placeholders in the notification body to personalize the message for each user. Available placeholders:
+    
+    - `{$a->coursename}` - Course name
+    - `{$a->courselink}` - Course link
+    - `{$a->fullname}` - User full name
+    - `{$a->firstname}` - User first name
+    - `{$a->lastname}` - User last name
     
      ![Notification placeholders](__docs/images/local_cdr_notification-placeholders.png)
 
-4. **Roles a notificar** (Desde la version 1.5.1):
-   Seleccionamos los roles de los cuales el usuario debe tener al menos uno asignado en el curso para que se le envíe la notificación. Por ejemplo si queremos que solo los usuarios que tengan el rol de estudiante en el curso se le envíe la notificación, marcamos la casilla `Estudiante`.
+4. **Roles to notify**:
+   Choose the course roles that determine who receives the notification when the rule matches a user.
+
+   - The matched user receives the notification only if they hold at least one of the selected roles in the course.
+   - Additionally, other course users who hold any of the selected roles that the matched user does not hold will also receive the notification.
+   - Roles already held by the matched user are excluded from the "other recipients" search to avoid duplicate delivery.
+
+   Example:
+   - Selected roles: `Student`, `Teacher`.
+   - If the matched user is a `Student`, they receive the notification. Other recipients will be users with the `Teacher` role only (other `Students` will not receive this notification from this action run).
+   - If the matched user has none of the selected roles, they do not receive the notification, but users with any of the selected roles will.
 
     ![Notification roles](__docs/images/local_cdr_notification-roles.png)
 
 
+### What happens when the action runs:
+   - The action sends the configured prompt to the Datacurso AI service via the `Course Creator AI` plugin and receives the activity definition.
+   - If the course has any AI context configured (e.g., instructional model or syllabus), this context will be used to create an activity better aligned with the course.
+   - A new course module is created and placed in the selected section and position.
+   - The new activity is made visible and is restricted to the matched user using the `Restriction by user` condition.
 
+## License
 
+2025 Data Curso LLC <https://datacurso.com>
 
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-
-
-
-
-
-
-
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see <https://www.gnu.org/licenses/>.

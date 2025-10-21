@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event observers for Course dynamic rules
+ * Event observers for Smart Rules AI
  *
  * @package    local_coursedynamicrules
  * @category   event

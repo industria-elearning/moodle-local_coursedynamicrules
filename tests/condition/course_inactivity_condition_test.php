@@ -20,7 +20,7 @@ use local_coursedynamicrules\condition\course_inactivity\course_inactivity_condi
 use stdClass;
 
 /**
- * Tests for Course dynamic rules
+ * Tests for Course Inactivity
  *
  * @package    local_coursedynamicrules
  * @category   test

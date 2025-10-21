@@ -48,12 +48,6 @@ class course_inactivity_task extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
-        // Validate the license status before proceeding.
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
-
         $conditiontype = $this->conditiontype;
 
         // Retrieve all active rules with the specified condition type.
