@@ -57,37 +57,24 @@ class sendnotification_action extends action {
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
         $coursecontext = context_course::instance($course->id);
-        $roleassigns = get_user_roles($coursecontext, $userid);
 
-        if (!$this->has_required_roles($roleassigns, $roleids)) {
-            return false;
-        }
-
-        $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
-        $courselink = html_writer::link($courseurl, $course->fullname);
-
-        $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
-        $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
-        $messagebody = str_replace($key, $value, $messagebody);
-
+        $messagebody = $this->replace_placeholders($messagebody, $course, $user);
         $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
         $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
 
-        $message = new \core\message\message();
-        $message->component = 'local_coursedynamicrules';
-        // Notification name from message.php.
-        $message->name = 'coursedynamicrules_notification';
-        $message->userfrom = \core_user::get_support_user();
-        $message->userto = $userid;
-        $message->subject = $messagesubject;
-        $message->fullmessage = html_to_text($messagebody);
-        $message->fullmessageformat = FORMAT_HTML;
-        $message->fullmessagehtml = $messagebody;
-        $message->smallmessage = $smallmessagetext;
-        $message->notification = 1;
+        $recipients = $this->get_recipients_by_roles($roleids, $coursecontext);
 
-        $messageid = message_send($message);
-        return $messageid;
+        if (empty($recipients)) {
+            return false;
+        }
+
+        $messageids = [];
+        foreach ($recipients as $recipient) {
+            $message = $this->create_message($recipient->id, $messagesubject, $messagebody, $smallmessagetext);
+            $messageids[] = message_send($message);
+        }
+
+        return $messageids;
     }
 
     /**
@@ -208,19 +195,69 @@ class sendnotification_action extends action {
     }
 
     /**
-     * Checks if the user has the required roles to retrieve the message.
+     * Replaces message body placeholders with course and user data.
      *
-     * @param array $roleassigns The role assignments for the user.
-     * @param array $roleids The required role IDs.
-     * @return bool True if the user has all required roles, false otherwise.
+     * Supported placeholders:
+     * - {$a->coursename}
+     * - {$a->courselink}
+     * - {$a->fullname}
+     * - {$a->firstname}
+     * - {$a->lastname}
+     *
+     * @param string   $messagebody HTML/text content containing placeholders.
+     * @param stdClass $course      Course record (requires at least id, fullname).
+     * @param stdClass $user        Target user (requires at least firstname, lastname).
+     * @return string  Message with placeholders replaced.
      */
-    private function has_required_roles($roleassigns, $roleids) {
-        foreach ($roleassigns as $roleassign) {
-            $roleid = $roleassign->roleid;
-            if (!in_array($roleid, $roleids)) {
-                return false;
+    private function replace_placeholders($messagebody, $course, $user): string {
+        $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $courselink = html_writer::link($courseurl, $course->fullname);
+        $key = ['{$a-&gt;coursename}', '{$a-&gt;courselink}', '{$a-&gt;fullname}', '{$a-&gt;firstname}', '{$a-&gt;lastname}'];
+        $value = [$course->fullname, $courselink, fullname($user), $user->firstname, $user->lastname];
+        return str_replace($key, $value, $messagebody);
+    }
+
+    /**
+     * Retrieves recipient users by role within the course context.
+     *
+     * @param int[]           $roleids       Role IDs to include.
+     * @param context_course  $coursecontext Course context.
+     * @return stdClass[]     Users indexed by user id.
+     */
+    private function get_recipients_by_roles($roleids, $coursecontext): array {
+        $recipients = [];
+        foreach ($roleids as $roleid) {
+            $userswithrole = get_role_users($roleid, $coursecontext, false, 'u.*', 'u.id ASC', false);
+            if (!empty($userswithrole)) {
+                foreach ($userswithrole as $u) {
+                    $recipients[$u->id] = $u;
+                }
             }
         }
-        return true;
+        return $recipients;
+    }
+
+    /**
+     * Builds the message object for Moodle's messaging API.
+     *
+     * @param int    $recipientid Recipient user id.
+     * @param string $subject     Message subject.
+     * @param string $fullhtml    Message body in HTML.
+     * @param string $smalltext   Short/plain-text summary.
+     * @return \core\message\message Message ready to send with message_send().
+     */
+    private function create_message($recipientid, $subject, $fullhtml, $smalltext): \core\message\message {
+        $message = new \core\message\message();
+        $message->component = 'local_coursedynamicrules';
+        $message->name = 'coursedynamicrules_notification';
+        $message->userfrom = \core_user::get_support_user();
+        $message->userto = $recipientid;
+        $message->subject = $subject;
+        $message->fullmessage = html_to_text($fullhtml);
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessagehtml = $fullhtml;
+        $message->smallmessage = $smalltext;
+        $message->notification = 1;
+        return $message;
     }
 }
