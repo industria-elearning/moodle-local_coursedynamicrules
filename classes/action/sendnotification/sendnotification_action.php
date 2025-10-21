@@ -126,11 +126,6 @@ class sendnotification_action extends action {
     public function save_action($formdata) {
         global $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return;
-        }
-
         $roles = $formdata->roles;
         $roleids = array_keys($roles, 1);
 

@@ -68,15 +68,4 @@ if ($hassiteconfig) {
             ''
         ));
     }
-
-    // Add check license key page.
-    $url = new moodle_url('/local/coursedynamicrules/checklicensekey.php', []);
-    $ADMIN->add(
-        $pluginname,
-        new admin_externalpage(
-            "{$pluginname}_checklicensekey",
-            get_string('checklicensekey', $pluginname),
-            $url
-        )
-    );
 }

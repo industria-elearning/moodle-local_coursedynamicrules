@@ -83,11 +83,6 @@ class no_course_access_condition extends condition {
     public function evaluate($context) {
         global $DB;
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return false;
-        }
-
         $courseid = $context->courseid;
         $userid = $context->userid;
         $periodvalue = $this->params->periodvalue;

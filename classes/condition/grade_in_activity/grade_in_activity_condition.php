@@ -47,10 +47,6 @@ class grade_in_activity_condition extends condition {
      */
     public function evaluate($context) {
 
-        $licensestatus = rule::validate_licence_status();
-        if (!$licensestatus->success) {
-            return false;
-        }
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;

@@ -122,13 +122,6 @@ class course_inactivity_condition extends condition {
     public function evaluate($context) {
         global $DB;
 
-        if (!defined('PHPUNIT_TEST') && !PHPUNIT_TEST) {
-            $licensestatus = rule::validate_licence_status();
-            if (!$licensestatus->success) {
-                return false;
-            }
-        }
-
         $courseid = $context->courseid;
         $userid = $context->userid;
 
@@ -340,13 +333,6 @@ class course_inactivity_condition extends condition {
      */
     public function save_condition($formdata) {
         global $DB;
-
-        if (!defined('PHPUNIT_TEST') && !PHPUNIT_TEST) {
-            $licensestatus = rule::validate_licence_status();
-            if (!$licensestatus->success) {
-                return false;
-            }
-        }
 
         $timeintervals = $formdata->intervaltype == self::INTERVAL_CUSTOM ?
             $formdata->customintervals : $formdata->recurringinterval;
