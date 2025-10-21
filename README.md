@@ -8,7 +8,8 @@ This plugin allows administrators and teachers to define custom rules that autom
    
 2. Have Moodle cron configured and running correctly.
    
-3. Have the Moodle plugin `Restriction by user` installed, which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+3. **Optional** Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+4. **Optional** Have the Moodle plugin `Course Creator AI` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 
 ## Installing via uploaded ZIP file
 
@@ -60,7 +61,7 @@ to complete the installation from the command line.
 
 ## Available conditions
 
-### Activity completion
+### Activity completed
 
 #### Description
 
@@ -215,12 +216,47 @@ Use this condition to evaluate whether users have completed an activity with a p
 
 ## Available actions
 
+### Create AI reinforcement activity (Only for moodle 4.5 or higher)
+
+#### Description
+This action will request the Datacurso AI service to generate a personalised reinforcement activity for users who meet the rule conditions.
+
+#### Pre-requisites
+1. Moodle 4.5 or higher
+2. Have the `Restriction by user` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/availability_user](https://moodle.org/plugins/availability_user).
+3. Have the `Course Creator AI` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/local_coursegen](https://moodle.org/plugins/local_coursegen).
+
+#### Action configuration
+
+1. **Prompt**:
+   Enter the instruction that the AI will use to generate the reinforcement activity.
+
+   - You can include placeholders to personalise the prompt for each user. Available placeholders:
+     - `{$a->coursename}` – Course name
+     - `{$a->courseurl}` – Course URL
+     - `{$a->fullname}` – User full name
+     - `{$a->firstname}` – User first name
+     - `{$a->lastname}` – User last name
+
+2. **Generate images**:
+   If enabled, the AI may generate and include images in the created activity when supported by the target activity type.
+
+3. **Section**:
+   Select the course section where the activity will be created.
+
+4. **Insert before**:
+   Optionally choose an existing activity to insert the new activity before. If set to `None`, the new activity will be appended at the end of the selected section.
+
+![Create AI activity](__docs/images/local_cdr_createaiactivity.png)
+
 ### Enable activity
 
 #### Description
 Use this action to enable specific activities in the course for users who meet the rule's conditions.
 
-**Note**: To use this action, you must install the `Restriction by user` plugin, which can be downloaded for free from: [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+#### Pre-requisites
+
+1. Have the `Restriction by user` plugin installed and enabled, which can be downloaded for free from: [https://moodle.org/plugins/availability_user](https://moodle.org/plugins/availability_user).
 
 #### Action configuration
 
@@ -251,8 +287,9 @@ For more information, visit the documentation page: [https://docs.datacurso.com/
    
     ![Notification settings](__docs/images/local_cdr_notification-settings.png)
 
-2. In the `Default notification preferences` section, find `Course dynamic rules notification` and enable the option for `Datacurso Message Hub`.
+2. In the `Default notification preferences` section, find `Smart Rules AI notification` and enable the option for `Datacurso Message Hub`.
 
+    ![Notification preferences](__docs/images/local_cdr_notification-preferences-enable.png)
     ![Notification preferences](__docs/images/local_cdr_notification-preferences.png)
 
 #### Action configuration
@@ -280,3 +317,26 @@ For more information, visit the documentation page: [https://docs.datacurso.com/
    Select the roles of which the user must have at least one assigned in the course for the notification to be sent. For example, if you want only users with the student role to be notified, check the `Student` box.
 
     ![Notification roles](__docs/images/local_cdr_notification-roles.png)
+
+
+### What happens when the action runs:
+   - The action sends the configured prompt to the Datacurso AI service via the `Course Creator AI` plugin and receives the activity definition.
+   - If the course has any AI context configured (e.g., instructional model or syllabus), this context will be used to create an activity better aligned with the course.
+   - A new course module is created and placed in the selected section and position.
+   - The new activity is made visible and is restricted to the matched user using the `Restriction by user` condition.
+
+## License
+
+2025 Data Curso LLC <https://datacurso.com>
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see <https://www.gnu.org/licenses/>.
