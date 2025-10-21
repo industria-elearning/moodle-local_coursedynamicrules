@@ -314,7 +314,16 @@ For more information, visit the documentation page: [https://docs.datacurso.com/
      ![Notification placeholders](__docs/images/local_cdr_notification-placeholders.png)
 
 4. **Roles to notify**:
-   Select the roles of which the user must have at least one assigned in the course for the notification to be sent. For example, if you want only users with the student role to be notified, check the `Student` box.
+   Choose the course roles that determine who receives the notification when the rule matches a user.
+
+   - The matched user receives the notification only if they hold at least one of the selected roles in the course.
+   - Additionally, other course users who hold any of the selected roles that the matched user does not hold will also receive the notification.
+   - Roles already held by the matched user are excluded from the "other recipients" search to avoid duplicate delivery.
+
+   Example:
+   - Selected roles: `Student`, `Teacher`.
+   - If the matched user is a `Student`, they receive the notification. Other recipients will be users with the `Teacher` role only (other `Students` will not receive this notification from this action run).
+   - If the matched user has none of the selected roles, they do not receive the notification, but users with any of the selected roles will.
 
     ![Notification roles](__docs/images/local_cdr_notification-roles.png)
 
