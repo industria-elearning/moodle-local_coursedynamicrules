@@ -244,7 +244,7 @@ class sendnotification_action extends action {
     private function create_message($recipientid, $subject, $fullhtml, $smalltext): \core\message\message {
         $message = new \core\message\message();
         $message->component = 'local_coursedynamicrules';
-        $message->name = 'coursedynamicrules_notification';
+        $message->name = 'smart_rules_ai_notification';
         $message->userfrom = \core_user::get_support_user();
         $message->userto = $recipientid;
         $message->subject = $subject;

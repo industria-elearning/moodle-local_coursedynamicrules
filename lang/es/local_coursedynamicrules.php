@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Reglas dinámicas del curso';
 $string['coursedynamicrules:notification'] = 'Enviar notificación';
-$string['messageprovider:coursedynamicrules_notification'] = 'Notificación de reglas dinámicas del curso';
+$string['messageprovider:smart_rules_ai_notification'] = 'Notificación de reglas dinámicas del curso';
 $string['coursedynamicrules:managerule'] = 'Gestionar reglas';
 $string['coursedynamicrules:createrule'] = 'Crear reglas';
 $string['coursedynamicrules:updaterule'] = 'Actualizar reglas';

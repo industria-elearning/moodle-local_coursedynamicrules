@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for Course dynamic rules
+ * Capability definitions for Smart Rules AI
  *
  * Documentation: {@link https://moodledev.io/docs/apis/subsystems/access}
  *

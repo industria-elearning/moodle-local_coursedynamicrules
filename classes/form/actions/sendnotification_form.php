@@ -61,7 +61,7 @@ class sendnotification_form extends action_form {
         } else {
             $enabledproviders = get_config(
                 'message',
-                'message_provider_local_coursedynamicrules_coursedynamicrules_notification_enabled'
+                'message_provider_local_coursedynamicrules_smart_rules_ai_notification_enabled'
             );
 
             // Validate if enabledproviders includes datacurso_msghub.

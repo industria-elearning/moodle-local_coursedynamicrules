@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Callback implementations for Course dynamic rules
+ * Callback implementations for Smart Rules AI
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Extends the navigation tree with the course dynamic rules menu item.
+ * Extends the navigation tree with the Smart Rules AI menu item.
  *
  * @param navigation_node $navigation the navigation tree
  * @param stdClass $course the course

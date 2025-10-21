@@ -155,7 +155,7 @@ $string['messagebody_help'] = 'The following placeholders may be included in the
 * User lastname {$a->lastname}
 * Course activity module name {$a->modulename}
 * Course activity module instance name {$a->moduleinstancename}';
-$string['messageprovider:coursedynamicrules_notification'] = 'Course dynamic rules notification';
+$string['messageprovider:smart_rules_ai_notification'] = 'Smart Rules AI notification';
 $string['messagesubject'] = 'Subject';
 $string['minutes'] = 'Minutes';
 $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <strong>Datacurso Message Hub</strong> plugins let you send notifications via WhatsApp and SMS using providers like Twilio.
@@ -183,10 +183,10 @@ $string['period'] = 'Period';
 $string['period_help'] = 'The minimum amount of time a user must go without accessing the course.';
 $string['plugin_disabled'] = 'This action requires the plugin <strong>{$a->pluginname}</strong> to be enabled. Please access to the <a href="{$a->enableurl}" target="_blank">{$a->enableurl}</a> page, search <strong>{$a->visiblename}</strong> and enable it.';
 $string['plugin_missing'] = 'This action requires the plugin <strong>{$a->pluginname}</strong> to be installed and enabled. Please download it from <a href="{$a->downloadurl}" target="_blank">{$a->downloadurl}</a> and install it.';
-$string['pluginname'] = 'Course dynamic rules';
+$string['pluginname'] = 'Smart Rules AI';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
 $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
-You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Course dynamic rules notification</strong>.
+You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Smart Rules AI notification</strong>.
 <br>
 <a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">See documentation for more information.</a>';
 $string['recurringinterval'] = 'Recurring interval';
