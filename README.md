@@ -1,6 +1,40 @@
 ## Smart Rules AI
 
-This plugin allows administrators and teachers to define custom rules that automate actions based on specific conditions related to course activities and users.
+The **Smart Rules AI** plugin enables administrators and teachers to **automate course actions with intelligent rules** based on conditions about activities, grades, and user behavior.
+
+With Smart Rules AI you can sustain **motivation and engagement**, **reduce inactivity**, and **personalize interventions** at scale—from automated reminders to **AI‑generated reinforcement activities** for those who need them most.
+
+This plugin is part of the **Datacurso AI Plugin Suite** and is powered by the **Datacurso AI Provider**.
+
+## The Datacurso AI Plugin Suite
+
+Transform Moodle into a **smarter, faster, and more engaging** platform with the **Datacurso AI Plugin Suite** — a collection of tools that bring AI directly into your LMS.
+
+- **[Ranking Activities AI](https://moodle.org/plugins/local_datacurso_ratings)**
+  Let students rate activities while AI analyzes feedback and delivers insights to educators.
+
+- **[Forum AI](https://moodle.org/plugins/local_forum_ai)**
+  Bring an AI assistant to your forums to spark discussions and keep engagement high.
+
+- **[Assign AI](https://moodle.org/plugins/local_assign_ai)**
+  AI reviews submissions, suggests feedback, and supports grading.
+
+- **[Share Certificate AI](https://moodle.org/plugins/local_socialcert)**
+  Celebrate achievements automatically with personalized social posts when students earn certificates.
+
+- **[Student Life Story AI](https://moodle.org/plugins/report_lifestory)**
+  Get a holistic view of student performance with AI‑generated summaries across all enrolled courses.
+
+## Key Features
+
+- **Rule‑based automation**
+  Define rules with conditions and actions that run automatically per course.
+
+- **Advanced conditions**
+  Activity completion, inactivity by intervals, grade in activity, no course access, completion with passing grade, and more.
+
+- **Intelligent actions**
+  Create **AI reinforcement activities**, enable activities for specific users, and send multichannel notifications.
 
 ## Prerequisites
 
@@ -8,7 +42,7 @@ This plugin allows administrators and teachers to define custom rules that autom
    
 2. Have Moodle cron configured and running correctly.
    
-3. **Optional** Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+3. **Optional** Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) and [Enable activity](#enable-activity) actions), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 4. **Optional** Have the Moodle plugin `Course Creator AI` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
 
 ## Installing via uploaded ZIP file
