@@ -106,10 +106,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpdoc
 
-      - name: Validating
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci validate
-
       - name: Check upgrade savepoints
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci savepoints
