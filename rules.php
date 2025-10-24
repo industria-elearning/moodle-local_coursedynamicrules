@@ -159,11 +159,9 @@ $addrulebutton = new single_button(
     true
 );
 
-echo $OUTPUT->heading_with_help(
-    get_string('rules', 'local_coursedynamicrules'),
-    'rules',
-    'local_coursedynamicrules'
-);
+// Render heading and branding on the same row.
+$headerrow = new \local_coursedynamicrules\output\header_with_brand('rules');
+echo $OUTPUT->render($headerrow);
 echo html_writer::div($OUTPUT->render($addrulebutton), 'my-3');
 echo html_writer::table($table);
 echo $OUTPUT->footer();

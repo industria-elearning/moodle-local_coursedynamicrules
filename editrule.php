@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_coursedynamicrules\core\rule;
-
 require('../../config.php');
 
 $ruleid = optional_param('id', 0, PARAM_INT);
@@ -58,6 +56,10 @@ if ($ruleid) {
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 
+$headingkey = $ruleid ? 'editrule' : 'createrule';
+$headerrow = new \local_coursedynamicrules\output\header_with_brand($headingkey, 'local_coursedynamicrules', false);
+echo $OUTPUT->render($headerrow);
+
 $ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 'courseid' => $courseid]);
 
 if ($ruleform->is_cancelled()) {
@@ -85,7 +87,5 @@ if ($ruleform->is_cancelled()) {
     }
 }
 
-$heading = $ruleid ? get_string('editrule', 'local_coursedynamicrules') : get_string('createrule', 'local_coursedynamicrules');
-echo $OUTPUT->heading($heading);
 $ruleform->display();
 echo $OUTPUT->footer();

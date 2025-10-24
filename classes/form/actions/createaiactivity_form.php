@@ -23,7 +23,7 @@ use moodle_url;
  * Class createaiactivity_form
  *
  * @package    local_coursedynamicrules
- * @copyright  2025 Industria Elearning
+ * @copyright  2025 Wilber Narvaez <https://datacurso.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class createaiactivity_form extends action_form {
