@@ -51,7 +51,6 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-
 if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
@@ -84,7 +83,9 @@ foreach ($actions as $action) {
 $actionoptions = load_action_options();
 
 
-echo $OUTPUT->heading_with_help(get_string('actions', 'local_coursedynamicrules'), 'actions', 'local_coursedynamicrules');
+// Render heading and branding using reusable renderable.
+$headerrow = new \local_coursedynamicrules\output\header_with_brand('actions');
+echo $OUTPUT->render($headerrow);
 echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
 echo html_writer::start_div('d-flex');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $actionoptions]);

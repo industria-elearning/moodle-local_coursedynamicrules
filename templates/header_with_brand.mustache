@@ -1,0 +1,15 @@
+{{!
+    @template local_coursedynamicrules/header_with_brand
+
+    Reusable row with heading (pre-rendered) and Datacurso logo aligned in the same line.
+
+    Context:
+    - heading: Pre-rendered HTML for the page heading (use triple-mustache).
+    - logourl: Absolute URL to the Datacurso logo image.
+}}
+<div class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
+    <div class="flex-grow-1">{{{heading}}}</div>
+    <a href="https://datacurso.com/" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
+        <img src="{{logourl}}" alt="Datacurso" style="height:28px;opacity:.9;">
+    </a>
+</div>
