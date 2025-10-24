@@ -22,10 +22,18 @@
     Context:
     - heading: Pre-rendered HTML for the page heading (use triple-mustache).
     - logourl: Absolute URL to the Datacurso logo image.
+
+    Example context (json):
+    {
+        "heading": "<h2 class=\"h4 m-0\">Example heading</h2>",
+        "logourl": "https://example.com/logo.png"
+    }
 }}
 <div class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
     <div class="flex-grow-1">{{{heading}}}</div>
+    {{#logourl}}
     <a href="https://datacurso.com/" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center">
         <img src="{{logourl}}" alt="Datacurso" style="height:28px;opacity:.9;">
     </a>
+    {{/logourl}}
 </div>
