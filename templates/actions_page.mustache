@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_coursedynamicrules/actions_page
+
+    Page shell for the actions management view. It renders:
+    - A backlink to rules list
+    - The actions menu (left)
+    - The actions list (right), reusing the conditions list partial structure
+
+    Context:
+    - backlinkurl: string
+    - backlinktext: string
+    - options: array for the conditions_menu template
+    - conditions: array for the conditions template (actions list)
+    - formhtml: optional pre-rendered HTML for a form
+}}
+<a href="{{backlinkurl}}" class="mb-3 d-block">{{backlinktext}}</a>
+<div class="d-flex">
+    {{> local_coursedynamicrules/conditions_menu }}
+    <div class="col-8">
+        {{> local_coursedynamicrules/conditions }}
+        {{#formhtml}}
+            <div class="card mb-3">{{{formhtml}}}</div>
+        {{/formhtml}}
+    </div>
+</div>
