@@ -151,17 +151,18 @@ foreach ($rules as $rule) {
     ];
 }
 
-$editruleurl = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid]);
-$addrulebutton = new single_button(
-    $editruleurl,
-    get_string('ruleadd', 'local_coursedynamicrules'),
-    'get',
-    true
-);
+// Require JS to handle rule create modal via AMD.
+$PAGE->requires->js_call_amd('local_coursedynamicrules/rules_list', 'init');
 
 // Render heading and branding on the same row.
 $headerrow = new \local_coursedynamicrules\output\header_with_brand('rules');
 echo $OUTPUT->render($headerrow);
-echo html_writer::div($OUTPUT->render($addrulebutton), 'my-3');
+
+// Render New Rule button via renderer/renderable.
+/** @var \local_coursedynamicrules\output\renderer $cdrrenderer */
+$cdrrenderer = $PAGE->get_renderer('local_coursedynamicrules');
+$newrulebutton = new \local_coursedynamicrules\output\new_rule_button($courseid);
+echo html_writer::div($cdrrenderer->render($newrulebutton), 'my-3');
+
 echo html_writer::table($table);
 echo $OUTPUT->footer();
