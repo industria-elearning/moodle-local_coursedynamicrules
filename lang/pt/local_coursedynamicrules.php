@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,165 +12,187 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'local_coursedynamicrules', language 'pt'
+ * Plugin strings are defined here.
  *
- * @package    local_coursedynamicrules
- * @category   string
- * @copyright  2024 Industria Elearning <info@industriaelearning.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_coursedynamicrules
+ * @category    string
+ * @copyright   2025 Wilber Narvaez <https://datacurso.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-$string['pluginname'] = 'Regras dinâmicas do curso';
-$string['coursedynamicrules:notification'] = 'Enviar notificação';
-$string['messageprovider:smart_rules_ai_notification'] = 'Notificação de regras dinâmicas do curso';
-$string['coursedynamicrules:managerule'] = 'Gerir regras';
-$string['coursedynamicrules:createrule'] = 'Criar regras';
-$string['coursedynamicrules:updaterule'] = 'Atualizar regras';
-$string['coursedynamicrules:viewrule'] = 'Ver regras';
-$string['coursedynamicrules:deleterule'] = 'Eliminar regras';
-$string['coursedynamicrules:manageaction'] = 'Gerir ações';
-$string['coursedynamicrules:createaction'] = 'Criar ações';
-$string['coursedynamicrules:updateaction'] = 'Atualizar ações';
-$string['coursedynamicrules:viewaction'] = 'Ver ações';
-$string['coursedynamicrules:deleteaction'] = 'Eliminar ações';
-$string['coursedynamicrules:managecondition'] = 'Gerir condições';
-$string['coursedynamicrules:createcondition'] = 'Criar condições';
-$string['coursedynamicrules:updatecondition'] = 'Atualizar condições';
-$string['coursedynamicrules:viewcondition'] = 'Ver condições';
-$string['coursedynamicrules:deletecondition'] = 'Eliminar condições';
-$string['typemissing'] = 'Valor em falta "tipo"';
-$string['name'] = 'Nome';
-$string['description'] = 'Descrição';
-$string['conditions'] = 'Condições';
-$string['actions'] = 'Ações';
-$string['ruleactive'] = 'Ativo';
-$string['ruleactive_help'] = 'Ativar ou desativar a regra';
-$string['ruleinactive'] = 'Inativa';
-$string['ruleadd'] = 'Adicionar regra';
-$string['ruleaddedsuccessfully'] = 'Regra adicionada com sucesso';
-$string['editrule'] = 'Editar regra';
-$string['deleterule'] = 'Eliminar regra';
-$string['addconditions'] = 'Adicionar condições';
-$string['editconditions'] = 'Editar condições';
-$string['passgrade'] = 'Conclusão de atividade com nota de aprovação';
-$string['allcourseactivitymodules'] = 'Todos os módulos de atividade do curso';
-$string['searchcourseactivitymodules'] = 'Pesquisar módulos de atividade do curso';
-$string['passgrade_description'] = 'Utilizadores que concluíram o módulo de atividade \'{$a}\' com nota de aprovação';
-$string['no_complete_activity_description'] = 'Utilizadores que não concluíram o módulo de atividade \'{$a->moddescription}\' após {$a->expectedcompletiondate}';
-$string['invalidruleid'] = 'ID de regra inválido';
-$string['deletecondition'] = 'Eliminar condição';
-$string['messagesubject'] = 'Assunto';
-$string['messagebody'] = 'Corpo';
-$string['messagebody_help'] = 'Os seguintes marcadores podem ser incluídos na mensagem:
 
-* Nome do curso {$a->coursename}
-* Nome completo do utilizador {$a->fullname}
-* Nome próprio do utilizador {$a->firstname}
-* Apelido do utilizador {$a->lastname}
-* Nome do módulo de atividade do curso {$a->modulename}
-* Nome da instância do módulo de atividade do curso {$a->moduleinstancename}';
-$string['sendnotification'] = 'Enviar notificação';
-$string['sendnotification_description'] = 'Enviar notificação \'{$a}\' aos utilizadores';
-$string['createaiactivity'] = 'Criar atividade de reforço com IA';
-$string['createaiactivity_description'] = 'Gerar uma atividade de reforço com IA na secção "{$a->section}" usando o prompt "{$a->prompt}"';
+$string['actions'] = 'Ações';
+$string['actions_help'] = 'As ações são usadas para definir o que será executado quando as condições da regra forem atendidas';
 $string['addactions'] = 'Adicionar ações';
-$string['editactions'] = 'Editar ações';
-$string['backtolistrules'] = 'Voltar à lista de regras';
-$string['availableplaceholders'] = 'Marcadores disponíveis';
-$string['coursename'] = 'Nome do curso';
-$string['courselink'] = 'Ligação do curso';
-$string['fullname'] = 'Nome completo do utilizador';
-$string['firstname'] = 'Nome próprio do utilizador';
-$string['lastname'] = 'Apelido do utilizador';
-$string['modulename'] = 'Nome do módulo de atividade do curso';
-$string['moduleinstancename'] = 'Nome da instância do módulo de atividade do curso';
-$string['deletingrule'] = 'A eliminar regra \'{$a}\'';
-$string['deletingcondition'] = 'A eliminar condição \'{$a}\'';
-$string['deleterulecheck'] = 'Tem a certeza absoluta que pretende eliminar completamente esta regra?';
-$string['deleteconditioncheck'] = 'Tem a certeza absoluta que pretende eliminar completamente esta condição?';
-$string['deleteactioncheck'] = 'Tem a certeza absoluta que pretende eliminar completamente esta ação?';
-$string['deletedrule'] = 'Regra eliminada <b>{$a}</b>';
-$string['deletedcondition'] = 'Condição eliminada <b>{$a}</b>';
-$string['deletedaction'] = 'Ação eliminada <b>{$a}</b>';
-$string['ruleupdatedsuccessfully'] = 'Regra atualizada com sucesso';
-$string['createrule'] = 'Criar Regra';
-$string['completiondate'] = 'Data de conclusão';
-$string['before'] = 'Antes';
+$string['addconditions'] = 'Adicionar condições';
 $string['after'] = 'Depois';
-$string['no_complete_activity'] = 'Atividade não concluída';
-$string['no_complete_activity_task'] = 'Tarefa de atividade não concluída';
-$string['expectedcompletiondate'] = 'Data prevista de conclusão';
-$string['grade_in_activity'] = 'Nota na atividade';
-$string['grade_in_activity_description'] = 'Para "{$a->moddescription}", devem ser obtidas as seguintes notas: {$a->gradestring}';
-$string['grade'] = 'Nota';
-$string['enablegradegreaterthanorequal_help'] = 'Ativar nota maior ou igual a';
-$string['enablegradelessthan'] = 'Ativar nota menor que';
-$string['errornegativegrade'] = 'A nota deve ser 0 ou superior.';
-$string['errormaxgradeexceeded'] = 'A nota não pode exceder a nota máxima para a atividade.';
-$string['enableactivity'] = 'Ativar atividade';
-$string['enableactivity_description'] = 'Ativar atividades \'{$a}\'';
-$string['createaiactivity_action_info'] = 'Esta ação solicitará ao serviço de IA que gere uma atividade de reforço personalizada para os utilizadores que cumpram as condições da regra.';
-$string['errorgradeoutofrange'] = 'O valor deve estar entre {$a->min} e {$a->max}.';
-$string['notification_action_info'] = 'Esta ação enviará uma notificação aos utilizadores que cumpram os critérios das condições da regra.';
-$string['missing_plugins_warning'] = '🔔 Melhore as suas notificações! Os nossos plugins <strong>Datacurso Message Hub</strong> permitem enviar notificações via WhatsApp e SMS utilizando fornecedores como Twilio.
-<br>
-<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Clique aqui para comprar e ativar agora!</a>';
-$string['provider_not_enabled_warning'] = 'Ative as notificações com o <strong>Datacurso Message Hub</strong> para esta ação enviar notificações via WhatsApp e SMS utilizando fornecedores como Twilio.
-Pode ativar nas <a href="{$a}" target="_blank">Definições de notificação</a> e procurar <strong>Notificação de regras dinâmicas do curso</strong>.
-<br>
-<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Consulte a documentação para mais informações.</a>';
-$string['rules'] = 'Regras';
-$string['rules_help'] = 'As regras são usadas para definir um conjunto de condições e ações que serão executadas';
-$string['missing_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja instalado e ativado. Por favor, faça o download em <a href="https://moodle.org/plugins/availability_user/versions" target="_blank">https://moodle.org/plugins/availability_user/versions</a> e instale-o.';
-$string['disabled_availability_user'] = 'Esta ação requer que o plugin <strong>Restrição por usuário</strong> esteja ativado. Por favor, acesse a página <a href="{$a}" target="_blank">Gerenciar restrições</a>, procure por <strong>Restrição por usuário</strong> e ative-o.';
-$string['enableactivity_action_info'] = 'Esta ação habilitará os módulos de atividades selecionados para os usuários que atenderem aos critérios das condições da regra.';
-$string['createaiactivity_prompt'] = 'Prompt para IA';
-$string['createaiactivity_prompt_help'] = 'Escreva a instrução que será enviada ao serviço de IA. Pode incluir marcadores que serão substituídos antes de enviar o prompt.';
+$string['allcourseactivitymodules'] = 'Todos os módulos de atividade do curso';
+$string['availableplaceholders'] = 'Marcadores disponíveis';
+$string['backtolistrules'] = 'Voltar à lista de regras';
+$string['basedate'] = 'Data base';
+$string['basedate_help'] = 'Escolha a data de referência para avaliar a inatividade:
+
+* **Desde a data de inscrição**: Calcula a partir da inscrição do usuário.
+* **Desde a data de início do curso**: Calcula a partir do início do curso.
+* **A partir de agora**: Calcula a partir da data atual.';
+$string['before'] = 'Antes';
+$string['checklicensekey'] = 'Verificar chave de licença';
+$string['complete_activity'] = 'Atividade concluída';
+$string['complete_activity_condition_info'] = 'Esta condição verificará quais usuários concluíram o módulo de atividade selecionado.';
+$string['complete_activity_description'] = 'Usuários que concluíram o módulo de atividade do curso "{$a->moddescription}"';
+$string['completiondate'] = 'Data de conclusão';
+$string['conditions'] = 'Condições';
+$string['conditions_help'] = 'As condições definem os critérios que devem ser atendidos para executar as ações da regra';
+$string['copiedtoclipboard'] = 'Copiado para a área de transferência';
+$string['copytoclipboard'] = 'Copiar para a área de transferência';
+$string['course_inactivity'] = 'Inatividade no curso em intervalos de tempo';
+$string['course_inactivity_custom_description'] = 'Usuários sem atividade no curso por intervalos de {$a->intervals} {$a->unit} a partir de {$a->basedate}';
+$string['course_inactivity_info'] = 'Esta condição verificará quais usuários não tiveram atividade no curso dentro dos intervalos especificados.';
+$string['course_inactivity_recurring_description'] = 'Usuários sem atividade no curso em intervalos recorrentes de {$a->intervals} {$a->unit} a partir de {$a->basedate}';
+$string['course_inactivity_task'] = 'Tarefa de inatividade no curso';
+$string['coursedynamicrules:createaction'] = 'Criar ações';
+$string['coursedynamicrules:createcondition'] = 'Criar condições';
+$string['coursedynamicrules:createrule'] = 'Criar regras';
+$string['coursedynamicrules:deleteaction'] = 'Excluir ações';
+$string['coursedynamicrules:deletecondition'] = 'Excluir condições';
+$string['coursedynamicrules:deleterule'] = 'Excluir regras';
+$string['coursedynamicrules:manageaction'] = 'Gerenciar ações';
+$string['coursedynamicrules:managecondition'] = 'Gerenciar condições';
+$string['coursedynamicrules:managerule'] = 'Gerenciar regras';
+$string['coursedynamicrules:notification'] = 'Enviar notificação';
+$string['coursedynamicrules:updateaction'] = 'Atualizar ações';
+$string['coursedynamicrules:updatecondition'] = 'Atualizar condições';
+$string['coursedynamicrules:updaterule'] = 'Atualizar regras';
+$string['coursedynamicrules:viewaction'] = 'Ver ações';
+$string['coursedynamicrules:viewcondition'] = 'Ver condições';
+$string['coursedynamicrules:viewrule'] = 'Ver regras';
+$string['courselink'] = 'Link do curso';
+$string['coursename'] = 'Nome do curso';
+$string['coursestartdate'] = 'Data de início do curso';
+$string['createaiactivity'] = 'Criar atividade de reforço com IA';
+$string['createaiactivity_action_info'] = 'Esta ação solicitará ao serviço Datacurso AI a geração de uma atividade de reforço personalizada para os usuários que atenderem às condições da regra.';
+$string['createaiactivity_beforemod'] = 'Colocar antes da atividade';
+$string['createaiactivity_beforemod_help'] = 'Selecione a atividade que o novo recurso deve preceder ou mantenha a opção padrão para adicioná-lo ao final da seção.';
+$string['createaiactivity_beforemod_none'] = 'Não posicionar antes de outra atividade';
+$string['createaiactivity_description'] = 'Gerar uma atividade de reforço com IA na seção "{$a->section}" usando o prompt "{$a->prompt}"';
 $string['createaiactivity_generateimages'] = 'Gerar imagens com IA';
 $string['createaiactivity_generateimages_label'] = 'Permitir que a IA inclua imagens geradas quando suportado.';
-$string['createaiactivity_section'] = 'Secção do curso';
-$string['createaiactivity_beforemod'] = 'Colocar antes da atividade';
-$string['createaiactivity_beforemod_help'] = 'Selecione a atividade que o novo recurso deve preceder ou mantenha a opção predefinida para o adicionar no final da secção.';
-$string['createaiactivity_beforemod_none'] = 'Não colocar antes de outra atividade';
 $string['createaiactivity_placeholders_info'] = 'Marcadores disponíveis: <code>{$a->coursename}</code>, <code>{$a->courseurl}</code>, <code>{$a->fullname}</code>, <code>{$a->firstname}</code>, <code>{$a->lastname}</code>.';
-$string['grade_in_activity_condition_info'] = 'Esta condição verificará qual usuário obteve a nota especificada no módulo de atividade selecionado.';
-$string['no_complete_activity_condition_info'] = 'Esta condição verificará qual usuário não concluiu o módulo de atividade selecionado após a data especificada.';
-$string['passgrade_condition_info'] = 'Esta condição verificará qual usuário concluiu o módulo de atividade selecionado com uma nota de aprovação.';
-$string['licensekey'] = 'Chave de licença';
-$string['generalsettings'] = 'Configurações gerais';
-$string['checklicensekey'] = 'Verificar chave de licença';
-$string['licensekeyvalid'] = 'A chave de licença é válida';
-$string['licensekeyinvalid'] = 'A chave de licença expirou ou é inválida. Por favor, vá para <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou comprar uma nova licença.';
-$string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
-$string['gradegreaterthanorequal_help'] = 'A condição é satisfeita se a nota do utilizador for maior ou igual ao valor especificado.';
-$string['gradelessthan'] = 'deve ser <';
-$string['gradelessthan_help'] = 'A condição é satisfeita se a nota do utilizador for menor que o valor especificado.';
-$string['course_inactivity_info'] = 'Esta condição verificará quais usuários não tiveram atividade no curso dentro dos intervalos de tempo especificados.';
-$string['course_inactivity'] = 'Inatividade no curso em intervalos de tempo';
-$string['basedate'] = 'Data base';
-$string['date_from_enrollment'] = 'Desde a data de inscrição';
+$string['createaiactivity_prompt'] = 'Prompt de IA';
+$string['createaiactivity_prompt_help'] = 'Escreva a instrução que será enviada ao serviço de IA. Você pode incluir marcadores que serão substituídos antes do envio.';
+$string['createaiactivity_section'] = 'Seção do curso';
+$string['createrule'] = 'Criar regra';
+$string['customintervals'] = 'Intervalos personalizados';
+$string['customintervals_help'] = 'Insira números separados por vírgulas representando períodos de inatividade (ex.: "7,14,30").';
 $string['date_from_course_start'] = 'Desde a data de início do curso';
+$string['date_from_enrollment'] = 'Desde a data de inscrição';
 $string['date_from_now'] = 'A partir de agora';
-$string['basedate_help'] = 'Selecione a data base a partir da qual os intervalos de tempo serão avaliados.';
-$string['invalidbasedate'] = 'Tipo de data base inválido: {$a}';
-$string['course_inactivity_custom_description'] = 'Utilizadores sem atividade no curso durante intervalos de {$a->intervals} {$a->unit} desde {$a->basedate}';
-$string['course_inactivity_recurring_description'] = 'Utilizadores sem atividade no curso em intervalos recorrentes de {$a->intervals} {$a->unit} desde {$a->basedate}';
+$string['days'] = 'Dias';
+$string['deleteactioncheck'] = 'Tem certeza de que deseja excluir completamente esta ação?';
+$string['deletecondition'] = 'Excluir condição';
+$string['deleteconditioncheck'] = 'Tem certeza de que deseja excluir completamente esta condição?';
+$string['deletedaction'] = 'Ação excluída <b>{$a}</b>';
+$string['deletedcondition'] = 'Condição excluída <b>{$a}</b>';
+$string['deletedrule'] = 'Regra excluída <b>{$a}</b>';
+$string['deleterule'] = 'Excluir regra';
+$string['deleterulecheck'] = 'Tem certeza de que deseja excluir completamente esta regra?';
+$string['deletingcondition'] = 'Excluindo condição "{$a}"';
+$string['deletingrule'] = 'Excluindo regra "{$a}"';
+$string['description'] = 'Descrição';
+$string['editactions'] = 'Editar ações';
+$string['editconditions'] = 'Editar condições';
+$string['editrule'] = 'Editar regra';
+$string['enableactivity'] = 'Habilitar atividade';
+$string['enableactivity_action_info'] = 'Esta ação habilitará os módulos de atividades selecionados para os usuários que atenderem aos critérios da regra.';
+$string['enableactivity_description'] = 'Habilitar atividades "{$a}"';
+$string['enablegradegreaterthanorequal_help'] = 'Habilitar nota maior ou igual a';
+$string['enablegradelessthan'] = 'Habilitar nota menor que';
 $string['enrollmentdate'] = 'Data de inscrição';
-$string['coursestartdate'] = 'Data de início do curso';
-$string['now'] = 'Agora';
-$string['complete_activity_description'] = 'Utilizadores que concluíram o módulo de atividade do curso \'{$a->moddescription}\'';
-$string['complete_activity_condition_info'] = 'Esta condição irá verificar quais os utilizadores que concluíram o módulo de atividade selecionado.';
-$string['complete_activity'] = 'Atividade concluída';
-$string['copytoclipboard'] = 'Copiar para a área de transferência';
-$string['copiedtoclipboard'] = 'Copiado para a área de transferência';
-$string['rolestonotify'] = 'Funções a notificar';
-$string['rolestonotify_help'] = 'Selecione as funções que o utilizador deve ter para receber a notificação. Tem de selecionar pelo menos uma.';
-$string['mustselectonerole'] = 'Tem de selecionar pelo menos uma função.';
-
-// License.
-$string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Por favor, acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou adquirir uma nova licença.';
+$string['errorgradeoutofrange'] = 'O valor deve estar entre {$a->min} e {$a->max}.';
+$string['errormaxgradeexceeded'] = 'A nota não pode exceder a nota máxima da atividade.';
+$string['errornegativegrade'] = 'A nota deve ser 0 ou maior.';
+$string['expectedcompletiondate'] = 'Data de conclusão prevista';
+$string['firstname'] = 'Nome do usuário';
+$string['fullname'] = 'Nome completo do usuário';
+$string['generalsettings'] = 'Configurações gerais';
+$string['grade'] = 'Nota';
+$string['grade_in_activity'] = 'Nota na atividade';
+$string['grade_in_activity_condition_info'] = 'Esta condição verificará qual usuário obteve a nota especificada no módulo de atividade selecionado.';
+$string['grade_in_activity_description'] = 'Para "{$a->moddescription}", devem ser obtidas as seguintes notas: {$a->gradestring}';
+$string['gradegreaterthanorequal'] = 'deve ser &#x2265;';
+$string['gradegreaterthanorequal_help'] = 'A condição é atendida se a nota do usuário for maior ou igual ao valor especificado.';
+$string['gradegreaterthanorequalvalue'] = '&#x2265; {$a}';
+$string['gradelessthan'] = 'deve ser <';
+$string['gradelessthan_help'] = 'A condição é atendida se a nota do usuário for menor que o valor especificado.';
+$string['gradelessthanvalue'] = '< {$a}';
+$string['hours'] = 'Horas';
+$string['intervaltype'] = 'Tipo de intervalo';
+$string['intervaltype_help'] = 'Selecione como o intervalo será avaliado:\n\n* **Intervalos personalizados**: Para adicionar valores separados por vírgulas (ex.: 7,14,30) e avaliar a inatividade em momentos específicos.\n* **Intervalo recorrente**: Para avaliar a inatividade em intervalos recorrentes (ex.: a cada 7 dias).';
+$string['intervalunit'] = 'Unidade de tempo';
+$string['intervalunit_help'] = 'Selecione a unidade de tempo para os intervalos.';
+$string['invalidbasedate'] = 'Tipo de data base inválido {$a}';
+$string['invalidruleid'] = 'ID de regra inválido';
+$string['lastname'] = 'Sobrenome do usuário';
+$string['licensekey'] = 'Chave de licença';
 $string['licensekey_desc'] = 'Chave de licença necessária para usar este plugin';
+$string['licensekeycompany'] = 'Chave de licença para: {$a}';
+$string['licensekeycompany_desc'] = 'Chave de licença necessária para usar este plugin para a empresa: {$a}';
+$string['licensekeyinvalid'] = 'A chave de licença expirou ou é inválida. Acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renová-la ou comprar uma nova.';
+$string['licensekeyvalid'] = 'A chave de licença é válida';
+$string['messagebody'] = 'Corpo';
+$string['messagebody_help'] = 'Os seguintes marcadores podem ser incluídos na mensagem:\n\n* Nome do curso {$a->coursename}\n* Nome completo do usuário {$a->fullname}\n* Nome do usuário {$a->firstname}\n* Sobrenome do usuário {$a->lastname}\n* Nome do módulo de atividade do curso {$a->modulename}\n* Nome da instância do módulo de atividade do curso {$a->moduleinstancename}';
+$string['messageprovider:smart_rules_ai_notification'] = 'Notificação do Smart Rules AI';
+$string['messagesubject'] = 'Assunto';
+$string['minutes'] = 'Minutos';
+$string['missing_plugins_warning'] = 'Melhore suas notificações! Nossos plugins <strong>Datacurso Message Hub</strong> permitem enviar notificações via WhatsApp e SMS usando provedores como Twilio.
+<br>
+<a href="https://shop.datacurso.com/clientarea.php" target="_blank">Clique aqui para comprá-los e habilitá-los agora!</a>';
+$string['moduleinstancename'] = 'Nome da instância do módulo de atividade do curso';
+$string['modulename'] = 'Nome do módulo de atividade do curso';
+$string['months'] = 'Meses';
+$string['mustselectonerole'] = 'Você deve selecionar pelo menos um papel.';
+$string['name'] = 'Nome';
+$string['no_complete_activity'] = 'Atividade não concluída';
+$string['no_complete_activity_condition_info'] = 'Esta condição verificará qual usuário não concluiu o módulo de atividade selecionado após a data especificada.';
+$string['no_complete_activity_description'] = 'Usuários que não concluíram o módulo de atividade do curso "{$a->moddescription}" após {$a->expectedcompletiondate}';
+$string['no_complete_activity_task'] = 'Tarefa de atividade não concluída';
+$string['no_course_access'] = 'Sem acesso ao curso';
+$string['no_course_access_condition_info'] = 'Esta condição verificará quais usuários não acessaram este curso dentro do período especificado.';
+$string['no_course_access_description'] = 'Usuários que ficam mais de {$a->periodvalue} {$a->periodunit} sem acessar este curso.';
+$string['no_course_access_task'] = 'Tarefa sem acesso ao curso';
+$string['notification_action_info'] = 'Esta ação enviará uma notificação aos usuários que atenderem aos critérios da regra.';
+$string['now'] = 'Agora';
+$string['passgrade'] = 'Conclusão da atividade com nota de aprovação';
+$string['passgrade_condition_info'] = 'Esta condição verificará qual usuário concluiu o módulo de atividade selecionado com nota de aprovação.';
+$string['passgrade_description'] = 'Usuários que concluíram o módulo de atividade do curso "{$a}" com nota de aprovação';
+$string['period'] = 'Período';
+$string['period_help'] = 'O tempo mínimo que um usuário deve ficar sem acessar o curso.';
+$string['plugin_disabled'] = 'Esta ação requer que o plugin <strong>{$a->pluginname}</strong> esteja habilitado. Acesse a página <a href="{$a->enableurl}" target="_blank">{$a->enableurl}</a>, pesquise por <strong>{$a->visiblename}</strong> e habilite-o.';
+$string['plugin_missing'] = 'Esta ação requer que o plugin <strong>{$a->pluginname}</strong> esteja instalado e habilitado. Baixe-o em <a href="{$a->downloadurl}" target="_blank">{$a->downloadurl}</a> e instale-o.';
+$string['pluginname'] = 'Smart Rules AI';
+$string['pluginnotavailable'] = 'Este plugin não está disponível porque a licença do produto expirou ou é inválida. Acesse <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovar ou comprar uma nova licença.';
+$string['provider_not_enabled_warning'] = 'Ative as notificações com o <strong>Datacurso Message Hub</strong> para que esta ação envie notificações via WhatsApp e SMS usando provedores como Twilio.
+Você pode habilitar em <a href="{$a}" target="_blank">Configurações de notificação</a> pesquisando por <strong>Smart Rules AI notification</strong>.
+<br>
+<a href="https://docs.datacurso.com/index.php?title=Message_Hub" target="_blank">Consulte a documentação para mais informações.</a>';
+$string['recurringinterval'] = 'Intervalo recorrente';
+$string['recurringinterval_help'] = 'Insira um valor numérico que represente um intervalo recorrente de inatividade (ex.: "7" para a cada 7 dias de inatividade).';
+$string['rolestonotify'] = 'Funções a notificar';
+$string['rolestonotify_help'] = 'Selecione as funções que o usuário deve ter para receber a notificação. Selecione pelo menos uma.';
+$string['ruleactive'] = 'Ativa';
+$string['ruleactive_help'] = 'Ativar ou desativar a regra';
+$string['ruleadd'] = 'Adicionar regra';
+$string['ruleaddedsuccessfully'] = 'Regra adicionada com sucesso';
+$string['ruleinactive'] = 'Inativa';
+$string['rules'] = 'Regras';
+$string['rules_help'] = 'As regras são usadas para definir um conjunto de condições e ações que serão executadas';
+$string['ruleupdatedsuccessfully'] = 'Regra atualizada com sucesso';
+$string['searchcourseactivitymodules'] = 'Pesquisar módulos de atividade do curso';
+$string['sendnotification'] = 'Enviar notificação';
+$string['sendnotification_description'] = 'Enviar notificação "{$a}" aos usuários';
+$string['typemissing'] = 'Valor "type" ausente';
+$string['weeks'] = 'Semanas';
