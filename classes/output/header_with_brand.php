@@ -27,7 +27,7 @@ use renderer_base;
  * context required by the mustache template so pages stay simple.
  *
  * @package    local_coursedynamicrules
- * @copyright  2025
+ * @copyright  2025 Wilber Narvaez <https://datacurso.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class header_with_brand implements renderable, templatable {
