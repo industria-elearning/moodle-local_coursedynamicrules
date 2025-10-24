@@ -53,7 +53,7 @@ const createModalForm = (triggerElement, modalTitle, formClass, formArgs) => {
  * @return {ModalForm}
  */
 export const createRuleModal = (triggerElement, modalTitle, courseId, ruleId = 0) => {
-    return createModalForm(triggerElement, modalTitle, 'local_coursedynamicrules\\form\\rule_dynamic', {
+    return createModalForm(triggerElement, modalTitle, 'local_coursedynamicrules\\form\\rule_form', {
         id: ruleId,
         courseid: courseId,
     });
