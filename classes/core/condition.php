@@ -104,12 +104,15 @@ abstract class condition {
     }
 
     /**
-     * Displays the form for editing an condition
+     * Renders the html form (same as display, but returns the result).
      *
-     * this function only can used after the call of build_editform()
+     * Note that you can only output this rendered result once per page, as
+     * it contains IDs which must be unique.
+     *
+     * @return string HTML code for the form
      */
     public function show_editform() {
-        $this->conditionform->display();
+        return $this->conditionform->render();
     }
 
     /**

@@ -22,9 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// TODO Refactor this file.
-
-use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
@@ -45,48 +42,11 @@ $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' =>
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_course($course);
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('incourse');
-echo $OUTPUT->header();
 
-if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
-    throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
-}
-
-$conditions = $DB->get_records('cdr_condition', ['ruleid' => $ruleid]);
-
-$conditionsfortemplate = [];
-foreach ($conditions as $condition) {
-    $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
-
-    $header = $conditioninstance->get_header();
-    $description = $conditioninstance->get_description();
-
-    if (!empty($header) && !empty($description)) {
-        $deleteurl = new moodle_url(
-            '/local/coursedynamicrules/deletecondition.php',
-            ['id' => $condition->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
-        );
-        $conditionsfortemplate[] = [
-            'id' => $condition->id,
-            'header' => $header,
-            'description' => $description,
-            'deleteurl' => $deleteurl->out(false),
-        ];
-    }
-}
-
-$conditionoptions = load_condition_options();
-
-// Render heading and branding using reusable renderable.
-$headerrow = new \local_coursedynamicrules\output\header_with_brand('conditions');
-echo $OUTPUT->render($headerrow);
-echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
-echo html_writer::start_div('d-flex h-100');
-echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $conditionoptions]);
-echo html_writer::start_div('col-8 h-100');
-echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $conditionsfortemplate]);
+// The page renderable will build the conditions list and menu by default.
+// If a specific condition type is selected, we will build its form and
+// inject the rendered HTML into the right column.
+$formhtml = null;
 if (!empty($type)) {
     $conditionrecord = (object) [
         'conditiontype' => $type,
@@ -106,62 +66,24 @@ if (!empty($type)) {
         $conditioninstance->save_condition($data);
         redirect($url);
     } else {
-        $conditioninstance->show_editform();
+        $formhtml = $conditioninstance->show_editform();
     }
 }
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
+echo $OUTPUT->header();
 
-echo html_writer::end_div();
-echo html_writer::end_div();
+if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
+    throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
+}
+
+// Render heading and branding using reusable renderable.
+$headerrow = new \local_coursedynamicrules\output\header_with_brand('conditions');
+echo $OUTPUT->render($headerrow);
+
+// Render the page content.
+$conditionspage = new \local_coursedynamicrules\output\conditions_page($courseid, $ruleid, $formhtml);
+echo $OUTPUT->render($conditionspage);
+
 echo $OUTPUT->footer();
-
-
-/**
- * load the available item plugins from given subdirectory of $CFG->dirroot
- * the default is "mod/feedback/item"
- *
- * @param string $dir the subdir
- * @return array list of condition types
- */
-function load_conditions($dir = 'local/coursedynamicrules/classes/condition') {
-    global $CFG;
-    $conditiontypes = get_list_of_plugins($dir);
-    $filtered = [];
-
-    foreach ($conditiontypes as $conditiontype) {
-        $conditionclass = "\\local_coursedynamicrules\\condition\\{$conditiontype}\\{$conditiontype}_condition";
-        if (class_exists($conditionclass)) {
-            $filtered[] = $conditiontype;
-        }
-    }
-    return $filtered;
-}
-
-/**
- * load the available condtion options to use in conditions menu option
- *
- * @return array pluginnames as string
- */
-function load_condition_options() {
-    global $CFG;
-    $courseid = required_param('courseid', PARAM_INT);
-    $ruleid = required_param('ruleid', PARAM_INT);
-    $conditionoptions = [];
-
-    if (!$conditiontypes = load_conditions('local/coursedynamicrules/classes/condition')) {
-        return [];
-    }
-
-    foreach ($conditiontypes as $conditiontype) {
-        $url = new moodle_url(
-            '/local/coursedynamicrules/conditions.php',
-            ['courseid' => $courseid, 'type' => $conditiontype, 'ruleid' => $ruleid]
-        );
-        $conditionoptions[] = [
-            'type' => $conditiontype,
-            'visualname' => get_string($conditiontype, 'local_coursedynamicrules'),
-            'action' => $url->out(false),
-        ];
-    }
-    asort($conditionoptions);
-    return $conditionoptions;
-}
