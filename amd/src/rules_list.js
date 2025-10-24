@@ -25,6 +25,11 @@
 
 import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
+import {dispatchEvent} from 'core/event_dispatcher';
+import Notification from 'core/notification';
+import {add as addToast} from 'core/toast';
+import * as reportEvents from 'core_reportbuilder/local/events';
+import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import * as selectors from 'local_coursedynamicrules/local/selectors';
 import {createRuleModal} from 'local_coursedynamicrules/local/repository/modals';
 
@@ -35,26 +40,54 @@ export const init = () => {
     prefetchStrings('local_coursedynamicrules', [
         'createrule',
         'ruleadd',
+        'ruleupdatedsuccessfully',
     ]);
 
     document.addEventListener('click', event => {
-        const trigger = event.target.closest(selectors.actions.ruleCreate);
-        if (!trigger) {
+        // Create rule.
+        const ruleCreate = event.target.closest(selectors.actions.ruleCreate);
+        if (ruleCreate) {
+            event.preventDefault();
+
+            const courseId = parseInt(ruleCreate.getAttribute('data-course-id'), 10) || 0;
+            const modal = createRuleModal(ruleCreate, getString('createrule', 'local_coursedynamicrules'), courseId);
+
+            modal.addEventListener(modal.events.FORM_SUBMITTED, e => {
+                // Server returns URL to redirect after creation/update.
+                if (e && e.detail) {
+                    window.location.href = e.detail;
+                }
+            });
+
+            modal.show();
             return;
         }
-        event.preventDefault();
 
-        const courseId = parseInt(trigger.getAttribute('data-course-id'), 10) || 0;
+        // Edit rule (pattern aligned with core reportbuilder).
+        const ruleEdit = event.target.closest(selectors.actions.ruleEdit);
+        if (ruleEdit) {
+            event.preventDefault();
 
-        const modal = createRuleModal(trigger, getString('createrule', 'local_coursedynamicrules'), courseId);
+            const courseId = parseInt(ruleEdit.getAttribute('data-course-id'), 10) || 0;
+            const ruleId = parseInt(ruleEdit.getAttribute('data-rule-id'), 10) || 0;
 
-        modal.addEventListener(modal.events.FORM_SUBMITTED, e => {
-            // Server returns URL to redirect after creation/update.
-            if (e && e.detail) {
-                window.location.href = e.detail;
-            }
-        });
+            // Use triggerElement as the action menu toggle to preserve focus after modal closes.
+            const triggerElement = ruleEdit.closest('.dropdown')?.querySelector('.dropdown-toggle') || ruleEdit;
+            const modal = createRuleModal(triggerElement, getString('editrule', 'local_coursedynamicrules'), courseId, ruleId);
 
-        modal.show();
+            modal.addEventListener(modal.events.FORM_SUBMITTED, () => {
+                const reportElement = event.target.closest(reportSelectors.regions.report);
+                getString('ruleupdatedsuccessfully', 'local_coursedynamicrules')
+                    .then(addToast)
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
+                        return;
+                    })
+                    .catch(Notification.exception);
+            });
+
+            modal.show();
+            return;
+        }
     });
 };

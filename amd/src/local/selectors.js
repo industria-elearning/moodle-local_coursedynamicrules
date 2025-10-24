@@ -23,6 +23,7 @@ const SELECTORS = {
     regions: {},
     actions: {
         ruleCreate: '[data-action="local_coursedynamicrules/rule-create"]',
+        ruleEdit: '[data-action="local_coursedynamicrules/rule-edit"]',
     },
 };
 

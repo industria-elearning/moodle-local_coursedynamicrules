@@ -22,6 +22,8 @@ use plugin_renderer_base;
  * Renderer for local_coursedynamicrules
  *
  * @package    local_coursedynamicrules
+ * @copyright  2025 Wilber Narvaez <https://datacurso.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
     /**

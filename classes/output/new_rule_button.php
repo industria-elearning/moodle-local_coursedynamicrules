@@ -24,18 +24,28 @@ use renderer_base;
  * Renderable for the New Rule button.
  *
  * @package    local_coursedynamicrules
+ * @copyright  2025 Wilber Narvaez <https://datacurso.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class new_rule_button implements renderable, templatable {
     /** @var int */
     protected $courseid;
 
     /**
+     * Constructor.
+     *
      * @param int $courseid
      */
     public function __construct(int $courseid) {
         $this->courseid = $courseid;
     }
 
+    /**
+     * Export the data for the template.
+     *
+     * @param renderer_base $output
+     * @return array
+     */
     public function export_for_template(renderer_base $output): array {
         return [
             'courseid' => $this->courseid,
