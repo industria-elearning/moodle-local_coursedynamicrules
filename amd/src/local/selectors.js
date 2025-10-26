@@ -20,10 +20,22 @@
  */
 
 const SELECTORS = {
-    regions: {},
+    regions: {
+        conditionsContainer: '[data-region="local_coursedynamicrules/conditions"]',
+        conditionCard: '[data-region="local_coursedynamicrules/condition-card"]',
+        conditionHeading: '[data-region="local_coursedynamicrules/condition-heading"]',
+        conditionForm: '[data-region="local_coursedynamicrules/condition-form"]',
+        conditionFormContainer: '[data-region="local_coursedynamicrules/condition-form-container"]',
+        conditionDescription: '[data-region="local_coursedynamicrules/condition-description"]',
+        conditionEmptyMessage: '[data-region="local_coursedynamicrules/no-instances-message"]',
+        sidebarItem: '[data-region="local_coursedynamicrules/sidebar-item"]'
+    },
     actions: {
         ruleCreate: '[data-action="local_coursedynamicrules/rule-create"]',
         ruleEdit: '[data-action="local_coursedynamicrules/rule-edit"]',
+        conditionAdd: '[data-action="local_coursedynamicrules/addcondition"]',
+        conditionEdit: '[data-action="local_coursedynamicrules/edit-condition"]',
+        conditionDelete: '[data-action="local_coursedynamicrules/delete-condition"]'
     },
 };
 
