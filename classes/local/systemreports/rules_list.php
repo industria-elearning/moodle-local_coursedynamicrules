@@ -102,18 +102,35 @@ class rules_list extends system_report {
      * Add actions to report
      */
     protected function add_actions(): void {
-        // Edit rule (open modal instead of redirect). Use data attributes similar to core pattern.
+        // Edit content action (full-page editor), like core reportbuilder 'edit.php'.
+        $this->add_action((new action(
+            new moodle_url('/local/coursedynamicrules/ruleedit.php', ['id' => ':id']),
+            new pix_icon('t/right', ''),
+            [],
+            false,
+            new lang_string('editrulecontent', 'local_coursedynamicrules')
+        ))
+            ->add_callback(function(\stdClass $row): bool {
+                return has_capability('local/coursedynamicrules:managerule', $this->get_context());
+            })
+        );
+
+        // Edit details action (open modal), like core reportbuilder settings modal.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/edit', ''),
+            new pix_icon('i/settings', ''),
             [
                 'data-action' => 'local_coursedynamicrules/rule-edit',
                 'data-rule-id' => ':id',
                 'data-course-id' => $this->get_parameter('courseid', 0, PARAM_INT),
             ],
             false,
-            new lang_string('editrule', 'local_coursedynamicrules')
-        )));
+            new lang_string('editruledetails', 'local_coursedynamicrules')
+        ))
+            ->add_callback(function(\stdClass $row): bool {
+                return has_capability('local/coursedynamicrules:managerule', $this->get_context());
+            })
+        );
 
         // Delete rule.
         $this->add_action((new action(
