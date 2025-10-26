@@ -106,6 +106,8 @@ $string['description'] = 'Descripción';
 $string['editactions'] = 'Editar acciones';
 $string['editconditions'] = 'Editar condiciones';
 $string['editrule'] = 'Editar regla';
+$string['editrulecontent'] = 'Editar contenido de la regla';
+$string['editruledetails'] = 'Editar detalles de la regla';
 $string['enableactivity'] = 'Habilitar actividad';
 $string['enableactivity_action_info'] = 'Esta acción habilitará los módulos de actividades seleccionados para los usuarios que cumplan los criterios de la regla.';
 $string['enableactivity_description'] = 'Habilitar actividades "{$a}"';
@@ -206,3 +208,8 @@ $string['sendnotification'] = 'Enviar notificación';
 $string['sendnotification_description'] = 'Enviar notificación "{$a}" a los usuarios';
 $string['typemissing'] = 'Falta el valor "type"';
 $string['weeks'] = 'Semanas';
+
+// Interfaz dinámica de condiciones.
+$string['conditionadded'] = 'Condición añadida: {$a}';
+$string['editcondition'] = 'Editar condición, {$a}';
+$string['conditionnotsaved'] = 'La condición aún no ha sido guardada';
