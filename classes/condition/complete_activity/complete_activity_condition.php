@@ -35,6 +35,46 @@ class complete_activity_condition extends condition {
     protected $type = "complete_activity";
 
     /**
+     * Adds condition-specific form elements
+     *
+     * @param \MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_config_form(\MoodleQuickForm $mform): void {
+        global $OUTPUT;
+
+        // Info notification.
+        $notification = $OUTPUT->notification(
+            get_string('complete_activity_condition_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
+        // Build options with course modules that have completion tracking enabled.
+        $modinfo = get_fast_modinfo($this->courseid);
+        $cms = $modinfo->get_cms();
+        $options = [];
+        foreach ($cms as $cm) {
+            if ($this->is_completion_enabled($cm) && !$cm->deletioninprogress) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
+        }
+
+        $attributes = [
+            'multiple' => false,
+            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'coursemodule',
+            get_string('searchcourseactivitymodules', 'local_coursedynamicrules'),
+            $options,
+            $attributes
+        );
+        $mform->setType('coursemodule', PARAM_INT);
+    }
+
+    /**
      * Creates and returns an instance of the form for editing the item
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
@@ -124,17 +164,25 @@ class complete_activity_condition extends condition {
     public function save_condition($formdata) {
         global $DB;
         $params = [
-            'cmid' => $formdata->coursemodule,
+            'cmid' => (int)$formdata->coursemodule,
         ];
 
-        $condition = new stdClass();
-        $condition->ruleid = $formdata->ruleid;
-        $condition->conditiontype = $this->type;
-        $condition->params = json_encode($params);
+        $record = new stdClass();
+        $record->ruleid = (int)$formdata->ruleid;
+        $record->conditiontype = $this->type;
+        $record->params = json_encode($params);
 
-        $this->set_data($condition);
+        if (!empty($formdata->id)) {
+            // Update existing condition.
+            $record->id = (int)$formdata->id;
+            $DB->update_record('cdr_condition', $record);
+        } else {
+            // Create new condition.
+            $record->id = $DB->insert_record('cdr_condition', $record);
+        }
 
-        $DB->insert_record('cdr_condition', $condition);
+        // Refresh internal data.
+        $this->set_data($record, $this->courseid);
     }
 
     /**
@@ -167,6 +215,17 @@ class complete_activity_condition extends condition {
         $description = get_string('complete_activity_description', 'local_coursedynamicrules', $options);
 
         return $description;
+    }
+
+    /**
+     * Returns config data to prefill the edit form.
+     *
+     * @return array
+     */
+    public function get_configdata(): array {
+        return [
+            'coursemodule' => isset($this->params->cmid) ? (int)$this->params->cmid : null,
+        ];
     }
 
     /**
