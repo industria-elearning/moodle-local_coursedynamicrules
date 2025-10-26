@@ -72,6 +72,53 @@ class course_inactivity_condition extends condition {
     }
 
     /**
+     * Adds condition-specific form elements
+     *
+     * @param \MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_config_form(\MoodleQuickForm $mform): void {
+        global $OUTPUT;
+        $pluginname = 'local_coursedynamicrules';
+
+        $notification = $OUTPUT->notification(
+            get_string('course_inactivity_info', $pluginname),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
+        $intervaltypeoptions = [
+            self::INTERVAL_CUSTOM => get_string('customintervals', $pluginname),
+            self::INTERVAL_RECURRING => get_string('recurringinterval', $pluginname),
+        ];
+        $mform->addElement('select', 'intervaltype', get_string('intervaltype', $pluginname), $intervaltypeoptions);
+        $mform->addHelpButton('intervaltype', 'intervaltype', $pluginname);
+
+        $mform->addElement('text', 'customintervals', get_string('customintervals', $pluginname));
+        $mform->addHelpButton('customintervals', 'customintervals', $pluginname);
+         $mform->hideIf('customintervals', 'intervaltype', 'neq', self::INTERVAL_CUSTOM);
+
+         $mform->addElement('text', 'recurringinterval', get_string('recurringinterval', $pluginname));
+         $mform->addHelpButton('recurringinterval', 'recurringinterval', $pluginname);
+         $mform->hideIf('recurringinterval', 'intervaltype', 'neq', self::INTERVAL_RECURRING);
+
+         $mform->addElement('select', 'intervalunit', get_string('intervalunit', $pluginname), [
+            'days' => get_string('days', $pluginname),
+            'weeks' => get_string('weeks', $pluginname),
+            'months' => get_string('months', $pluginname),
+         ]);
+        $mform->addHelpButton('intervalunit', 'intervalunit', $pluginname);
+
+        $basedatetypeoptions = [
+            self::DATE_FROM_ENROLLMENT => get_string('date_from_enrollment', $pluginname),
+            self::DATE_FROM_COURSE_START => get_string('date_from_course_start', $pluginname),
+            self::DATE_FROM_NOW => get_string('date_from_now', $pluginname),
+        ];
+        $mform->addElement('select', 'basedatetype', get_string('basedate', $pluginname), $basedatetypeoptions);
+        $mform->addHelpButton('basedatetype', 'basedate', $pluginname);
+    }
+
+    /**
      * Creates and returns an instance of the form for editing the item
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
@@ -344,14 +391,19 @@ class course_inactivity_condition extends condition {
             'basedatetype' => $formdata->basedatetype,
         ];
 
-        $condition = new stdClass();
-        $condition->ruleid = $formdata->ruleid;
-        $condition->conditiontype = $this->type;
-        $condition->params = json_encode($params);
+        $record = new stdClass();
+        $record->ruleid = (int)$formdata->ruleid;
+        $record->conditiontype = $this->type;
+        $record->params = json_encode($params);
 
-        $this->set_data($condition);
+        if (!empty($formdata->id)) {
+            $record->id = (int)$formdata->id;
+            $DB->update_record('cdr_condition', $record);
+        } else {
+            $record->id = $DB->insert_record('cdr_condition', $record);
+        }
 
-        $DB->insert_record('cdr_condition', $condition);
+        $this->set_data($record, $this->courseid);
     }
 
     /**
@@ -388,6 +440,28 @@ class course_inactivity_condition extends condition {
             'local_coursedynamicrules',
             $stringoptions
         );
+    }
+
+
+    /**
+     * Returns config data to prefill the edit form.
+     *
+     * @return array
+     */
+    public function get_configdata(): array {
+        $data = [
+            'intervaltype' => $this->params->intervaltype,
+            'intervalunit' => $this->params->intervalunit,
+            'basedatetype' => $this->params->basedatetype,
+        ];
+
+        if ($this->params->intervaltype === self::INTERVAL_CUSTOM) {
+            $data['customintervals'] = $this->params->timeintervals;
+        } else {
+            $data['recurringinterval'] = $this->params->timeintervals;
+        }
+
+        return $data;
     }
 
 
