@@ -198,6 +198,25 @@ abstract class condition {
     abstract public function get_description();
 
     /**
+     * Adds condition-specific form elements
+     *
+     * @param \MoodleQuickForm $mform The form to add elements to
+     */
+    public function get_config_form(\MoodleQuickForm $mform): void {
+        // Default no-op. Specific conditions may override to add elements.
+    }
+
+    /**
+     * Validates the config form of the condition.
+     *
+     * @param array $data Data from the form
+     * @return array Array with errors for each element
+     */
+    public function validate_config_form(array $data): array {
+        return [];
+    }
+
+    /**
      * Creates and returns an instance of the form for editing the item
      *
      * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
@@ -234,4 +253,22 @@ abstract class condition {
      * @param object $formdata
      */
     abstract public function save_condition($formdata);
+
+    /**
+     * Returns config data suitable to prefill the edit form.
+     *
+     * @return array
+     */
+    public function get_configdata(): array {
+        return [];
+    }
+
+    /**
+     * Returns the rule id this condition belongs to.
+     *
+     * @return int
+     */
+    public function get_ruleid(): int {
+        return (int)$this->ruleid;
+    }
 }
