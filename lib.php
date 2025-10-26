@@ -22,9 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Extends the navigation tree with the Smart Rules AI menu item.
  *
@@ -38,4 +35,54 @@ function local_coursedynamicrules_extend_navigation_course($navigation, $course,
         $name = get_string('pluginname', 'local_coursedynamicrules');
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
     }
+}
+
+/**
+ * Output fragment for a condition form card
+ *
+ * @param array $params
+ * @return string
+ */
+function local_coursedynamicrules_output_fragment_condition_form(array $params): string {
+    global $PAGE;
+
+    $classname = $params['classname'];
+    $ruleid = (int)$params['ruleid'];
+    $courseid = (int)($params['courseid'] ?? 0);
+
+    // Derive condition type from classname namespace: \component\condition\{type}\{type}_condition.
+    $parts = explode('\\', $classname);
+    $type = count($parts) >= 2 ? $parts[count($parts) - 2] : '';
+
+    // Prepare dynamic form for condition (mirror core_reportbuilder audience_form).
+    $conditionform = new \local_coursedynamicrules\form\conditions\condition_form(
+        null,
+        null,
+        'post',
+        '',
+        [],
+        true,
+        [
+            'ruleid' => $ruleid,
+            'classname' => $classname,
+            'courseid' => $courseid,
+        ]
+    );
+    $conditionform->set_data_for_dynamic_submission();
+
+    $resolvedtitle = $params['title'] ?? ($type ? get_string($type, 'local_coursedynamicrules') : '');
+
+    $context = [
+        'instanceid' => 0,
+        'heading' => $resolvedtitle,
+        'headingeditable' => $resolvedtitle,
+        'form' => $conditionform->render(),
+        'canedit' => true,
+        'candelete' => true,
+        'showormessage' => !empty($params['showormessage']),
+        'description' => '',
+    ];
+
+    $renderer = $PAGE->get_renderer('local_coursedynamicrules');
+    return $renderer->render_from_template('local_coursedynamicrules/local/condition/form', $context);
 }
