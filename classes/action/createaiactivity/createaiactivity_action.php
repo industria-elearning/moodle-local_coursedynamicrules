@@ -94,7 +94,7 @@ class createaiactivity_action extends action {
             \core\session\manager::write_close();
 
             $client = new ai_course_api();
-            $result = $client->request('POST', '/resources/create-mod', $payload);
+            $result = $client->request('POST', '/smartrules/create-mod', $payload);
 
             $newcm = mod_manager::create_from_ai_result($result, $course, $sectionnum, $beforemod);
 
