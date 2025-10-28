@@ -74,7 +74,7 @@ class createaiactivity_action extends action {
 
             $prompt = $this->build_prompt($message, $course, $user);
 
-            $aicontext = ai_context::get_course_context_info($courseid);
+            $aicontext = ai_context::get_valid_course_context($courseid);
 
             $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
@@ -85,7 +85,7 @@ class createaiactivity_action extends action {
                 'generate_images' => $generateimages,
                 'url' => $courseurl->out(false),
                 'context_type' => $aicontext ? $aicontext->context_type : null,
-                'model_name' => $aicontext ? $aicontext->name : null,
+                'model_name' => $aicontext ? $aicontext->model_name : null,
             ];
 
             // These calls may take a long time depending on prompt complexity.
