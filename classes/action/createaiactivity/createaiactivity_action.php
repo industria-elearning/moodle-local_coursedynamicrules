@@ -74,7 +74,7 @@ class createaiactivity_action extends action {
 
             $prompt = $this->build_prompt($message, $course, $user);
 
-            $aicontext = ai_context::get_course_context_info($courseid);
+            $aicontext = ai_context::get_valid_course_context($courseid);
 
             $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
@@ -85,7 +85,7 @@ class createaiactivity_action extends action {
                 'generate_images' => $generateimages,
                 'url' => $courseurl->out(false),
                 'context_type' => $aicontext ? $aicontext->context_type : null,
-                'model_name' => $aicontext ? $aicontext->name : null,
+                'model_name' => $aicontext ? $aicontext->model_name : null,
             ];
 
             // These calls may take a long time depending on prompt complexity.
@@ -94,7 +94,7 @@ class createaiactivity_action extends action {
             \core\session\manager::write_close();
 
             $client = new ai_course_api();
-            $result = $client->request('POST', '/resources/create-mod', $payload);
+            $result = $client->request('POST', '/smartrules/create-mod', $payload);
 
             $newcm = mod_manager::create_from_ai_result($result, $course, $sectionnum, $beforemod);
 
