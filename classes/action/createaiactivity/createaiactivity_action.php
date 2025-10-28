@@ -47,7 +47,7 @@ class createaiactivity_action extends action {
 
         $plugininfo = \core_plugin_manager::instance()->get_plugin_info('local_coursegen');
         if (!$plugininfo) {
-            debugging('local_coursegen plugin is required to execute createaiactivity action.', DEBUG_DEVELOPER);
+            debugging(get_string('error_required_local_coursegen', 'local_coursedynamicrules'), DEBUG_DEVELOPER);
             return;
         }
 
@@ -56,7 +56,7 @@ class createaiactivity_action extends action {
 
         $message = $this->params->message ?? '';
         if (trim($message) === '') {
-            debugging('createaiactivity action executed without a valid prompt message.', DEBUG_DEVELOPER);
+            debugging(get_string('error_empty_aiactivity_prompt', 'local_coursedynamicrules'), DEBUG_DEVELOPER);
             return;
         }
 
@@ -116,7 +116,7 @@ class createaiactivity_action extends action {
             rebuild_course_cache($courseid, true);
         } catch (\Throwable $e) {
             debugging(
-                'Unexpected error while creating AI reinforcement activity: ' . $e->getMessage(),
+                get_string('error_unexpected_creating_aiactivity', 'local_coursedynamicrules', $e->getMessage()),
                 DEBUG_DEVELOPER
             );
         }
