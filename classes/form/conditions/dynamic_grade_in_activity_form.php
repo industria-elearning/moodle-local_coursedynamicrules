@@ -41,15 +41,8 @@ class dynamic_grade_in_activity_form extends dynamic_form {
      */
     public function definition() {
         $mform = $this->_form;
-        $cmid = $this->optional_param('coursemodule', 0, PARAM_INT);
+        $coursemodule = $this->optional_param('coursemodule', 0, PARAM_INT);
         $courseid = $this->optional_param('courseid', 0, PARAM_INT);
-
-        $attr = $mform->getAttributes();
-        $attr['id'] = 'dynamic_grade_in_activity_form';
-        $attr['novalidate'] = true;
-        $attr['class'] .= ' needs-validation';
-
-        $mform->setAttributes($attr);
 
         $modinfo = get_fast_modinfo($courseid);
         $cms = $modinfo->get_cms();
@@ -66,20 +59,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             }
         }
 
-        $cm = $cmid ? $filteredcms[$cmid] : reset($filteredcms);
-
-        $attributes = [
-            'multiple' => false,
-            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
-        ];
-        $mform->addElement(
-            'autocomplete',
-            'coursemodule',
-            get_string('searchcourseactivitymodules', 'local_coursedynamicrules'),
-            $options,
-            $attributes
-        );
-        $mform->setDefault('coursemodule', $cm->id);
+        $cm = $coursemodule ? $filteredcms[$coursemodule] : reset($filteredcms);
 
         if ($cm) {
             $component = 'mod_' . $cm->modname;
@@ -139,7 +119,13 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             'data-gradeitem' => $gradeitem->id,
             'data-grademin' => $grademin,
             'data-grademax' => $grademax,
+            'data-name' => 'local_coursedynamicrules/grede_in_activity_input',
         ];
+
+        $namegradegte = 'grade[' . $gradeitem->id . '][gte]';
+        $namegradelt = 'grade[' . $gradeitem->id . '][lt]';
+        $nameenablegte = 'enable[' . $gradeitem->id . '][gte]';
+        $nameenablelt = 'enable[' . $gradeitem->id . '][lt]';
 
         if ($scale) {
             $options = [];
@@ -152,7 +138,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $attributes['id'] = $identifier;
             $elementgradegte = $mform->createElement(
                 'select',
-                $identifier,
+                $namegradegte,
                 '',
                 $options,
                 $attributes
@@ -163,7 +149,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $attributes['data-condition'] = 'gradelt';
             $elementgradelt = $mform->createElement(
                 'select',
-                $identifier,
+                $namegradelt,
                 '',
                 $options,
                 $attributes
@@ -174,7 +160,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $attributes['data-condition'] = 'gradegte';
             $elementgradegte = $mform->createElement(
                 'text',
-                $identifier,
+                $namegradegte,
                 '',
                 $attributes
             );
@@ -184,7 +170,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $attributes['data-condition'] = 'gradelt';
             $elementgradelt = $mform->createElement(
                 'text',
-                $identifier,
+                $namegradelt,
                 '',
                 $attributes
             );
@@ -194,7 +180,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         $gradegreatergroup = [];
         $gradegreatergroup[] = $mform->createElement(
             'advcheckbox',
-            'enablegradegte_' . $gradeitem->id,
+            $nameenablegte,
             '',
             get_string('gradegreaterthanorequal', 'local_coursedynamicrules'),
         );
@@ -209,22 +195,22 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             false
         );
         $mform->addHelpButton('gradegtegroup_' . $gradeitem->id, 'gradegreaterthanorequal', 'local_coursedynamicrules');
-        $mform->disabledIf('gradegte_' . $gradeitem->id, 'enablegradegte_' . $gradeitem->id, 'notchecked');
-        $mform->setType('gradegte_' . $gradeitem->id, PARAM_FLOAT);
+        $mform->disabledIf($namegradegte, $nameenablegte, 'notchecked');
+        $mform->setType($namegradegte, PARAM_FLOAT);
 
         // Create elements for "grade less than" condition.
         $gradelessgroup = [];
         $gradelessgroup[] = $mform->createElement(
             'advcheckbox',
-            'enablegradelt_' . $gradeitem->id,
+            $nameenablelt,
             '',
             get_string('gradelessthan', 'local_coursedynamicrules'),
         );
         $gradelessgroup[] = $elementgradelt;
         $mform->addGroup($gradelessgroup, 'gradeltgroup_' . $gradeitem->id, '', ' ', false);
         $mform->addHelpButton('gradeltgroup_' . $gradeitem->id, 'gradelessthan', 'local_coursedynamicrules');
-        $mform->disabledIf('gradelt_' . $gradeitem->id, 'enablegradelt_' . $gradeitem->id, 'notchecked');
-        $mform->setType('gradelt_' . $gradeitem->id, PARAM_FLOAT);
+        $mform->disabledIf($namegradelt, $nameenablelt, 'notchecked');
+        $mform->setType($namegradelt, PARAM_FLOAT);
     }
 
     /**

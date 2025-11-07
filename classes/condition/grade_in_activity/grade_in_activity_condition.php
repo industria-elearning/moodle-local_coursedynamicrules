@@ -20,8 +20,8 @@ use cm_info;
 use core_grades\component_gradeitems;
 use grade_grade;
 use grade_item;
+use html_writer;
 use local_coursedynamicrules\core\condition;
-use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
 use stdClass;
 
@@ -41,6 +41,72 @@ class grade_in_activity_condition extends condition {
     protected $type = "grade_in_activity";
 
     /**
+     * Adds condition-specific form elements
+     *
+     * @param \MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_config_form(\MoodleQuickForm $mform): void {
+        global $OUTPUT, $PAGE;
+        $courseid = $this->courseid;
+
+        $attributes = $mform->getAttributes();
+        $attributes['data-region'] = 'local_coursedynamicrules/grade_in_activity_form';
+
+        $mform->setAttributes($attributes);
+
+        $notification = $OUTPUT->notification(
+            get_string('grade_in_activity_condition_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = $modinfo->get_cms();
+        $options = [];
+        foreach ($cms as $cm) {
+            // Indicate when require grade is enable.
+            // See get_moduleinfo_data funtion.
+            $completionusegrade = !is_null($cm->completiongradeitemnumber);
+
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $completionusegrade && !$cm->deletioninprogress) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
+        }
+
+        $attributes = [
+            'multiple' => false,
+            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
+            'data-action' => 'local_coursedynamicrules/change_coursemodule',
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'coursemodule',
+            get_string('searchcourseactivitymodules', 'local_coursedynamicrules'),
+            $options,
+            $attributes
+        );
+
+        $mform->addElement('html', html_writer::div('', '', ['data-region' => 'local_coursedynamicrules/gradeitems_form']));
+
+        $mform->addElement('hidden', 'gradeitems', '');
+        $mform->setType('gradeitems', PARAM_RAW);
+
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
+
+        $jsargs = [
+            \context_course::instance($courseid)->id,
+            $courseid,
+        ];
+        $PAGE->requires->js_call_amd(
+            'local_coursedynamicrules/grade_in_activity_form',
+            'init',
+            $jsargs
+        );
+    }
+
+    /**
      * Evaluate the condition and return true if the condition is met
      * @param object $context Context of the rule
      * @return bool
@@ -49,8 +115,9 @@ class grade_in_activity_condition extends condition {
 
         $courseid = $context->courseid;
         $userid = $context->userid;
-        $cmid = $this->params->cmid;
-        $gradeitemsconditions = $this->params->gradeitemsconditions;
+        $params = (array)$this->params;
+        $cmid = $params['cmid'];
+        $gradeitemsconditions = $params['gradeitemsconditions'];
 
         // This is for evaluate the condition only for the course module obtained from event observer related data.
         if (isset($context->cmid) && $context->cmid != $cmid) {
@@ -78,24 +145,25 @@ class grade_in_activity_condition extends condition {
             $grade = grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $userid]);
             $finalgrade = $grade->finalgrade;
 
-            $gradegtekey = 'gradegte' . '_' . $gradeitemid;
-            $gradegte = $gradeitemsconditions->$gradegtekey;
+            $conditions = [];
+            if (isset($gradeitemsconditions[$gradeitemid])) {
+                $conditions = (array)$gradeitemsconditions[$gradeitemid];
+            }
 
-            if ($gradegte) {
-                $gradegtebounded = $gradeitem->bounded_grade($gradegte->value);
-                if ($finalgrade >= $gradegtebounded) {
+            $gte = $conditions['gradegte'] ?? null;
+            if ($gte && !empty($gte['value'])) {
+                $gtebounded = $gradeitem->bounded_grade($gte['value']);
+                if ($finalgrade >= $gtebounded) {
                     $hasgraderequire = true;
                 } else {
                     $allitemconditionsmet = false;
                 }
             }
 
-            $gradeltkey = 'gradelt' . '_' . $gradeitemid;
-            $gradelt = $gradeitemsconditions->$gradeltkey;
-
-            if ($gradelt) {
-                $gradeltbounded = $gradeitem->bounded_grade($gradelt->value);
-                if ($finalgrade < $gradeltbounded) {
+            $lt = $conditions['gradelt'] ?? null;
+            if ($lt && !empty($lt['value'])) {
+                $ltbounded = $gradeitem->bounded_grade($lt['value']);
+                if ($finalgrade < $ltbounded) {
                     $hasgraderequire = true;
                 } else {
                     $allitemconditionsmet = false;
@@ -188,18 +256,25 @@ class grade_in_activity_condition extends condition {
 
         $gradestrings = [];
 
-        $gradegtekey = 'gradegte' . '_' . $gradeitemid;
-        $gradegte = $gradeitemsconditions->$gradegtekey;
-
-        if ($gradegte) {
-            $gradestrings[] = get_string('gradegreaterthanorequalvalue', 'local_coursedynamicrules', $gradegte->value);
+        $itemconds = null;
+        if (is_object($gradeitemsconditions) && isset($gradeitemsconditions->{$gradeitemid})) {
+            $itemconds = $gradeitemsconditions->{$gradeitemid};
+        } else if (is_array($gradeitemsconditions) && isset($gradeitemsconditions[$gradeitemid])) {
+            $itemconds = (object) $gradeitemsconditions[$gradeitemid];
         }
 
-        $gradeltkey = 'gradelt' . '_' . $gradeitemid;
-        $gradelt = $gradeitemsconditions->$gradeltkey;
+        if (
+            $itemconds && isset($itemconds->gradegte) && isset($itemconds->gradegte->value)
+            && empty($itemconds->gradegte->disabled) && $itemconds->gradegte->value !== ''
+        ) {
+            $gradestrings[] = get_string('gradegreaterthanorequalvalue', 'local_coursedynamicrules', $itemconds->gradegte->value);
+        }
 
-        if ($gradelt) {
-            $gradestrings[] = get_string('gradelessthanvalue', 'local_coursedynamicrules', $gradelt->value);
+        if (
+            $itemconds && isset($itemconds->gradelt) && isset($itemconds->gradelt->value)
+            && empty($itemconds->gradelt->disabled) && $itemconds->gradelt->value !== ''
+        ) {
+            $gradestrings[] = get_string('gradelessthanvalue', 'local_coursedynamicrules', $itemconds->gradelt->value);
         }
 
         if (empty($gradestrings)) {
@@ -259,25 +334,11 @@ class grade_in_activity_condition extends condition {
         global $DB;
 
         $gradeitems = json_decode($formdata->gradeitems, true);
-        $gradeitemsconditions = [];
-        foreach ($gradeitems as $gradeitemkey => $gradeitem) {
-            $value = clean_param($gradeitem['value'], PARAM_FLOAT);
-            $disabled = $gradeitem['disabled'];
 
-            if (!empty($value) && !$disabled) {
-                $gradeitemkey = clean_param($gradeitemkey, PARAM_RAW);
-                $gradeitemid = clean_param($gradeitem['gradeitem'], PARAM_INT);
-                $gradeitemcondition = clean_param($gradeitem['condition'], PARAM_TEXT);
-                $gradeitemsconditions[$gradeitemkey] = [
-                    'gradeitem' => $gradeitemid,
-                    'condition' => $gradeitemcondition,
-                    'value' => $value,
-                ];
-            }
-        }
+        $gradeitemsconditions = $this->get_grade_items_conditions($gradeitems);
 
         $params = [
-            'cmid' => clean_param($formdata->cmid, PARAM_INT),
+            'cmid' => clean_param($formdata->coursemodule, PARAM_INT),
             'gradeitemsconditions' => $gradeitemsconditions,
         ];
 
@@ -286,8 +347,54 @@ class grade_in_activity_condition extends condition {
         $condition->conditiontype = $this->type;
         $condition->params = json_encode($params);
 
-        $this->set_data($condition);
+        $this->set_data($condition, $this->courseid);
 
         $DB->insert_record('cdr_condition', $condition);
+    }
+
+    /**
+     * Gets the grade items conditions
+     *
+     * @param array $gradeitems The grade items
+     * @return array The grade items conditions
+     */
+    private function get_grade_items_conditions($gradeitems) {
+        $gradeitemsconditions = [];
+
+        foreach ($gradeitems as $gradeitemid => $conditions) {
+            $cleanid = clean_param($gradeitemid, PARAM_INT);
+
+            $gradeitemsconditions[$cleanid] = $this->clean_grade_item_conditions($conditions, ['gradegte', 'gradelt']);
+        }
+
+        return $gradeitemsconditions;
+    }
+
+    /**
+     * Cleans the grade item conditions
+     *
+     * @param array $conditions The conditions to clean
+     * @param array $conditionkeys The keys of the conditions to clean
+     * @return array The cleaned conditions
+     */
+    private function clean_grade_item_conditions($conditions, $conditionkeys) {
+        $cleanconditions = [];
+        foreach ($conditionkeys as $key) {
+            if (!isset($conditions[$key])) {
+                continue;
+            }
+
+            $rawvalue = $conditions[$key]['value'] ?? '';
+            $rawdisabled = !empty($conditions[$key]['disabled']);
+            $value = clean_param($rawvalue, PARAM_FLOAT);
+
+            if (empty($value) || $rawdisabled) {
+                continue;
+            }
+            $cleanconditions[$key] = [
+                'value' => $value,
+            ];
+        }
+        return $cleanconditions;
     }
 }

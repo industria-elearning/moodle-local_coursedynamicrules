@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_coursedynamicrules\form\conditions\dynamic_grade_in_activity_form;
+
 /**
  * Extends the navigation tree with the Smart Rules AI menu item.
  *
@@ -86,3 +88,33 @@ function local_coursedynamicrules_output_fragment_condition_form(array $params):
     $renderer = $PAGE->get_renderer('local_coursedynamicrules');
     return $renderer->render_from_template('local_coursedynamicrules/local/condition/form', $context);
 }
+
+/**
+ * Output fragment for a grade in activity form
+ *
+ * @param array $params
+ * @return string
+ */
+function local_coursedynamicrules_output_fragment_grade_in_activity_form(array $params): string {
+    global $PAGE;
+
+    $coursemodule = $params['coursemodule'];
+    $courseid = $params['courseid'];
+
+    $gradeinactivityform = new dynamic_grade_in_activity_form(
+        null,
+        null,
+        'post',
+        '',
+        [],
+        true,
+        [
+            'coursemodule' => $coursemodule,
+            'courseid' => $courseid,
+        ]
+    );
+    $gradeinactivityform->set_data_for_dynamic_submission();
+
+    return $gradeinactivityform->render();
+}
+
