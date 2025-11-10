@@ -20,7 +20,7 @@
  * @copyright  2025 Wilber Narvaez <https://datacurso.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {loadFragment} from "core/fragment";
+import { loadFragment } from "core/fragment";
 import Notification from "core/notification";
 import Templates from "core/templates";
 
@@ -28,59 +28,35 @@ export const init = (contextId, courseId) => {
   const form = document.querySelector(
     '[data-region="local_coursedynamicrules/grade_in_activity_form"]'
   );
-  const select = document.querySelector(
+  const select = form.querySelector(
     '[data-action="local_coursedynamicrules/change_coursemodule"]'
   );
   if (!select || !form) {
     return;
   }
 
-  form.addEventListener("submit", () => {
-    const inputs = form.querySelectorAll(
-      '[data-name="local_coursedynamicrules/grede_in_activity_input"]'
-    );
+  select.addEventListener("change", (e) => {
+    const formParent = form.closest('[data-region="local_coursedynamicrules/condition_form_container"]');
+    const ruleId = form.querySelector('[name="ruleid"]').value;
 
-    const gradeItemsObject = {};
-    inputs.forEach((input) => {
-      const condition = input.dataset.condition; // 'gradegte' | 'gradelt'
-      const gradeItem = input.dataset.gradeitem; // Grade item id
-      const value = input.value;
-      const disabled = input.disabled === true;
-
-      if (!gradeItemsObject[gradeItem]) {
-        gradeItemsObject[gradeItem] = {};
-      }
-      gradeItemsObject[gradeItem][condition] = {
-        value: value,
-        disabled: disabled,
-      };
-    });
-
-    const gradeitemsField = form.querySelector('input[name="gradeitems"]');
-    if (gradeitemsField) {
-      gradeitemsField.value = JSON.stringify(gradeItemsObject);
-    }
+    const params = {
+      classname:
+        "\\local_coursedynamicrules\\condition\\grade_in_activity\\grade_in_activity_condition",
+      ruleid: parseInt(ruleId),
+      courseid: courseId,
+      showormessage: true,
+      coursemodule: e.target.value,
+    };
+    // Load condition card fragment, render and then initialise the form within.
+    loadFragment(
+      "local_coursedynamicrules",
+      "condition_form",
+      contextId,
+      params
+    )
+      .then((html, js) => {
+        return Templates.replaceNodeContents(formParent, html, js);
+      })
+      .catch(Notification.exception);
   });
-
-  select.addEventListener("change", () =>
-    loadGradeItemsForm(contextId, courseId, select)
-  );
-  loadGradeItemsForm(contextId, courseId, select);
-};
-
-const loadGradeItemsForm = (contextId, courseId, select) => {
-  const container = document.querySelector(
-    '[data-region="local_coursedynamicrules/gradeitems_form"]'
-  );
-  const value = select.value;
-  loadFragment(
-    "local_coursedynamicrules",
-    "grade_in_activity_form",
-    contextId,
-    {coursemodule: value, courseid: courseId}
-  )
-    .then((html, js) => {
-      return Templates.replaceNodeContents(container, html, js);
-    })
-    .fail(Notification.exception);
 };

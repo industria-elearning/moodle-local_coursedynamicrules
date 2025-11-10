@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition\grade_in_activity;
+namespace local_coursedynamicrules\condition;
 
 use cm_info;
 use core_grades\component_gradeitems;
 use grade_grade;
 use grade_item;
-use html_writer;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\form\conditions\grade_in_activity_form;
 use stdClass;
@@ -49,6 +48,7 @@ class grade_in_activity_condition extends condition {
     public function get_config_form(\MoodleQuickForm $mform): void {
         global $OUTPUT, $PAGE;
         $courseid = $this->courseid;
+        $coursemodule = $mform->optional_param('coursemodule', 0, PARAM_INT);
 
         $attributes = $mform->getAttributes();
         $attributes['data-region'] = 'local_coursedynamicrules/grade_in_activity_form';
@@ -87,10 +87,43 @@ class grade_in_activity_condition extends condition {
             $attributes
         );
 
-        $mform->addElement('html', html_writer::div('', '', ['data-region' => 'local_coursedynamicrules/gradeitems_form']));
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = $modinfo->get_cms();
+        $filteredcms = [];
+        $options = [];
+        foreach ($cms as $cm) {
+            // Indicate when require grade is enable.
+            // See get_moduleinfo_data funtion.
+            $completionusegrade = !is_null($cm->completiongradeitemnumber);
 
-        $mform->addElement('hidden', 'gradeitems', '');
-        $mform->setType('gradeitems', PARAM_RAW);
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && $completionusegrade && !$cm->deletioninprogress) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+                $filteredcms[$cm->id] = $cm;
+            }
+        }
+
+        $cm = $coursemodule ? $filteredcms[$coursemodule] : reset($filteredcms);
+
+        if ($cm) {
+            $component = 'mod_' . $cm->modname;
+
+            // Get the itemnames mapping for the component. This is used to display the grade item names in the form.
+            $itemnames = component_gradeitems::get_itemname_mapping_for_component($component);
+
+            if (count($itemnames) === 1) {
+                $options = [
+                    'groupstring' => get_string('gradenoun'),
+                ];
+                $this->add_grade_elements($mform, $cm, 0, $options);
+            } else if (count($itemnames) > 1) {
+                foreach ($itemnames as $itemnumber => $itemname) {
+                    $optiongroup = [
+                        'groupstring' => get_string("grade_{$itemname}_name", $component),
+                    ];
+                    $this->add_grade_elements($mform, $cm, $itemnumber, $optiongroup);
+                }
+            }
+        }
 
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
@@ -104,6 +137,127 @@ class grade_in_activity_condition extends condition {
             'init',
             $jsargs
         );
+    }
+
+    /**
+     * Adds grade elements to the form.
+     *
+     * This function adds two groups of elements to the form: one for grades greater than or equal to a specified value,
+     * and another for grades less than a specified value. Each group consists of a checkbox to enable the condition and
+     * a text input to specify the grade value.
+     *
+     * @param \MoodleQuickForm $mform The form to which the elements will be added.
+     * @param cm_info $cm The course module object
+     * @param int $itemnumber The item number for the grade item.
+     * @param array $optiongroup An array containing the group string for the option group.
+     */
+    private function add_grade_elements($mform, $cm, $itemnumber, $optiongroup) {
+        // Fetch the grade item based on the course module and item number.
+        $gradeitem = grade_item::fetch(
+            [
+                'iteminstance' => $cm->instance,
+                'itemmodule' => $cm->modname,
+                'itemtype' => 'mod',
+                'itemnumber' => $itemnumber,
+            ]
+        );
+
+        $decimals = $gradeitem->get_decimals();
+        $grademin = format_float($gradeitem->grademin, $decimals);
+        $grademax = format_float($gradeitem->grademax, $decimals);
+
+        // Load the scale for the grade item.
+        $scale = $gradeitem->load_scale();
+
+        $attributes = [
+            'data-cmid' => $cm->id,
+            'data-gradeitem' => $gradeitem->id,
+            'data-grademin' => $grademin,
+            'data-grademax' => $grademax,
+            'data-name' => 'local_coursedynamicrules/grede_in_activity_input',
+        ];
+
+        $namegradegte = 'grade[' . $gradeitem->id . '][gte]';
+        $namegradelt = 'grade[' . $gradeitem->id . '][lt]';
+        $nameenablegte = 'enable[' . $gradeitem->id . '][gte]';
+        $nameenablelt = 'enable[' . $gradeitem->id . '][lt]';
+
+        if ($scale) {
+            $options = [];
+            foreach ($scale->scale_items as $i => $name) {
+                $options[$i + 1] = $name;
+            }
+
+            $attributes['data-condition'] = 'gradegte';
+            $elementgradegte = $mform->createElement(
+                'select',
+                $namegradegte,
+                '',
+                $options,
+                $attributes
+            );
+
+            $attributes['data-condition'] = 'gradelt';
+            $elementgradelt = $mform->createElement(
+                'select',
+                $namegradelt,
+                '',
+                $options,
+                $attributes
+            );
+        } else {
+            $attributes['data-condition'] = 'gradegte';
+            $elementgradegte = $mform->createElement(
+                'text',
+                $namegradegte,
+                '',
+                $attributes
+            );
+
+            $attributes['data-condition'] = 'gradelt';
+            $elementgradelt = $mform->createElement(
+                'text',
+                $namegradelt,
+                '',
+                $attributes
+            );
+        }
+
+        // Create elements for "grade greater than or equal" condition.
+        $gradegreatergroup = [];
+        $gradegreatergroup[] = $mform->createElement(
+            'advcheckbox',
+            $nameenablegte,
+            '',
+            get_string('gradegreaterthanorequal', 'local_coursedynamicrules'),
+        );
+        $gradegreatergroup[] = $elementgradegte;
+        $groupstring = $optiongroup['groupstring'];
+        $groupstring .= ' (' . $grademin . ' - ' . $grademax . ')';
+        $mform->addGroup(
+            $gradegreatergroup,
+            'gradegtegroup_' . $gradeitem->id,
+            $groupstring,
+            ' ',
+            false
+        );
+        $mform->addHelpButton('gradegtegroup_' . $gradeitem->id, 'gradegreaterthanorequal', 'local_coursedynamicrules');
+        $mform->disabledIf($namegradegte, $nameenablegte, 'notchecked');
+        $mform->setType($namegradegte, PARAM_FLOAT);
+
+        // Create elements for "grade less than" condition.
+        $gradelessgroup = [];
+        $gradelessgroup[] = $mform->createElement(
+            'advcheckbox',
+            $nameenablelt,
+            '',
+            get_string('gradelessthan', 'local_coursedynamicrules'),
+        );
+        $gradelessgroup[] = $elementgradelt;
+        $mform->addGroup($gradelessgroup, 'gradeltgroup_' . $gradeitem->id, '', ' ', false);
+        $mform->addHelpButton('gradeltgroup_' . $gradeitem->id, 'gradelessthan', 'local_coursedynamicrules');
+        $mform->disabledIf($namegradelt, $nameenablelt, 'notchecked');
+        $mform->setType($namegradelt, PARAM_FLOAT);
     }
 
     /**
@@ -397,4 +551,18 @@ class grade_in_activity_condition extends condition {
         }
         return $cleanconditions;
     }
+
+    /**
+     * Returns config data to prefill the edit form.
+     *
+     * @return array
+     */
+    public function get_configdata(): array {
+        $configdata = [];
+        if (isset($this->params->cmid)) {
+            $configdata['coursemodule'] = (int)$this->params->cmid;
+        }
+        return $configdata;
+    }
 }
+

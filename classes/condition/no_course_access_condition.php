@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition\no_course_access;
+namespace local_coursedynamicrules\condition;
 
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\core\rule;

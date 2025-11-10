@@ -14,24 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition\no_complete_activity;
+namespace local_coursedynamicrules\condition;
 
 use completion_info;
 use local_coursedynamicrules\core\condition;
-use local_coursedynamicrules\core\rule;
-use local_coursedynamicrules\form\conditions\no_complete_activity_form;
+use local_coursedynamicrules\form\conditions\passgrade_form;
 use stdClass;
 
 /**
- * Class no_complete_activity_condition
+ * Class passgrade_condition
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class no_complete_activity_condition extends condition {
+class passgrade_condition extends condition {
     /** @var string type of condition */
-    protected $type = "no_complete_activity";
+    protected $type = "passgrade";
 
     /**
      * Creates and returns an instance of the form for editing the item
@@ -64,25 +63,9 @@ class no_complete_activity_condition extends condition {
         $editable = true,
         $ajaxformdata = null
     ) {
-        $this->conditionform = new no_complete_activity_form(
-            $action,
-            $customdata,
-            $method,
-            $target,
-            $attributes,
-            $editable,
-            $ajaxformdata
-        );
-    }
+        global $DB, $CFG;
 
-    /**
-     * Determines if the provided completion state represents a completed activity.
-     *
-     * @param int $completionstate Completion state constant.
-     * @return bool True when the state is one of the completed states.
-     */
-    private function is_completed_state(int $completionstate): bool {
-        return $completionstate == COMPLETION_COMPLETE || $completionstate == COMPLETION_COMPLETE_PASS;
+        $this->conditionform = new passgrade_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
     /**
@@ -92,15 +75,13 @@ class no_complete_activity_condition extends condition {
      * @return bool
      */
     public function evaluate($context) {
-
+        global $DB;
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
-        $expectedcompletiondate = $this->params->expectedcompletiondate;
 
-        $now = time();
-
-        if ($now < $expectedcompletiondate) {
+        // This is for evaluate the condition only for the course module obtained from event observer related data.
+        if (isset($context->cmid) && $context->cmid != $cmid) {
             return false;
         }
 
@@ -108,6 +89,10 @@ class no_complete_activity_condition extends condition {
         // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.
         $cminfo = $modinfo->cms[$cmid];
         if (!$cminfo || $cminfo->deletioninprogress) {
+            return false;
+        }
+
+        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
             return false;
         }
 
@@ -119,13 +104,7 @@ class no_complete_activity_condition extends condition {
             $userid
         );
 
-        // Return false if the user has completed the activity module because is not necessary execute the actions of the rule.
-        if ($this->is_completed_state($completiondata->completionstate)) {
-            return false;
-        }
-
-        // Return true if the user has not completed the activity module in the expected date.
-        return true;
+        return $completiondata->completionstate == COMPLETION_COMPLETE_PASS;
     }
 
     /**
@@ -136,7 +115,6 @@ class no_complete_activity_condition extends condition {
         global $DB;
         $params = [
             'cmid' => $formdata->coursemodule,
-            'expectedcompletiondate' => $formdata->expectedcompletiondate,
         ];
 
         $condition = new stdClass();
@@ -155,7 +133,7 @@ class no_complete_activity_condition extends condition {
      * @return string
      */
     public function get_header() {
-        return get_string('no_complete_activity', 'local_coursedynamicrules');
+        return get_string('passgrade', 'local_coursedynamicrules');
     }
 
     /**
@@ -173,12 +151,6 @@ class no_complete_activity_condition extends condition {
         if (!$cminfo) {
             return '';
         }
-        $options = [
-            'moddescription' => ucfirst($cminfo->modname) . " - " . $cminfo->name,
-            'expectedcompletiondate' => userdate($this->params->expectedcompletiondate),
-        ];
-        $description = get_string('no_complete_activity_description', 'local_coursedynamicrules', $options);
-
-        return $description;
+        return get_string('passgrade_description', 'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name);
     }
 }

@@ -23,6 +23,7 @@
  */
 
 use local_coursedynamicrules\form\conditions\dynamic_grade_in_activity_form;
+use local_coursedynamicrules\helper\rule_component_loader;
 
 /**
  * Extends the navigation tree with the Smart Rules AI menu item.
@@ -46,33 +47,55 @@ function local_coursedynamicrules_extend_navigation_course($navigation, $course,
  * @return string
  */
 function local_coursedynamicrules_output_fragment_condition_form(array $params): string {
-    global $PAGE;
+    global $PAGE, $DB;
 
     $classname = $params['classname'];
     $ruleid = (int)$params['ruleid'];
     $courseid = (int)($params['courseid'] ?? 0);
+    $conditionid = (int)($params['id'] ?? 0);
 
     // Derive condition type from classname namespace: \component\condition\{type}\{type}_condition.
     $parts = explode('\\', $classname);
     $type = count($parts) >= 2 ? $parts[count($parts) - 2] : '';
 
-    // Prepare dynamic form for condition (mirror core_reportbuilder audience_form).
-    $conditionform = new \local_coursedynamicrules\form\conditions\condition_form(
+    if ($conditionid) {
+        $conditionrecord = $DB->get_record('cdr_condition', ['id' => $conditionid], '*', MUST_EXIST);
+        if (!$courseid) {
+            $courseid = (int)$DB->get_field('cdr_rule', 'courseid', ['id' => $conditionrecord->ruleid], MUST_EXIST);
+        }
+    } else {
+        $conditionrecord = (object)[
+            'id' => 0,
+            'ruleid' => $ruleid,
+            'conditiontype' => $type,
+            'params' => json_encode(new stdClass()),
+        ];
+    }
+
+    $conditioninstance = rule_component_loader::create_condition_instance($conditionrecord, $courseid);
+    $conditioninstance->build_editform(
         null,
         null,
         'post',
         '',
         [],
         true,
-        [
-            'ruleid' => $ruleid,
-            'classname' => $classname,
-            'courseid' => $courseid,
-        ]
+        $params,
     );
-    $conditionform->set_data_for_dynamic_submission();
+    $conditionform = $conditioninstance->get_editform_instance();
+    if (!$conditionform) {
+        throw new \coding_exception('Condition form could not be initialised.');
+    }
+    if (method_exists($conditionform, 'set_data_for_dynamic_submission')) {
+        $conditionform->set_data_for_dynamic_submission();
+    }
 
-    $resolvedtitle = $params['title'] ?? ($type ? get_string($type, 'local_coursedynamicrules') : '');
+    $resolvedtitle = '';
+    if (!empty($params['title'])) {
+        $resolvedtitle = $params['title'];
+    } else if (!empty($type)) {
+        $resolvedtitle = get_string($type, 'local_coursedynamicrules');
+    }
 
     $context = [
         'instanceid' => 0,
@@ -117,4 +140,3 @@ function local_coursedynamicrules_output_fragment_grade_in_activity_form(array $
 
     return $gradeinactivityform->render();
 }
-

@@ -81,19 +81,13 @@ class rule_condition_cards_exporter extends custom_report_menu_cards_exporter {
         ];
 
         // Discover condition classes for this component under the 'condition' namespace.
-        $classes = \core_component::get_component_classes_in_namespace('local_coursedynamicrules', 'condition');
+        $classes = \core_component::get_component_classes_in_namespace(null, 'local_coursedynamicrules\\condition');
         foreach ($classes as $class => $path) {
             // Only include concrete condition types.
             if (!is_subclass_of($class, \local_coursedynamicrules\core\condition::class)) {
                 continue;
             }
 
-            // Expect class name like \local_coursedynamicrules\condition\TYPE\TYPE_condition.
-            $parts = explode('\\', $class);
-            if (count($parts) < 2) {
-                continue;
-            }
-            $type = $parts[count($parts) - 2];
             $name = get_string($type, 'local_coursedynamicrules');
 
             $menucards[$cardname]['items'][] = [

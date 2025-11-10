@@ -130,24 +130,21 @@ class condition_form extends dynamic_form {
         $classname = $this->optional_param('classname', '', PARAM_RAW_TRIMMED);
         $courseid = $this->optional_param('courseid', 0, PARAM_INT);
 
+        $condition = $this->get_condition();
+        $formdata = [
+            'ruleid' => $ruleid,
+            'classname' => $classname,
+            'courseid' => $courseid,
+        ];
+        $formdata = array_merge($formdata, $condition->get_configdata());
+
         if ($id) {
-            $condition = $this->get_condition();
-            $formdata = [
-                'id' => $id,
-                'ruleid' => $condition->get_ruleid() ?? $ruleid,
-                'classname' => $classname,
-                'courseid' => $courseid,
-            ];
-            $formdata = array_merge($formdata, $condition->get_configdata());
+            $formdata['id'] = $id;
             $this->set_data($formdata);
             return;
         }
 
-        $this->set_data([
-            'ruleid' => $ruleid,
-            'classname' => $classname,
-            'courseid' => $courseid,
-        ]);
+        $this->set_data($formdata);
     }
 
     /**

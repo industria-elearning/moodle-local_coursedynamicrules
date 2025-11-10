@@ -60,8 +60,11 @@ const addConditionCard = (className, title) => {
 
     // Load condition card fragment, render and then initialise the form within.
     loadFragment('local_coursedynamicrules', 'condition_form', contextId, params)
-        .then((html, js) => {
-            const conditionCard = Templates.appendNodeContents(container, html, js)[0];
+        .then(async(formHtml, formJs) => {
+            const formContainer = await Templates.render('local_coursedynamicrules/local/condition/form_container', {
+                formhtml: formHtml,
+            });
+            const conditionCard = Templates.appendNodeContents(container, formContainer, formJs)[0];
             const emptyMessage = container.querySelector(SELECTORS.regions.conditionEmptyMessage);
 
             const conditionForm = initConditionCardForm(conditionCard);

@@ -249,6 +249,15 @@ abstract class condition {
     );
 
     /**
+     * Returns the edit form instance built for this condition, if any.
+     *
+     * @return condition_form|null
+     */
+    public function get_editform_instance(): ?condition_form {
+        return $this->conditionform;
+    }
+
+    /**
      * Saves the condition after it has been edited (or created)
      * @param object $formdata
      */

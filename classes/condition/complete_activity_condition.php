@@ -14,24 +14,65 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_coursedynamicrules\condition\passgrade;
+namespace local_coursedynamicrules\condition;
 
 use completion_info;
 use local_coursedynamicrules\core\condition;
 use local_coursedynamicrules\core\rule;
-use local_coursedynamicrules\form\conditions\passgrade_form;
+use local_coursedynamicrules\form\conditions\complete_activity_form;
 use stdClass;
 
 /**
- * Class passgrade_condition
+ * Class complete_activity_condition
+ * This condition is used to check if a user has completed a course module.
  *
  * @package    local_coursedynamicrules
  * @copyright  2024 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class passgrade_condition extends condition {
+class complete_activity_condition extends condition {
     /** @var string type of condition */
-    protected $type = "passgrade";
+    protected $type = "complete_activity";
+
+    /**
+     * Adds condition-specific form elements
+     *
+     * @param \MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_config_form(\MoodleQuickForm $mform): void {
+        global $OUTPUT;
+
+        // Info notification.
+        $notification = $OUTPUT->notification(
+            get_string('complete_activity_condition_info', 'local_coursedynamicrules'),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $mform->addElement('html', $notification);
+
+        // Build options with course modules that have completion tracking enabled.
+        $modinfo = get_fast_modinfo($this->courseid);
+        $cms = $modinfo->get_cms();
+        $options = [];
+        foreach ($cms as $cm) {
+            if ($this->is_completion_enabled($cm) && !$cm->deletioninprogress) {
+                $options[$cm->id] = ucfirst($cm->modname) . " - " . $cm->name;
+            }
+        }
+
+        $attributes = [
+            'multiple' => false,
+            'noselectionstring' => get_string('allcourseactivitymodules', 'local_coursedynamicrules'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'coursemodule',
+            get_string('searchcourseactivitymodules', 'local_coursedynamicrules'),
+            $options,
+            $attributes
+        );
+        $mform->setType('coursemodule', PARAM_INT);
+    }
 
     /**
      * Creates and returns an instance of the form for editing the item
@@ -64,19 +105,27 @@ class passgrade_condition extends condition {
         $editable = true,
         $ajaxformdata = null
     ) {
-        global $DB, $CFG;
-
-        $this->conditionform = new passgrade_form($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+        $this->conditionform = new complete_activity_form(
+            $action,
+            $customdata,
+            $method,
+            $target,
+            $attributes,
+            $editable,
+            $ajaxformdata
+        );
     }
 
     /**
      * Evaluate the condition and return true if the condition is met
+     * Validate if course module has been completed by user, only for course modules
+     * with manual or automatic completion tracking.
      *
      * @param object $context Context of the rule
-     * @return bool
+     * @return bool True if the user has completed the activity module, false otherwise
      */
     public function evaluate($context) {
-        global $DB;
+
         $courseid = $context->courseid;
         $userid = $context->userid;
         $cmid = $this->params->cmid;
@@ -93,10 +142,6 @@ class passgrade_condition extends condition {
             return false;
         }
 
-        if ($cminfo->completion != COMPLETION_TRACKING_AUTOMATIC) {
-            return false;
-        }
-
         $completion = new completion_info($modinfo->get_course());
 
         $completiondata = $completion->get_data(
@@ -105,7 +150,11 @@ class passgrade_condition extends condition {
             $userid
         );
 
-        return $completiondata->completionstate == COMPLETION_COMPLETE_PASS;
+        if ($this->is_completion_enabled($cminfo) && $this->is_cm_completed($completiondata)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -115,17 +164,25 @@ class passgrade_condition extends condition {
     public function save_condition($formdata) {
         global $DB;
         $params = [
-            'cmid' => $formdata->coursemodule,
+            'cmid' => (int)$formdata->coursemodule,
         ];
 
-        $condition = new stdClass();
-        $condition->ruleid = $formdata->ruleid;
-        $condition->conditiontype = $this->type;
-        $condition->params = json_encode($params);
+        $record = new stdClass();
+        $record->ruleid = (int)$formdata->ruleid;
+        $record->conditiontype = $this->type;
+        $record->params = json_encode($params);
 
-        $this->set_data($condition);
+        if (!empty($formdata->id)) {
+            // Update existing condition.
+            $record->id = (int)$formdata->id;
+            $DB->update_record('cdr_condition', $record);
+        } else {
+            // Create new condition.
+            $record->id = $DB->insert_record('cdr_condition', $record);
+        }
 
-        $DB->insert_record('cdr_condition', $condition);
+        // Refresh internal data.
+        $this->set_data($record, $this->courseid);
     }
 
     /**
@@ -134,7 +191,7 @@ class passgrade_condition extends condition {
      * @return string
      */
     public function get_header() {
-        return get_string('passgrade', 'local_coursedynamicrules');
+        return get_string('complete_activity', 'local_coursedynamicrules');
     }
 
     /**
@@ -152,6 +209,44 @@ class passgrade_condition extends condition {
         if (!$cminfo) {
             return '';
         }
-        return get_string('passgrade_description', 'local_coursedynamicrules', ucfirst($cminfo->modname) . " - " . $cminfo->name);
+        $options = [
+            'moddescription' => ucfirst($cminfo->modname) . " - " . $cminfo->name,
+        ];
+        $description = get_string('complete_activity_description', 'local_coursedynamicrules', $options);
+
+        return $description;
+    }
+
+    /**
+     * Returns config data to prefill the edit form.
+     *
+     * @return array
+     */
+    public function get_configdata(): array {
+        return [
+            'coursemodule' => isset($this->params->cmid) ? (int)$this->params->cmid : null,
+        ];
+    }
+
+    /**
+     * Validate if the completion is enabled for the course module
+     *
+     * @param object $cminfo Course module information
+     * @return bool True if the completion is enabled, false otherwise
+     */
+    private function is_completion_enabled($cminfo) {
+        return $cminfo->completion == COMPLETION_TRACKING_MANUAL || $cminfo->completion == COMPLETION_TRACKING_AUTOMATIC;
+    }
+
+    /**
+     * Validate if the user has completed the activity module
+     *
+     * @param object $completiondata Completion data
+     * @return bool True if the user has completed the activity module, false otherwise
+     */
+    private function is_cm_completed($completiondata) {
+        return
+            $completiondata->completionstate == COMPLETION_COMPLETE ||
+            $completiondata->completionstate == COMPLETION_COMPLETE_PASS;
     }
 }
