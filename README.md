@@ -38,7 +38,7 @@ Transform Moodle into a **smarter, faster, and more engaging** platform with the
 
 ## Prerequisites
 
-1. Have Moodle version 4.1.14 or higher.
+1. Have Moodle version 4.5.
    
 2. Have Moodle cron configured and running correctly.
    
