@@ -77,7 +77,7 @@ foreach ($conditions as $condition) {
     }
 }
 
-$conditionoptions = load_condition_options();
+$conditionoptions = local_coursedynamicrules_load_condition_options();
 
 // Render heading and branding using reusable renderable.
 $headerrow = new \local_coursedynamicrules\output\header_with_brand('conditions');
@@ -122,7 +122,7 @@ echo $OUTPUT->footer();
  * @param string $dir the subdir
  * @return array list of condition types
  */
-function load_conditions($dir = 'local/coursedynamicrules/classes/condition') {
+function local_coursedynamicrules_load_conditions($dir = 'local/coursedynamicrules/classes/condition') {
     global $CFG;
     $conditiontypes = get_list_of_plugins($dir);
     $filtered = [];
@@ -141,13 +141,13 @@ function load_conditions($dir = 'local/coursedynamicrules/classes/condition') {
  *
  * @return array pluginnames as string
  */
-function load_condition_options() {
+function local_coursedynamicrules_load_condition_options() {
     global $CFG;
     $courseid = required_param('courseid', PARAM_INT);
     $ruleid = required_param('ruleid', PARAM_INT);
     $conditionoptions = [];
 
-    if (!$conditiontypes = load_conditions('local/coursedynamicrules/classes/condition')) {
+    if (!$conditiontypes = local_coursedynamicrules_load_conditions('local/coursedynamicrules/classes/condition')) {
         return [];
     }
 
