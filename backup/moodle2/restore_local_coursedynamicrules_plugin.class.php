@@ -71,8 +71,8 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
         $record->timecreated = $data->timecreated ?? time();
         $record->timemodified = $data->timemodified ?? time();
 
-        $newruleid = $DB->insert_record('cdr_rule', $record);
-        $this->set_mapping('cdr_rule', $data->id, $newruleid, false);
+        $newruleid = $DB->insert_record('local_coursedynamicrules_rule', $record);
+        $this->set_mapping('local_coursedynamicrules_rule', $data->id, $newruleid, false);
     }
 
     /**
@@ -88,15 +88,15 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
         $data = (object)$data;
 
         $record = new \stdClass();
-        $record->ruleid = $this->get_mappingid('cdr_rule', $data->ruleid);
+        $record->ruleid = $this->get_mappingid('local_coursedynamicrules_rule', $data->ruleid);
         $record->name = $data->name ?? null;
         $record->conditiontype = $data->conditiontype ?? null;
         $record->eventname = $data->eventname ?? null;
         $record->params = $this->remap_condition_params($data->params ?? '');
         $record->lastexecutiontime = $data->lastexecutiontime ?? null;
 
-        $newconditionid = $DB->insert_record('cdr_condition', $record);
-        $this->set_mapping('cdr_condition', $data->id, $newconditionid, false);
+        $newconditionid = $DB->insert_record('local_coursedynamicrules_condition', $record);
+        $this->set_mapping('local_coursedynamicrules_condition', $data->id, $newconditionid, false);
     }
 
     /**
@@ -112,14 +112,14 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
         $data = (object)$data;
 
         $record = new \stdClass();
-        $record->ruleid = $this->get_mappingid('cdr_rule', $data->ruleid);
+        $record->ruleid = $this->get_mappingid('local_coursedynamicrules_rule', $data->ruleid);
         $record->name = $data->name ?? null;
         $record->actiontype = $data->actiontype ?? null;
         $record->params = $this->remap_action_params($data->params ?? '');
         $record->lastexecutiontime = $data->lastexecutiontime ?? null;
 
-        $newactionid = $DB->insert_record('cdr_action', $record);
-        $this->set_mapping('cdr_action', $data->id, $newactionid, false);
+        $newactionid = $DB->insert_record('local_coursedynamicrules_action', $record);
+        $this->set_mapping('local_coursedynamicrules_action', $data->id, $newactionid, false);
     }
 
     /**
@@ -258,7 +258,7 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
             'backup_ids_temp',
             [
                 'backupid' => $this->get_restoreid(),
-                'itemname' => 'cdr_rule',
+                'itemname' => 'local_coursedynamicrules_rule',
             ],
             '',
             'itemid, newitemid'
@@ -285,13 +285,13 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
     protected function remap_condition_records(int $ruleid) {
         global $DB;
 
-        $conditions = $DB->get_records('cdr_condition', ['ruleid' => $ruleid]);
+        $conditions = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $ruleid]);
         foreach ($conditions as $condition) {
             $paramsjson = $condition->params ?? '';
             $remappedjson = $this->remap_condition_params($paramsjson);
 
             if ($remappedjson !== $paramsjson) {
-                $DB->set_field('cdr_condition', 'params', $remappedjson, ['id' => $condition->id]);
+                $DB->set_field('local_coursedynamicrules_condition', 'params', $remappedjson, ['id' => $condition->id]);
             }
         }
     }
@@ -305,13 +305,13 @@ class restore_local_coursedynamicrules_plugin extends restore_local_plugin {
     protected function remap_action_records(int $ruleid) {
         global $DB;
 
-        $actions = $DB->get_records('cdr_action', ['ruleid' => $ruleid]);
+        $actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $ruleid]);
         foreach ($actions as $action) {
             $paramsjson = $action->params ?? '';
             $remappedjson = $this->remap_action_params($paramsjson);
 
             if ($remappedjson !== $paramsjson) {
-                $DB->set_field('cdr_action', 'params', $remappedjson, ['id' => $action->id]);
+                $DB->set_field('local_coursedynamicrules_action', 'params', $remappedjson, ['id' => $action->id]);
             }
         }
     }

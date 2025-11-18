@@ -77,9 +77,9 @@ class backup_local_coursedynamicrules_plugin extends backup_local_plugin {
         $actions->add_child($action);
 
         // Sources.
-        $rule->set_source_table('cdr_rule', ['courseid' => backup::VAR_COURSEID]);
-        $condition->set_source_table('cdr_condition', ['ruleid' => backup::VAR_PARENTID]);
-        $action->set_source_table('cdr_action', ['ruleid' => backup::VAR_PARENTID]);
+        $rule->set_source_table('local_coursedynamicrules_rule', ['courseid' => backup::VAR_COURSEID]);
+        $condition->set_source_table('local_coursedynamicrules_condition', ['ruleid' => backup::VAR_PARENTID]);
+        $action->set_source_table('local_coursedynamicrules_action', ['ruleid' => backup::VAR_PARENTID]);
 
         return $plugin;
     }

@@ -124,7 +124,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
         // Save the condition.
         $condition->save_condition($conditiondata);
 
-        $records = $DB->get_records('cdr_condition', ['ruleid' => $this->ruleid]);
+        $records = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $this->ruleid]);
 
         $record = reset($records);
         $this->assertEquals($this->type, $record->conditiontype);

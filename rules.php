@@ -47,7 +47,7 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$rules = $DB->get_records('cdr_rule', ['courseid' => $courseid]);
+$rules = $DB->get_records('local_coursedynamicrules_rule', ['courseid' => $courseid]);
 
 $table = new html_table();
 $table->head[] = get_string('name', 'local_coursedynamicrules');
@@ -56,8 +56,8 @@ $table->head[] = get_string('actions', 'local_coursedynamicrules');
 $table->head[] = '';
 
 foreach ($rules as $rule) {
-    $conditions = $DB->get_records('cdr_condition', ['ruleid' => $rule->id]);
-    $actions = $DB->get_records('cdr_action', ['ruleid' => $rule->id]);
+    $conditions = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $rule->id]);
+    $actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $rule->id]);
     $conditionstext = '';
     $actionstext = '';
 

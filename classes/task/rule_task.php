@@ -60,7 +60,7 @@ class rule_task extends \core\task\adhoc_task {
             $users = [$user];
 
             // Get active rules for the course.
-            $rules = $DB->get_records('cdr_rule', ['courseid' => $courseid, 'active' => 1]);
+            $rules = $DB->get_records('local_coursedynamicrules_rule', ['courseid' => $courseid, 'active' => 1]);
 
             $additionaldata = [];
 

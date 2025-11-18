@@ -48,7 +48,7 @@ echo $OUTPUT->header();
 $rule = new stdClass();
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');
-    $rule = $DB->get_record('cdr_rule', ['id' => $ruleid]);
+    $rule = $DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid]);
 } else {
     $pagetitle = get_string('createrule', 'local_coursedynamicrules');
 }
@@ -69,7 +69,7 @@ if ($ruleform->is_cancelled()) {
     $data->active = $data->active ?? 0;
     if (empty($data->id)) {
         $data->timecreated = time();
-        $DB->insert_record('cdr_rule', $data);
+        $DB->insert_record('local_coursedynamicrules_rule', $data);
         redirect(
             $rulesurl,
             get_string('ruleaddedsuccessfully', 'local_coursedynamicrules'),
@@ -77,7 +77,7 @@ if ($ruleform->is_cancelled()) {
             \core\output\notification::NOTIFY_SUCCESS
         );
     } else {
-        $DB->update_record('cdr_rule', $data);
+        $DB->update_record('local_coursedynamicrules_rule', $data);
         redirect(
             $rulesurl,
             get_string('ruleupdatedsuccessfully', 'local_coursedynamicrules'),

@@ -51,11 +51,11 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
+if (!$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
 
-$actions = $DB->get_records('cdr_action', ['ruleid' => $ruleid]);
+$actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $ruleid]);
 
 
 $actionsfortemplate = [];

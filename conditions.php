@@ -50,11 +50,11 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
 echo $OUTPUT->header();
 
-if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
+if (!$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
 
-$conditions = $DB->get_records('cdr_condition', ['ruleid' => $ruleid]);
+$conditions = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $ruleid]);
 
 $conditionsfortemplate = [];
 foreach ($conditions as $condition) {

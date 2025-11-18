@@ -54,7 +54,7 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$condition = $DB->get_record('cdr_condition', ['id' => $id], '*', MUST_EXIST);
+$condition = $DB->get_record('local_coursedynamicrules_condition', ['id' => $id], '*', MUST_EXIST);
 
 $config = get_config('local_coursedynamicrules');
 

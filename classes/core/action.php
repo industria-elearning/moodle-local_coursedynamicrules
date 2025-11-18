@@ -117,7 +117,7 @@ abstract class action {
     public function set_last_execution_time($time) {
         global $DB;
         $this->lastexecutiontime = $time;
-        $DB->set_field('cdr_action', 'lastexecutiontime', $time, ['id' => $this->id]);
+        $DB->set_field('local_coursedynamicrules_action', 'lastexecutiontime', $time, ['id' => $this->id]);
     }
 
     /**
@@ -145,7 +145,7 @@ abstract class action {
     }
 
     /**
-     * Deletes a action record from the 'cdr_action' table. and related information with it.
+     * Deletes a action record from the 'local_coursedynamicrules_action' table. and related information with it.
      *
      * @return bool True on success, false on failure.
      * @throws \dml_exception A DML specific exception is thrown for any errors.
@@ -153,7 +153,7 @@ abstract class action {
     public function delete() {
         global $DB;
 
-        return $DB->delete_records('cdr_action', ['id' => $this->get_id()]);
+        return $DB->delete_records('local_coursedynamicrules_action', ['id' => $this->get_id()]);
     }
 
     /**

@@ -174,7 +174,7 @@ class createaiactivity_action extends action {
         $action->params = json_encode($params);
 
         $this->set_data($action);
-        $DB->insert_record('cdr_action', $action);
+        $DB->insert_record('local_coursedynamicrules_action', $action);
     }
 
     /**

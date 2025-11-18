@@ -66,8 +66,8 @@ class rule {
         $this->additionaldata = $additionaldata;
 
         // Load conditions and actions from the DB.
-        $conditions = $DB->get_records('cdr_condition', ['ruleid' => $this->id]);
-        $actions = $DB->get_records('cdr_action', ['ruleid' => $this->id]);
+        $conditions = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $this->id]);
+        $actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $this->id]);
 
         foreach ($conditions as $conditionrecord) {
             if (!empty($conditiontypes) && !in_array($conditionrecord->conditiontype, $conditiontypes)) {
@@ -154,19 +154,19 @@ class rule {
     public function set_active($active) {
         global $DB;
         $this->active = $active ? 1 : 0;
-        $DB->set_field('cdr_rule', 'active', $this->active, ['id' => $this->id]);
+        $DB->set_field('local_coursedynamicrules_rule', 'active', $this->active, ['id' => $this->id]);
     }
 
     /**
      * Sets the last execution time for the rule.
      *
-     * This method updates the 'lastexecutiontime' field in the 'cdr_rule' table
+     * This method updates the 'lastexecutiontime' field in the 'local_coursedynamicrules_rule' table
      *
      * @param int $time The timestamp of the last execution time.
      */
     public function set_last_execution_time($time) {
         global $DB;
-        $DB->set_field('cdr_rule', 'lastexecutiontime', $time, ['id' => $this->id]);
+        $DB->set_field('local_coursedynamicrules_rule', 'lastexecutiontime', $time, ['id' => $this->id]);
 
         foreach ($this->conditions as $condition) {
             $condition->set_last_execution_time($time);
@@ -187,7 +187,7 @@ class rule {
     }
 
     /**
-     * Deletes a rule record from the 'cdr_rule' table. and related conditions and actions with it.
+     * Deletes a rule record from the 'local_coursedynamicrules_rule' table. and related conditions and actions with it.
      *
      * @return bool True on success, false on failure.
      * @throws \dml_exception A DML specific exception is thrown for any errors.
@@ -203,7 +203,7 @@ class rule {
             $action->delete();
         }
 
-        return $DB->delete_records('cdr_rule', ['id' => $this->id]);
+        return $DB->delete_records('local_coursedynamicrules_rule', ['id' => $this->id]);
     }
 
     /**
