@@ -24,6 +24,7 @@ use stdClass;
  *
  * @package    local_coursedynamicrules
  * @category   test
+ * @coversDefaultClass \local_coursedynamicrules\condition\course_inactivity\course_inactivity_condition
  * @copyright  2025 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -101,6 +102,8 @@ final class course_inactivity_condition_test extends \advanced_testcase {
 
     /**
      * Test save_condition method.
+     *
+     * @covers ::save_condition
      */
     public function test_save_condition(): void {
         global $DB;
@@ -225,6 +228,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * @param int $currentime Current time.
      * @param int $lastaccess Last user access time.
      * @param bool $expected Expected result.
+     * @covers ::evaluate
      */
     public function test_evaluate_for_custom_intervals($currentime, $lastaccess, $expected): void {
         // Create the condition.
@@ -256,6 +260,7 @@ final class course_inactivity_condition_test extends \advanced_testcase {
      * @param int $currentime Current time.
      * @param int $lastaccess Last user access time.
      * @param bool $expected Expected result.
+     * @covers ::evaluate
      */
     public function test_evaluate_for_recurring_interval($currentime, $lastaccess, $expected): void {
         // Create the condition.

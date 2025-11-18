@@ -27,7 +27,6 @@
  * @package   local_coursedynamicrules
  */
 class backup_local_coursedynamicrules_plugin extends backup_local_plugin {
-
     /**
      * Define plugin structure
      *

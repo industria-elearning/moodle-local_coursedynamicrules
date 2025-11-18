@@ -23,8 +23,6 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Execute local_coursedynamicrules upgrade from the given old version.
  *
@@ -157,7 +155,6 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
     }
 
     if ($oldversion < 2025111802) {
-
         // Define table cdr_rule to be renamed to local_coursedynamicrules_rule.
         $table = new xmldb_table('cdr_rule');
 
