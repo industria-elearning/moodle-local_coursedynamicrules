@@ -138,7 +138,7 @@ class enableactivity_action extends action {
 
         $this->set_data($action);
 
-        $DB->insert_record('cdr_action', $action);
+        $DB->insert_record('local_coursedynamicrules_action', $action);
 
         foreach ($coursemodules as $cm) {
             $cmid = $cm->id;
@@ -189,7 +189,7 @@ class enableactivity_action extends action {
     }
 
     /**
-     * Deletes a action record from the 'cdr_action' table. and related information with it.
+     * Deletes a action record from the 'local_coursedynamicrules_action' table. and related information with it.
      *
      * @return bool True on success, false on failure.
      * @throws \dml_exception A DML specific exception is thrown for any errors.

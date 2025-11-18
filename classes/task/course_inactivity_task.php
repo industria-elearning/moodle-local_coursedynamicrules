@@ -54,8 +54,8 @@ class course_inactivity_task extends \core\task\scheduled_task {
         $rules = $DB->get_records_sql(
             "SELECT DISTINCT r.*
             FROM
-                {cdr_rule} r
-                JOIN {cdr_condition} c ON c.ruleid = r.id
+                {local_coursedynamicrules_rule} r
+                JOIN {local_coursedynamicrules_condition} c ON c.ruleid = r.id
             WHERE
                 c.conditiontype = :conditiontype
                 AND r.active = 1",

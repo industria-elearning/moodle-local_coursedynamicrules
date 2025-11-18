@@ -51,11 +51,11 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-if (!$DB->get_record('cdr_rule', ['id' => $ruleid])) {
+if (!$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid])) {
     throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
 }
 
-$actions = $DB->get_records('cdr_action', ['ruleid' => $ruleid]);
+$actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $ruleid]);
 
 
 $actionsfortemplate = [];
@@ -80,7 +80,7 @@ foreach ($actions as $action) {
     }
 }
 
-$actionoptions = load_action_options();
+$actionoptions = local_coursedynamicrules_load_action_options();
 
 
 // Render heading and branding using reusable renderable.
@@ -125,7 +125,7 @@ echo $OUTPUT->footer();
  * @param string $dir the subdir
  * @return array list of action types
  */
-function load_actions($dir = 'local/coursedynamicrules/classes/action') {
+function local_coursedynamicrules_load_actions($dir = 'local/coursedynamicrules/classes/action') {
     global $CFG;
     $actiontypes = get_list_of_plugins($dir);
     $filtered = [];
@@ -145,13 +145,13 @@ function load_actions($dir = 'local/coursedynamicrules/classes/action') {
  *
  * @return array pluginnames as string
  */
-function load_action_options() {
+function local_coursedynamicrules_load_action_options() {
     global $CFG;
     $courseid = required_param('courseid', PARAM_INT);
     $ruleid = required_param('ruleid', PARAM_INT);
     $actionoptions = [];
 
-    if (!$actiontypes = load_actions('local/coursedynamicrules/classes/action')) {
+    if (!$actiontypes = local_coursedynamicrules_load_actions('local/coursedynamicrules/classes/action')) {
         return [];
     }
 

@@ -62,7 +62,7 @@ class local_coursedynamicrules_generator extends component_generator_base {
         $record->timecreated = time();
         $record->timemodified = time();
 
-        $ruleid = $DB->insert_record('cdr_rule', $record);
+        $ruleid = $DB->insert_record('local_coursedynamicrules_rule', $record);
         $record->id = $ruleid;
 
         return new rule($record, $users, $conditiontypes);

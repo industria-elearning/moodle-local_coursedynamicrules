@@ -52,8 +52,8 @@ class no_course_access_task extends \core\task\scheduled_task {
         $rules = $DB->get_records_sql(
             "SELECT DISTINCT r.*
             FROM
-                {cdr_rule} r
-                JOIN {cdr_condition} c ON c.ruleid = r.id
+                {local_coursedynamicrules_rule} r
+                JOIN {local_coursedynamicrules_condition} c ON c.ruleid = r.id
             WHERE
                 c.conditiontype = :conditiontype
                 AND r.active = 1",
@@ -107,7 +107,7 @@ class no_course_access_task extends \core\task\scheduled_task {
             // Check if the condition type matches and the current time is after the next time period.
             if ($condition->get_type() == $this->conditiontype && $now >= $params->nexttimeperiod) {
                 $params->nexttimeperiod = strtotime("+$params->periodvalue $params->periodunit", $now);
-                $DB->set_field('cdr_condition', 'params', json_encode($params), ['id' => $conditionid]);
+                $DB->set_field('local_coursedynamicrules_condition', 'params', json_encode($params), ['id' => $conditionid]);
             }
         }
     }

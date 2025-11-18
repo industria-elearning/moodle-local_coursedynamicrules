@@ -23,8 +23,6 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Execute local_coursedynamicrules upgrade from the given old version.
  *
@@ -154,6 +152,29 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
 
         // Coursedynamicrules savepoint reached.
         upgrade_plugin_savepoint(true, 2025022601, 'local', 'coursedynamicrules');
+    }
+
+    if ($oldversion < 2025111802) {
+        // Define table cdr_rule to be renamed to local_coursedynamicrules_rule.
+        $table = new xmldb_table('cdr_rule');
+
+        // Launch rename table for cdr_rule.
+        $dbman->rename_table($table, 'local_coursedynamicrules_rule');
+
+        // Define table cdr_condition to be renamed to local_coursedynamicrules_condition.
+        $table = new xmldb_table('cdr_condition');
+
+        // Launch rename table for cdr_condition.
+        $dbman->rename_table($table, 'local_coursedynamicrules_condition');
+
+        // Define table cdr_action to be renamed to local_coursedynamicrules_action.
+        $table = new xmldb_table('cdr_action');
+
+        // Launch rename table for cdr_action.
+        $dbman->rename_table($table, 'local_coursedynamicrules_action');
+
+        // Coursedynamicrules savepoint reached.
+        upgrade_plugin_savepoint(true, 2025111802, 'local', 'coursedynamicrules');
     }
 
     return true;

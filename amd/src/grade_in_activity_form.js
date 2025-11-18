@@ -76,12 +76,12 @@ function handleLoadForm(dynamicForm) {
 function handleSubmitForm() {
     const gradeInActivityForm = document.getElementById('grade_in_activity_form');
     const dynamicGradeInActivityForm = document.getElementById('dynamic_grade_in_activity_form');
-    gradeInActivityForm.addEventListener('submit', (e) => {
+    gradeInActivityForm.addEventListener('submit', async(e) => {
         // Check if the submit button was clicked.
         // this is to prevent the form from submitting when the user clicks the cancel button.
         if (e.submitter.name === 'submitbutton') {
             e.preventDefault();
-            const formIsValid = formValidation();
+            const formIsValid = await formValidation();
             if (e.submitter.name === 'submitbutton' && dynamicGradeInActivityForm.checkValidity() && formIsValid) {
                 gradeInActivityForm.submit();
             }
@@ -98,12 +98,12 @@ function handleSubmitForm() {
  *
  * @returns {boolean} - Returns true if the form is valid, otherwise false.
  */
-function formValidation() {
+async function formValidation() {
     const cmId = document.querySelector('[name=coursemodule]').value;
     const cmConditionInputs = document.querySelectorAll(`[data-cmid='${cmId}']`);
 
     let formIsValid = true;
-    cmConditionInputs.forEach((input) => {
+    cmConditionInputs.forEach(async (input) => {
         const gradeMin = parseFloat(input.dataset.grademin);
         const gradeMax = parseFloat(input.dataset.grademax);
         const inputValue = parseFloat(input.value);
@@ -121,15 +121,11 @@ function formValidation() {
         if (inputValue > gradeMax || inputValue < gradeMin) {
             input.classList.add('is-invalid');
             formIsValid = false;
-            getString('errorgradeoutofrange', 'local_coursedynamicrules', {
+                const content = await getString('errorgradeoutofrange', 'local_coursedynamicrules', {
                 min: gradeMin,
                 max: gradeMax,
-            }).then(function(content) {
+                });
                 invalidFeedback.textContent = content;
-                return;
-            }).catch(function() {
-                Notification.exception(new Error('Failed to load string: errorgradeoutofrange'));
-            });
         } else {
             input.classList.remove('is-invalid');
             invalidFeedback.textContent = '';
@@ -144,12 +140,13 @@ function formValidation() {
  *
  * @param {DynamicForm} dynamicForm The dynamic form instance.
  */
-function attachCourseModuleChangeListener(dynamicForm) {
+async function attachCourseModuleChangeListener(dynamicForm) {
     const courseModuleSelect = document.querySelector('[name=coursemodule]');
 
     if (!courseModuleSelect) {
+        const message = await getString('coursemoduleelementnotfound', 'local_coursedynamicrules');
         Notification.addNotification({
-            message: 'Course module select element not found.',
+            message: message,
             type: 'warning',
         });
         return;

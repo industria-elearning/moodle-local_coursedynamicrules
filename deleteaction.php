@@ -53,7 +53,7 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$action = $DB->get_record('cdr_action', ['id' => $id], '*', MUST_EXIST);
+$action = $DB->get_record('local_coursedynamicrules_action', ['id' => $id], '*', MUST_EXIST);
 
 $config = get_config('local_coursedynamicrules');
 

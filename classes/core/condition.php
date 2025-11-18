@@ -79,7 +79,7 @@ abstract class condition {
         global $DB;
         $this->lastexecutiontime = $time;
 
-        $DB->set_field('cdr_condition', 'lastexecutiontime', $time, ['id' => $this->id]);
+        $DB->set_field('local_coursedynamicrules_condition', 'lastexecutiontime', $time, ['id' => $this->id]);
     }
 
     /**
@@ -162,7 +162,7 @@ abstract class condition {
     }
 
     /**
-     * Deletes a condition record from the 'cdr_condition' table. and related information with it.
+     * Deletes a condition record from the 'local_coursedynamicrules_condition' table. and related information with it.
      *
      * @return bool True on success, false on failure.
      * @throws \dml_exception A DML specific exception is thrown for any errors.
@@ -170,7 +170,7 @@ abstract class condition {
     public function delete() {
         global $DB;
 
-        return $DB->delete_records('cdr_condition', ['id' => $this->id]);
+        return $DB->delete_records('local_coursedynamicrules_condition', ['id' => $this->id]);
     }
 
     /**

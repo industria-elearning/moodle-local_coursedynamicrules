@@ -38,12 +38,13 @@ Transform Moodle into a **smarter, faster, and more engaging** platform with the
 
 ## Prerequisites
 
-1. Have Moodle version 4.1.14 or higher.
+1. Have Moodle version 4.5.
    
 2. Have Moodle cron configured and running correctly.
    
-3. **Optional** Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) and [Enable activity](#enable-activity) actions), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
-4. **Optional** Have the Moodle plugin `Course Creator AI` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+3. Have the Moodle plugin `Restriction by user` installed (required for the [Create AI activity](#create-ai-activity) and [Enable activity](#enable-activity) actions), which can be downloaded for free from the following link [https://moodle.org/plugins/availability_user/versions](https://moodle.org/plugins/availability_user/versions).
+   
+4. Have the Moodle plugin `Course Creator AI` installed (required for the [Create AI activity](#create-ai-activity) action), which can be downloaded for free from the following link [https://moodle.org/plugins/local_coursegen](https://moodle.org/plugins/local_coursegen).
 
 ## Installing via uploaded ZIP file
 
