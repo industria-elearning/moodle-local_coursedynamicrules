@@ -21,6 +21,7 @@ use core_availability\tree;
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\createaiactivity_form;
+use local_coursedynamicrules\local\payload_anonymizer;
 use local_coursegen\ai_context;
 use local_coursegen\mod_manager;
 use moodle_url;
@@ -88,6 +89,10 @@ class createaiactivity_action extends action {
                 'model_name' => $aicontext ? $aicontext->model_name : null,
             ];
 
+            $anonymized = payload_anonymizer::anonymize($payload, $user);
+            $payload = $anonymized['payload'];
+            $replacements = $anonymized['replacements'];
+
             // These calls may take a long time depending on prompt complexity.
             \core_php_time_limit::raise();
             raise_memory_limit(MEMORY_EXTRA);
@@ -95,6 +100,7 @@ class createaiactivity_action extends action {
 
             $client = new ai_course_api();
             $result = $client->request('POST', '/smartrules/create-mod', $payload);
+            $result = payload_anonymizer::deanonymize_data($result, $replacements);
 
             $newcm = mod_manager::create_from_ai_result($result, $course, $sectionnum, $beforemod);
 
