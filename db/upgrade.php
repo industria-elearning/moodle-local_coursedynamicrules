@@ -177,5 +177,70 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025111802, 'local', 'coursedynamicrules');
     }
 
+    if ($oldversion < 2026042300) {
+        local_coursedynamicrules_upgrade_migrate_sendnotification_roles();
+        upgrade_plugin_savepoint(true, 2026042300, 'local', 'coursedynamicrules');
+    }
+
     return true;
+}
+
+/**
+ * Migrate sendnotification roles params to primary/copy keys.
+ *
+ * @return void
+ */
+function local_coursedynamicrules_upgrade_migrate_sendnotification_roles(): void {
+    global $DB;
+
+    $studentroles = $DB->get_records('role', ['shortname' => 'student'], 'id ASC', 'id');
+    $studentroleids = array_map('intval', array_keys($studentroles));
+
+    $actions = $DB->get_records('local_coursedynamicrules_action', ['actiontype' => 'sendnotification']);
+    foreach ($actions as $action) {
+        $params = json_decode($action->params, true);
+        if (!is_array($params)) {
+            continue;
+        }
+
+        if (isset($params['primaryroleids']) || isset($params['copyroleids'])) {
+            continue;
+        }
+
+        $primaryroleids = [];
+        $copyroleids = [];
+
+        if (isset($params['observedroleids']) || isset($params['observerroleids'])) {
+            $primaryroleids = array_values(array_map('intval', $params['observedroleids'] ?? []));
+            $copyroleids = array_values(array_map('intval', $params['observerroleids'] ?? []));
+        } else {
+            $legacyroleids = array_values(array_map('intval', $params['roleids'] ?? []));
+            $legacyroleids = array_values(array_unique(array_filter($legacyroleids)));
+
+            if (count($legacyroleids) === 1) {
+                $primaryroleids = $legacyroleids;
+                $copyroleids = [];
+            } else if (count($legacyroleids) > 1) {
+                $studentmatches = array_values(array_intersect($legacyroleids, $studentroleids));
+                if (!empty($studentmatches)) {
+                    $primaryroleids = [$studentmatches[0]];
+                } else {
+                    $primaryroleids = [$legacyroleids[0]];
+                }
+                $copyroleids = array_values(array_diff($legacyroleids, $primaryroleids));
+            }
+        }
+
+        if (empty($primaryroleids) && empty($copyroleids)) {
+            continue;
+        }
+
+        $params['primaryroleids'] = $primaryroleids;
+        $params['copyroleids'] = $copyroleids;
+        unset($params['observedroleids']);
+        unset($params['observerroleids']);
+        unset($params['roleids']);
+
+        $DB->set_field('local_coursedynamicrules_action', 'params', json_encode($params), ['id' => $action->id]);
+    }
 }

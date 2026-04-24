@@ -51,54 +51,98 @@ class sendnotification_action extends action {
 
         $messagesubject = $this->params->messagesubject;
         $messagebody = $this->params->messagebody;
-        $roleids = $this->params->roleids;
+        $primaryroleids = $this->params->primaryroleids
+            ?? $this->params->observedroleids
+            ?? $this->params->roleids
+            ?? [];
+        $copyroleids = $this->params->copyroleids
+            ?? $this->params->observerroleids
+            ?? [];
 
         $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
         $coursecontext = context_course::instance($course->id);
 
-        $messagebody = $this->replace_placeholders($messagebody, $course, $user);
-        $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
-        $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
-
-        $messageids = [];
-
-        // Send to the current user if they have at least one of the specified roles.
-        $userroles = get_user_roles($coursecontext, $userid, false);
-        $userroleids = [];
-        foreach ($userroles as $userrole) {
-            if (in_array($userrole->roleid, $roleids)) {
-                $userroleids[] = $userrole->roleid;
-            }
-        }
-
-        if (!empty($userroleids)) {
-            $message = $this->create_message($userid, $messagesubject, $messagebody, $smallmessagetext);
-            $messageids[] = message_send($message);
-        }
-
-        // Delete current user roles from roleids to avoid sending to other users with these roles.
-        $remainingroleids = array_diff($roleids, $userroleids);
-
-        // Get recipients for remaining roles.
-        $recipients = $this->get_recipients_by_roles($remainingroleids, $coursecontext);
-
-        // If there are no recipients, return false to indicate no action.
-        if (empty($recipients)) {
+        if (empty($primaryroleids)) {
             return false;
         }
 
-        foreach ($recipients as $recipient) {
-            // Avoid duplicate send to the current user.
-            if ((int)$recipient->id === (int)$userid) {
-                continue;
+        $userroles = get_user_roles($coursecontext, $userid, false);
+        $isobserveduser = false;
+        foreach ($userroles as $userrole) {
+            if (in_array($userrole->roleid, $primaryroleids)) {
+                $isobserveduser = true;
+                break;
             }
-            $message = $this->create_message($recipient->id, $messagesubject, $messagebody, $smallmessagetext);
-            $messageids[] = message_send($message);
+        }
+
+        if (!$isobserveduser) {
+            return false;
+        }
+
+        $messagebody = $this->replace_placeholders($messagebody, $course, $user);
+        $smallmessagehtml = html_entity_decode($messagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+        $smallmessagetext = $this->sanitize_html_message_twilio($smallmessagehtml);
+        $messageids = [];
+
+        $message = $this->create_message($userid, $messagesubject, $messagebody, $smallmessagetext);
+        $messageids[] = message_send($message);
+
+        $recipients = $this->get_recipients_by_roles($copyroleids, $coursecontext);
+        unset($recipients[$userid]);
+
+        if (!empty($recipients)) {
+            $observersubject = $this->build_observer_subject($messagesubject, $user);
+            $observermessagebody = $this->build_observer_message_body($messagebody, $user);
+            $observersmallmessagehtml = html_entity_decode($observermessagebody, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+            $observersmallmessagetext = $this->sanitize_html_message_twilio($observersmallmessagehtml);
+
+            foreach ($recipients as $recipient) {
+                $message = $this->create_message(
+                    $recipient->id,
+                    $observersubject,
+                    $observermessagebody,
+                    $observersmallmessagetext
+                );
+                $messageids[] = message_send($message);
+            }
+        }
+
+        if (empty($messageids)) {
+            return false;
         }
 
         return $messageids;
+    }
+
+    /**
+     * Builds a subject for observer recipients.
+     *
+     * @param string   $messagesubject Notification subject configured in the action.
+     * @param stdClass $user User who matched the rule condition.
+     * @return string
+     */
+    private function build_observer_subject(string $messagesubject, stdClass $user): string {
+        $params = (object) [
+            'fullname' => fullname($user),
+            'subject' => $messagesubject,
+        ];
+
+        return get_string('observer_notification_subject', 'local_coursedynamicrules', $params);
+    }
+
+    /**
+     * Builds message body for observer recipients.
+     *
+     * @param string   $messagebody Notification body already replaced for matched user.
+     * @param stdClass $user User who matched the rule condition.
+     * @return string
+     */
+    private function build_observer_message_body(string $messagebody, stdClass $user): string {
+        $intro = get_string('observer_notification_intro', 'local_coursedynamicrules', fullname($user));
+
+        return html_writer::tag('p', $intro) . $messagebody;
     }
 
     /**
@@ -150,13 +194,16 @@ class sendnotification_action extends action {
     public function save_action($formdata) {
         global $DB;
 
-        $roles = $formdata->roles;
-        $roleids = array_keys($roles, 1);
+        $primaryrecipients = $formdata->primaryrecipients ?? [];
+        $copyrecipients = $formdata->copyrecipients ?? [];
+        $primaryroleids = array_keys($primaryrecipients, 1);
+        $copyroleids = array_keys($copyrecipients, 1);
 
         $params = [
             'messagesubject' => $formdata->messagesubject,
             'messagebody' => format_text($formdata->messagebody['text'], FORMAT_HTML),
-            'roleids' => $roleids,
+            'primaryroleids' => $primaryroleids,
+            'copyroleids' => $copyroleids,
         ];
 
         $action = new stdClass();
@@ -239,20 +286,21 @@ class sendnotification_action extends action {
     /**
      * Retrieves recipient users by role within the course context.
      *
-     * @param int[]           $roleids       Role IDs to include.
-     * @param context_course  $coursecontext Course context.
-     * @return stdClass[]     Users indexed by user id.
+     * @param int[]          $roleids Role IDs to include.
+     * @param context_course $coursecontext Course context.
+     * @return stdClass[] Users indexed by user id.
      */
     private function get_recipients_by_roles($roleids, $coursecontext): array {
         $recipients = [];
         foreach ($roleids as $roleid) {
             $userswithrole = get_role_users($roleid, $coursecontext, false, 'u.*', 'u.id ASC', false);
             if (!empty($userswithrole)) {
-                foreach ($userswithrole as $u) {
-                    $recipients[$u->id] = $u;
+                foreach ($userswithrole as $user) {
+                    $recipients[$user->id] = $user;
                 }
             }
         }
+
         return $recipients;
     }
 
