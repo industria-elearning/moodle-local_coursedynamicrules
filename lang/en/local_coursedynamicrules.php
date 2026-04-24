@@ -48,6 +48,8 @@ $string['completiondate'] = 'Completion date';
 $string['conditions'] = 'Conditions';
 $string['conditions_help'] = 'Conditions are used to define the conditions that must be met for executing the rule actions';
 $string['copiedtoclipboard'] = 'Copied to clipboard';
+$string['copyrecipients'] = 'Copy recipients';
+$string['copyrecipients_help'] = 'Select which roles receive an informational copy when the condition is met for a primary recipient.';
 $string['copytoclipboard'] = 'Copy to clipboard';
 $string['course_inactivity'] = 'Course inactivity in time intervals';
 $string['course_inactivity_custom_description'] = 'Users without activity in the course for intervals of {$a->intervals} {$a->unit} from {$a->basedate}';
@@ -170,9 +172,9 @@ $string['missing_plugins_warning'] = '🔔 Enhance your notifications! Our <stro
 $string['moduleinstancename'] = 'Course activity module instance name';
 $string['modulename'] = 'Course activity module name';
 $string['months'] = 'Months';
-$string['mustselectonerole'] = 'You must select at least one role.';
 $string['mustselectoneobservedrole'] = 'You must select at least one observed role.';
 $string['mustselectoneprimaryrole'] = 'You must select at least one primary recipient role.';
+$string['mustselectonerole'] = 'You must select at least one role.';
 $string['name'] = 'Name';
 $string['no_complete_activity'] = 'Activity not completed';
 $string['no_complete_activity_condition_info'] = 'This condition will check which user has not completed the selected activity module after the specified date.';
@@ -186,13 +188,9 @@ $string['notification_action_info'] = 'This action will send a notification to u
 $string['notificationtargeting'] = 'Notification targeting';
 $string['notificationtargeting_help'] = 'Define who receives the primary notification and who receives an informational copy. If a condition is met for a user in the primary recipients roles, that user receives the primary notification and copy recipients receive an informational copy.';
 $string['notificationtargeting_info'] = 'Define who receives the primary notification and who receives an informational copy. If a condition is met for a user in the primary recipients roles, that user receives the primary notification and copy recipients receive an informational copy.';
+$string['now'] = 'Now';
 $string['observer_notification_intro'] = 'Observation copy: this notification was generated for {$a} based on the rule conditions.';
 $string['observer_notification_subject'] = 'Observation: {$a->fullname} received "{$a->subject}"';
-$string['primaryrecipients'] = 'Primary recipients';
-$string['primaryrecipients_help'] = 'Select which roles receive the primary notification when the condition is met for a user in those roles.';
-$string['copyrecipients'] = 'Copy recipients';
-$string['copyrecipients_help'] = 'Select which roles receive an informational copy when the condition is met for a primary recipient.';
-$string['now'] = 'Now';
 $string['passgrade'] = 'Activity completion with passing grade';
 $string['passgrade_condition_info'] = 'This condition will check which user has completed the selected activity module with a passing grade.';
 $string['passgrade_description'] = 'Users who have completed the course activity module \'{$a}\' with a passing grade';
@@ -202,6 +200,8 @@ $string['plugin_disabled'] = 'This action requires the plugin <strong>{$a->plugi
 $string['plugin_missing'] = 'This action requires the plugin <strong>{$a->pluginname}</strong> to be installed and enabled. Please download it from <a href="{$a->downloadurl}" target="_blank">{$a->downloadurl}</a> and install it.';
 $string['pluginname'] = 'Smart Rules AI';
 $string['pluginnotavailable'] = 'This plugin is not available, because the product license has expired or is invalid. Please go to <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> to renew or purchase a new license.';
+$string['primaryrecipients'] = 'Primary recipients';
+$string['primaryrecipients_help'] = 'Select which roles receive the primary notification when the condition is met for a user in those roles.';
 $string['provider_not_enabled_warning'] = 'Enable notifications with <strong>Datacurso Message Hub</strong> to this action to send notifications via WhatsApp and SMS using providers like Twilio.
 You can enable it from <a href="{$a}" target="_blank">Notification settings</a> and searching <strong>Smart Rules AI notification</strong>.
 <br>

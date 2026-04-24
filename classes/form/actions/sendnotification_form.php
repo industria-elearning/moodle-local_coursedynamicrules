@@ -105,7 +105,11 @@ class sendnotification_form extends action_form {
 
         $mform->addElement('static', 'messagebody_static', '', $placeholderstext);
 
-        $mform->addElement('header', 'notificationtargetingheader', get_string('notificationtargeting', 'local_coursedynamicrules'));
+        $mform->addElement(
+            'header',
+            'notificationtargetingheader',
+            get_string('notificationtargeting', 'local_coursedynamicrules')
+        );
         $mform->addHelpButton('notificationtargetingheader', 'notificationtargeting', 'local_coursedynamicrules');
 
         $roles = get_default_enrol_roles(context_course::instance($courseid));
@@ -168,7 +172,7 @@ class sendnotification_form extends action_form {
         $primaryrecipients = $data['primaryrecipients'] ?? [];
         // Check if at least one primary recipient role checkbox was selected.
         $atleastoneselected = false;
-        foreach ($primaryrecipients as $roleid => $value) {
+        foreach ($primaryrecipients as $value) {
             if ($value == 1) {
                 $atleastoneselected = true;
                 break;

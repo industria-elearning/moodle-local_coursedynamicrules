@@ -39,7 +39,6 @@ use Behat\Gherkin\Node\PyStringNode;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_local_coursedynamicrules extends behat_base {
-
     /**
      * Create no course access rules with sendnotification action.
      *
@@ -155,7 +154,7 @@ class behat_local_coursedynamicrules extends behat_base {
     /**
      * Assert latest local_coursedynamicrules notification field contains expected text.
      *
-     * @Then /^the latest local coursedynamicrules notification for "(?P<username>[^"]*)" should contain "(?P<expected>[^"]*)" in "(?P<field>[^"]*)"$/
+     * @Then /^the latest local coursedynamicrules notification for "([^"]*)" should contain "([^"]*)" in "([^"]*)"$/
      * @param string $username Username.
      * @param string $expected Expected substring.
      * @param string $field Notification field.

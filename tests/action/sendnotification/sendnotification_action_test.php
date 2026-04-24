@@ -135,15 +135,15 @@ final class sendnotification_action_test extends \advanced_testcase {
         }
 
         $message = $messagesbyrecipient[$teacher->id];
-        $expectedobserversubject = get_string('observer_notification_subject', 'local_coursedynamicrules', (object) [
+        $observermsubject = get_string('observer_notification_subject', 'local_coursedynamicrules', (object) [
             'fullname' => fullname($student),
             'subject' => 'Nactivity notification',
         ]);
-        $expectedobserverintro = get_string('observer_notification_intro', 'local_coursedynamicrules', fullname($student));
+        $observerintro = get_string('observer_notification_intro', 'local_coursedynamicrules', fullname($student));
 
         $this->assertEquals($teacher->id, $message->useridto);
-        $this->assertEquals($expectedobserversubject, $message->subject);
-        $this->assertStringContainsString($expectedobserverintro, $message->fullmessagehtml);
+        $this->assertEquals($observermsubject, $message->subject);
+        $this->assertStringContainsString($observerintro, $message->fullmessagehtml);
         $this->assertStringContainsString(fullname($student), $message->fullmessagehtml);
         $this->assertStringNotContainsString(fullname($teacher), $message->fullmessagehtml);
     }
@@ -207,22 +207,22 @@ final class sendnotification_action_test extends \advanced_testcase {
         $this->assertArrayHasKey($student->id, $messagesbyrecipient);
         $this->assertArrayHasKey($teacher->id, $messagesbyrecipient);
 
-        $expectedobserversubject = get_string('observer_notification_subject', 'local_coursedynamicrules', (object) [
+        $observermsubject = get_string('observer_notification_subject', 'local_coursedynamicrules', (object) [
             'fullname' => fullname($student),
             'subject' => 'Nactivity notification',
         ]);
-        $expectedobserverintro = get_string('observer_notification_intro', 'local_coursedynamicrules', fullname($student));
+        $observerintro = get_string('observer_notification_intro', 'local_coursedynamicrules', fullname($student));
 
         $studentmessage = $messagesbyrecipient[$student->id];
         $teachermessage = $messagesbyrecipient[$teacher->id];
 
         $this->assertEquals('Nactivity notification', $studentmessage->subject);
-        $this->assertStringNotContainsString($expectedobserverintro, $studentmessage->fullmessagehtml);
+        $this->assertStringNotContainsString($observerintro, $studentmessage->fullmessagehtml);
         $this->assertStringContainsString(fullname($student), $studentmessage->fullmessagehtml);
         $this->assertStringNotContainsString(fullname($teacher), $studentmessage->fullmessagehtml);
 
-        $this->assertEquals($expectedobserversubject, $teachermessage->subject);
-        $this->assertStringContainsString($expectedobserverintro, $teachermessage->fullmessagehtml);
+        $this->assertEquals($observermsubject, $teachermessage->subject);
+        $this->assertStringContainsString($observerintro, $teachermessage->fullmessagehtml);
         $this->assertStringContainsString(fullname($student), $teachermessage->fullmessagehtml);
         $this->assertStringNotContainsString(fullname($teacher), $teachermessage->fullmessagehtml);
     }

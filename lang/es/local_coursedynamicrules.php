@@ -48,6 +48,8 @@ $string['completiondate'] = 'Fecha de finalización';
 $string['conditions'] = 'Condiciones';
 $string['conditions_help'] = 'Las condiciones se utilizan para definir los criterios que deben cumplirse para ejecutar las acciones de la regla';
 $string['copiedtoclipboard'] = 'Copiado al portapapeles';
+$string['copyrecipients'] = 'Destinatarios en copia';
+$string['copyrecipients_help'] = 'Selecciona los roles que recibirán una copia informativa cuando la condición se cumpla para un destinatario principal.';
 $string['copytoclipboard'] = 'Copiar al portapapeles';
 $string['course_inactivity'] = 'Inactividad en el curso por intervalos de tiempo';
 $string['course_inactivity_custom_description'] = 'Usuarios sin actividad en el curso durante intervalos de {$a->intervals} {$a->unit} desde {$a->basedate}';
@@ -169,9 +171,9 @@ $string['missing_plugins_warning'] = '🔔 ¡Mejore sus notificaciones! Nuestros
 $string['moduleinstancename'] = 'Nombre de la instancia del módulo de actividad del curso';
 $string['modulename'] = 'Nombre del módulo de actividad del curso';
 $string['months'] = 'Meses';
-$string['mustselectonerole'] = 'Debe seleccionar al menos un rol.';
 $string['mustselectoneobservedrole'] = 'Debe seleccionar al menos un rol observado.';
 $string['mustselectoneprimaryrole'] = 'Debe seleccionar al menos un rol de destinatarios principales.';
+$string['mustselectonerole'] = 'Debe seleccionar al menos un rol.';
 $string['name'] = 'Nombre';
 $string['no_complete_activity'] = 'Actividad no completada';
 $string['no_complete_activity_condition_info'] = 'Esta condición comprobará qué usuario no ha completado el módulo de actividad seleccionado después de la fecha especificada.';
@@ -185,13 +187,9 @@ $string['notification_action_info'] = 'Esta acción enviará una notificación a
 $string['notificationtargeting'] = 'Segmentación de la notificación';
 $string['notificationtargeting_help'] = 'Define quién recibe la notificación principal y quién recibe una copia informativa. Si una condición se cumple para un usuario dentro de los roles de destinatarios principales, ese usuario recibe la notificación principal y los destinatarios en copia reciben una copia informativa.';
 $string['notificationtargeting_info'] = 'Define quién recibe la notificación principal y quién recibe una copia informativa. Si una condición se cumple para un usuario de los destinatarios principales, ese usuario recibe la notificación principal y los destinatarios en copia reciben una copia informativa.';
+$string['now'] = 'Ahora';
 $string['observer_notification_intro'] = 'Copia de observación: esta notificación fue generada para {$a} según las condiciones de la regla.';
 $string['observer_notification_subject'] = 'Observación: {$a->fullname} recibió "{$a->subject}"';
-$string['primaryrecipients'] = 'Destinatarios principales';
-$string['primaryrecipients_help'] = 'Selecciona los roles que recibirán la notificación principal cuando la condición se cumpla para un usuario de esos roles.';
-$string['copyrecipients'] = 'Destinatarios en copia';
-$string['copyrecipients_help'] = 'Selecciona los roles que recibirán una copia informativa cuando la condición se cumpla para un destinatario principal.';
-$string['now'] = 'Ahora';
 $string['passgrade'] = 'Finalización de actividad con calificación aprobatoria';
 $string['passgrade_condition_info'] = 'Esta condición comprobará qué usuario ha completado el módulo de actividad seleccionado con calificación aprobatoria.';
 $string['passgrade_description'] = 'Usuarios que han completado el módulo de actividad del curso "{$a}" con calificación aprobatoria';
@@ -201,6 +199,8 @@ $string['plugin_disabled'] = 'Esta acción requiere que el complemento <strong>{
 $string['plugin_missing'] = 'Esta acción requiere que el complemento <strong>{$a->pluginname}</strong> esté instalado y habilitado. Descárguelo desde <a href="{$a->downloadurl}" target="_blank">{$a->downloadurl}</a> e instálelo.';
 $string['pluginname'] = 'Smart Rules AI';
 $string['pluginnotavailable'] = 'Este complemento no está disponible porque la licencia del producto ha caducado o no es válida. Vaya a <a href="https://shop.datacurso.com/clientarea.php" target="_blank">Shop Datacurso</a> para renovarla o comprar una nueva.';
+$string['primaryrecipients'] = 'Destinatarios principales';
+$string['primaryrecipients_help'] = 'Selecciona los roles que recibirán la notificación principal cuando la condición se cumpla para un usuario de esos roles.';
 $string['provider_not_enabled_warning'] = 'Habilite las notificaciones con <strong>Datacurso Message Hub</strong> para que esta acción envíe notificaciones por WhatsApp y SMS utilizando proveedores como Twilio.
 Puede habilitarlo desde <a href="{$a}" target="_blank">Configuración de notificaciones</a> buscando <strong>Smart Rules AI notification</strong>.
 <br>

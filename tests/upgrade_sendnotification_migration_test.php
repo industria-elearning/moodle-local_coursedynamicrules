@@ -16,12 +16,11 @@
 
 namespace local_coursedynamicrules;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Tests sendnotification roles migration in plugin upgrade.
  *
  * @package    local_coursedynamicrules
+ * @covers     ::local_coursedynamicrules_upgrade_migrate_sendnotification_roles
  * @copyright  2026 Industria Elearning <info@industriaelearning.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,12 +52,12 @@ final class upgrade_sendnotification_migration_test extends \advanced_testcase {
             'messagebody' => 'Body',
             'roleids' => [$studentroleid],
         ]);
-        $multilegacywithstudentactionid = $this->create_sendnotification_action($ruleid, [
+        $multiwstudentid = $this->create_sendnotification_action($ruleid, [
             'messagesubject' => 'Subject',
             'messagebody' => 'Body',
             'roleids' => [$teacherroleid, $studentroleid, $managerroleid],
         ]);
-        $multilegacynostudentactionid = $this->create_sendnotification_action($ruleid, [
+        $multinostudentid = $this->create_sendnotification_action($ruleid, [
             'messagesubject' => 'Subject',
             'messagebody' => 'Body',
             'roleids' => [$teacherroleid, $managerroleid],
@@ -70,12 +69,12 @@ final class upgrade_sendnotification_migration_test extends \advanced_testcase {
             $DB->get_field('local_coursedynamicrules_action', 'params', ['id' => $singlelegacyactionid]),
             true
         );
-        $multilegacywithstudentparams = json_decode(
-            $DB->get_field('local_coursedynamicrules_action', 'params', ['id' => $multilegacywithstudentactionid]),
+        $multiwstudentparams = json_decode(
+            $DB->get_field('local_coursedynamicrules_action', 'params', ['id' => $multiwstudentid]),
             true
         );
-        $multilegacynostudentparams = json_decode(
-            $DB->get_field('local_coursedynamicrules_action', 'params', ['id' => $multilegacynostudentactionid]),
+        $multinostudentparams = json_decode(
+            $DB->get_field('local_coursedynamicrules_action', 'params', ['id' => $multinostudentid]),
             true
         );
 
@@ -83,13 +82,13 @@ final class upgrade_sendnotification_migration_test extends \advanced_testcase {
         $this->assertSame([], $singlelegacyparams['copyroleids']);
         $this->assertArrayNotHasKey('roleids', $singlelegacyparams);
 
-        $this->assertSame([$studentroleid], $multilegacywithstudentparams['primaryroleids']);
-        $this->assertEqualsCanonicalizing([$teacherroleid, $managerroleid], $multilegacywithstudentparams['copyroleids']);
-        $this->assertArrayNotHasKey('roleids', $multilegacywithstudentparams);
+        $this->assertSame([$studentroleid], $multiwstudentparams['primaryroleids']);
+        $this->assertEqualsCanonicalizing([$teacherroleid, $managerroleid], $multiwstudentparams['copyroleids']);
+        $this->assertArrayNotHasKey('roleids', $multiwstudentparams);
 
-        $this->assertSame([$teacherroleid], $multilegacynostudentparams['primaryroleids']);
-        $this->assertSame([$managerroleid], $multilegacynostudentparams['copyroleids']);
-        $this->assertArrayNotHasKey('roleids', $multilegacynostudentparams);
+        $this->assertSame([$teacherroleid], $multinostudentparams['primaryroleids']);
+        $this->assertSame([$managerroleid], $multinostudentparams['copyroleids']);
+        $this->assertArrayNotHasKey('roleids', $multinostudentparams);
     }
 
     /**
