@@ -1,3 +1,17 @@
+## 1.6.3
+
+**Released on:** 2026-04-29
+
+**Compatibility note:** This version is compatible with **Moodle 4.5**.
+
+## Fixed
+- **Database schema check reports legacy CDR tables**
+  Added an upgrade cleanup step that removes obsolete `cdr_rule`, `cdr_condition`, and `cdr_action` tables when they remain in existing sites.
+
+## Added
+- **Automated coverage for legacy table cleanup**
+  Added PHPUnit coverage to validate that the upgrade helper drops legacy CDR tables safely.
+
 ## 1.6.2
 
 **Released on:** 2026-04-24
