@@ -182,6 +182,11 @@ function xmldb_local_coursedynamicrules_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026042300, 'local', 'coursedynamicrules');
     }
 
+    if ($oldversion < 2026042401) {
+        local_coursedynamicrules_upgrade_cleanup_legacy_tables();
+        upgrade_plugin_savepoint(true, 2026042401, 'local', 'coursedynamicrules');
+    }
+
     return true;
 }
 
@@ -242,5 +247,24 @@ function local_coursedynamicrules_upgrade_migrate_sendnotification_roles(): void
         unset($params['roleids']);
 
         $DB->set_field('local_coursedynamicrules_action', 'params', json_encode($params), ['id' => $action->id]);
+    }
+}
+
+/**
+ * Drop legacy cdr_* tables that are no longer used by this plugin.
+ *
+ * @return void
+ */
+function local_coursedynamicrules_upgrade_cleanup_legacy_tables(): void {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+    $legacytables = ['cdr_action', 'cdr_condition', 'cdr_rule'];
+
+    foreach ($legacytables as $tablename) {
+        $table = new xmldb_table($tablename);
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
     }
 }
