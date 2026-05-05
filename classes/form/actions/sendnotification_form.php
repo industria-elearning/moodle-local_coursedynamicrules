@@ -105,51 +105,15 @@ class sendnotification_form extends action_form {
 
         $mform->addElement('static', 'messagebody_static', '', $placeholderstext);
 
-        $mform->addElement(
-            'header',
-            'notificationtargetingheader',
-            get_string('notificationtargeting', 'local_coursedynamicrules')
-        );
-        $mform->addHelpButton('notificationtargetingheader', 'notificationtargeting', 'local_coursedynamicrules');
-
         $roles = get_default_enrol_roles(context_course::instance($courseid));
-        $roleids = array_keys($roles);
-        $rolerecords = [];
-        if (!empty($roleids)) {
-            $rolerecords = $DB->get_records_list('role', 'id', $roleids, '', 'id,shortname');
-        }
-
-        $primarycheckboxes = [];
+        $checkboxes = [];
         foreach ($roles as $roleid => $rolename) {
-            $fieldname = 'primaryrecipients[' . $roleid . ']';
-            $primarycheckboxes[] = $mform->createElement('advcheckbox', $roleid, '', $rolename);
-            $mform->setType($fieldname, PARAM_INT);
-
-            if (isset($rolerecords[$roleid]) && $rolerecords[$roleid]->shortname === 'student') {
-                $mform->setDefault($fieldname, 1);
-            }
+            $checkboxes[] = $mform->createElement('advcheckbox', $roleid, '', $rolename);
+            $mform->setType($roleid, PARAM_INT);
         }
-        $mform->addGroup(
-            $primarycheckboxes,
-            'primaryrecipients',
-            get_string('primaryrecipients', 'local_coursedynamicrules'),
-            '<br />'
-        );
-        $mform->addHelpButton('primaryrecipients', 'primaryrecipients', 'local_coursedynamicrules');
-
-        $copycheckboxes = [];
-        foreach ($roles as $roleid => $rolename) {
-            $fieldname = 'copyrecipients[' . $roleid . ']';
-            $copycheckboxes[] = $mform->createElement('advcheckbox', $roleid, '', $rolename);
-            $mform->setType($fieldname, PARAM_INT);
-        }
-        $mform->addGroup(
-            $copycheckboxes,
-            'copyrecipients',
-            get_string('copyrecipients', 'local_coursedynamicrules'),
-            '<br />'
-        );
-        $mform->addHelpButton('copyrecipients', 'copyrecipients', 'local_coursedynamicrules');
+        $mform->addGroup($checkboxes, 'roles', get_string('rolestonotify', 'local_coursedynamicrules'), '<br />');
+        // Add help button for roles.
+        $mform->addHelpButton('roles', 'rolestonotify', 'local_coursedynamicrules');
 
         $mform->addElement('hidden', 'type', $this->type);
         $mform->addElement('hidden', 'ruleid', $ruleid);
@@ -169,10 +133,10 @@ class sendnotification_form extends action_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $primaryrecipients = $data['primaryrecipients'] ?? [];
-        // Check if at least one primary recipient role checkbox was selected.
+        $roles = $data['roles'];
+        // Check if at least one role checkbox was selected.
         $atleastoneselected = false;
-        foreach ($primaryrecipients as $value) {
+        foreach ($roles as $roleid => $value) {
             if ($value == 1) {
                 $atleastoneselected = true;
                 break;
@@ -180,7 +144,7 @@ class sendnotification_form extends action_form {
         }
 
         if (!$atleastoneselected) {
-            $errors['primaryrecipients'] = get_string('mustselectoneprimaryrole', 'local_coursedynamicrules');
+            $errors['roles'] = get_string('mustselectonerole', 'local_coursedynamicrules');
         }
 
         return $errors;
