@@ -132,13 +132,14 @@ foreach ($rules as $rule) {
 
     $ruletext = html_writer::div($editrulelink . $deleterulelink, 'd-flex', ['style' => 'gap: .4rem']);
 
+    // Rule name is user input; escape it to prevent XSS while preserving intentional HTML badges.
     if (!$rule->active) {
-        $rule->name .= ' ' . html_writer::span(
+        $rule->name = s($rule->name) . ' ' . html_writer::span(
             get_string('ruleinactive', 'local_coursedynamicrules'),
             'badge badge-secondary'
         );
     } else {
-        $rule->name .= ' ' . html_writer::span(
+        $rule->name = s($rule->name) . ' ' . html_writer::span(
             get_string('ruleactive', 'local_coursedynamicrules'),
             'badge badge-success'
         );

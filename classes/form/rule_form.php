@@ -37,11 +37,11 @@ class rule_form extends \moodleform {
         $mform->addElement('text', 'name', get_string('name', 'local_coursedynamicrules'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-        $mform->setDefault('name', $rule->name);
+        $mform->setDefault('name', $rule->name ?? '');
 
         $mform->addElement('textarea', 'description', get_string('description', 'local_coursedynamicrules'));
         $mform->setType('description', PARAM_RAW);
-        $mform->setDefault('description', $rule->description);
+        $mform->setDefault('description', $rule->description ?? '');
 
         $mform->addElement('checkbox', 'active', get_string('ruleactive', 'local_coursedynamicrules'));
         $mform->setDefault('active', $rule->active ?? 0);
@@ -50,7 +50,7 @@ class rule_form extends \moodleform {
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->setType('courseid', PARAM_INT);
 
-        $mform->addElement('hidden', 'id', $rule->id);
+        $mform->addElement('hidden', 'id', $rule->id ?? 0);
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges'));

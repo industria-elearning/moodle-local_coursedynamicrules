@@ -47,7 +47,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
         $attr = $mform->getAttributes();
         $attr['id'] = 'dynamic_grade_in_activity_form';
         $attr['novalidate'] = true;
-        $attr['class'] .= ' needs-validation';
+        $attr['class'] = ($attr['class'] ?? '') . ' needs-validation';
 
         $mform->setAttributes($attr);
 
@@ -66,7 +66,7 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             }
         }
 
-        $cm = $cmid ? $filteredcms[$cmid] : reset($filteredcms);
+        $cm = $cmid ? ($filteredcms[$cmid] ?? null) : (reset($filteredcms) ?: null);
 
         $attributes = [
             'multiple' => false,
@@ -79,7 +79,9 @@ class dynamic_grade_in_activity_form extends dynamic_form {
             $options,
             $attributes
         );
-        $mform->setDefault('coursemodule', $cm->id);
+        if ($cm) {
+            $mform->setDefault('coursemodule', $cm->id);
+        }
 
         if ($cm) {
             $component = 'mod_' . $cm->modname;
@@ -310,6 +312,6 @@ class dynamic_grade_in_activity_form extends dynamic_form {
      * @return moodle_url
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
-        return new moodle_url('/local/test/exampledynamicform.php', []);
+        return new moodle_url('/local/coursedynamicrules/conditions.php', []);
     }
 }

@@ -76,10 +76,13 @@ class grade_in_activity_condition extends condition {
             $gradeitemid = $gradeitem->id;
 
             $grade = grade_grade::fetch(['itemid' => $gradeitem->id, 'userid' => $userid]);
+            if (!$grade) {
+                return false;
+            }
             $finalgrade = $grade->finalgrade;
 
             $gradegtekey = 'gradegte' . '_' . $gradeitemid;
-            $gradegte = $gradeitemsconditions->$gradegtekey;
+            $gradegte = $gradeitemsconditions->$gradegtekey ?? null;
 
             if ($gradegte) {
                 $gradegtebounded = $gradeitem->bounded_grade($gradegte->value);
@@ -91,7 +94,7 @@ class grade_in_activity_condition extends condition {
             }
 
             $gradeltkey = 'gradelt' . '_' . $gradeitemid;
-            $gradelt = $gradeitemsconditions->$gradeltkey;
+            $gradelt = $gradeitemsconditions->$gradeltkey ?? null;
 
             if ($gradelt) {
                 $gradeltbounded = $gradeitem->bounded_grade($gradelt->value);
@@ -189,14 +192,14 @@ class grade_in_activity_condition extends condition {
         $gradestrings = [];
 
         $gradegtekey = 'gradegte' . '_' . $gradeitemid;
-        $gradegte = $gradeitemsconditions->$gradegtekey;
+        $gradegte = $gradeitemsconditions->$gradegtekey ?? null;
 
         if ($gradegte) {
             $gradestrings[] = get_string('gradegreaterthanorequalvalue', 'local_coursedynamicrules', $gradegte->value);
         }
 
         $gradeltkey = 'gradelt' . '_' . $gradeitemid;
-        $gradelt = $gradeitemsconditions->$gradeltkey;
+        $gradelt = $gradeitemsconditions->$gradeltkey ?? null;
 
         if ($gradelt) {
             $gradestrings[] = get_string('gradelessthanvalue', 'local_coursedynamicrules', $gradelt->value);

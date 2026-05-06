@@ -264,7 +264,7 @@ class course_inactivity_condition extends condition {
         switch ($basedatetype) {
             case self::DATE_FROM_ENROLLMENT:
                 $enrollment = $this->get_user_enrollment($userid, $courseid);
-                $basedate->timestart = $enrollment->timestart ?? $enrollment->timcreated;
+                $basedate->timestart = $enrollment->timestart ?? $enrollment->timecreated;
                 break;
             case self::DATE_FROM_COURSE_START:
                 $course = get_course($courseid);

@@ -29,7 +29,7 @@ class action_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $condition = $this->_customdata['action'];
+        $condition = $this->_customdata['action'] ?? null;
 
         $this->add_action_buttons();
     }

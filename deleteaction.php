@@ -53,14 +53,15 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$action = $DB->get_record('local_coursedynamicrules_action', ['id' => $id], '*', MUST_EXIST);
+$action = $DB->get_record('local_coursedynamicrules_action', ['id' => $id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid, 'courseid' => $courseid], '*', MUST_EXIST);
 
 $config = get_config('local_coursedynamicrules');
 
 $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
 $description = $actioninstance->get_description();
 
-if ($delete === md5($config->confirmdeleteaction)) {
+if ($delete === md5($config->confirmdeleteaction ?? '')) {
     require_sesskey();
 
     // Delete action.

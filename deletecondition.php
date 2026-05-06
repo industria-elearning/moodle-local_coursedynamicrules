@@ -54,14 +54,15 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 
-$condition = $DB->get_record('local_coursedynamicrules_condition', ['id' => $id], '*', MUST_EXIST);
+$condition = $DB->get_record('local_coursedynamicrules_condition', ['id' => $id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid, 'courseid' => $courseid], '*', MUST_EXIST);
 
 $config = get_config('local_coursedynamicrules');
 
 $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
 $description = $conditioninstance->get_description();
 
-if ($delete === md5($config->confirmdeletecondition)) {
+if ($delete === md5($config->confirmdeletecondition ?? '')) {
     require_sesskey();
     // Delete condition.
     $conditioninstance->delete();

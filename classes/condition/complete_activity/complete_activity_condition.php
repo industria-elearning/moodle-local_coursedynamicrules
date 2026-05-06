@@ -97,6 +97,9 @@ class complete_activity_condition extends condition {
 
         $modinfo = get_fast_modinfo($courseid, $userid);
         // Get in this form because the $modinfo->get_cm($cmid) throws an error if the activity module is not found.
+        if (!array_key_exists($cmid, $modinfo->cms)) {
+            return false;
+        }
         $cminfo = $modinfo->cms[$cmid];
         if (!$cminfo || $cminfo->deletioninprogress) {
             return false;
@@ -156,6 +159,9 @@ class complete_activity_condition extends condition {
         $cmid = $this->params->cmid;
         $modinfo = get_fast_modinfo($courseid);
         $cms = $modinfo->get_cms();
+        if (!array_key_exists($cmid, $cms)) {
+            return '';
+        }
         $cminfo = $cms[$cmid];
 
         if (!$cminfo) {
