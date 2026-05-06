@@ -46,6 +46,10 @@ $PAGE->set_pagelayout('incourse');
 echo $OUTPUT->header();
 
 $rule = new stdClass();
+$rule->id = 0;
+$rule->name = '';
+$rule->description = '';
+$rule->active = 0;
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');
     $rule = $DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid]);
