@@ -73,13 +73,16 @@ class course_inactivity_form extends condition_form {
             self::INTERVAL_RECURRING => get_string('recurringinterval', $pluginname),
         ];
         $mform->addElement('select', 'intervaltype', get_string('intervaltype', $pluginname), $intervaltypeoptions);
+        $mform->setType('intervaltype', PARAM_ALPHA);
         $mform->addHelpButton('intervaltype', 'intervaltype', $pluginname);
 
         $mform->addElement('text', 'customintervals', get_string('customintervals', $pluginname));
+        $mform->setType('customintervals', PARAM_TEXT);
         $mform->addHelpButton('customintervals', 'customintervals', $pluginname);
          $mform->hideIf('customintervals', 'intervaltype', 'neq', self::INTERVAL_CUSTOM);
 
          $mform->addElement('text', 'recurringinterval', get_string('recurringinterval', $pluginname));
+         $mform->setType('recurringinterval', PARAM_INT);
          $mform->addHelpButton('recurringinterval', 'recurringinterval', $pluginname);
          $mform->hideIf('recurringinterval', 'intervaltype', 'neq', self::INTERVAL_RECURRING);
 
@@ -88,6 +91,7 @@ class course_inactivity_form extends condition_form {
             'weeks' => get_string('weeks', $pluginname),
             'months' => get_string('months', $pluginname),
          ]);
+        $mform->setType('intervalunit', PARAM_ALPHA);
         $mform->addHelpButton('intervalunit', 'intervalunit', $pluginname);
 
         $basedatetypeoptions = [
@@ -96,6 +100,7 @@ class course_inactivity_form extends condition_form {
             self::DATE_FROM_NOW => get_string('date_from_now', $pluginname),
         ];
         $mform->addElement('select', 'basedatetype', get_string('basedate', $pluginname), $basedatetypeoptions);
+        $mform->setType('basedatetype', PARAM_ALPHA);
         $mform->addHelpButton('basedatetype', 'basedate', $pluginname);
 
         parent::definition();

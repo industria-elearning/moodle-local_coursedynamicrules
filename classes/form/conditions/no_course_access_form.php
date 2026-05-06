@@ -54,6 +54,8 @@ class no_course_access_form extends condition_form {
         ]);
 
         $mform->addGroup($periodgroup, 'period_group', get_string('period', 'local_coursedynamicrules'), '', false);
+        $mform->setType('periodvalue', PARAM_INT);
+        $mform->setType('periodunit', PARAM_ALPHA);
 
         $mform->addHelpButton('period_group', 'period', 'local_coursedynamicrules');
 
