@@ -16,6 +16,10 @@
 
 namespace local_coursedynamicrules\form\actions;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
+
 /**
  * Class action_form
  *
@@ -29,7 +33,7 @@ class action_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $condition = $this->_customdata['action'];
+        $condition = $this->_customdata['action'] ?? null;
 
         $this->add_action_buttons();
     }

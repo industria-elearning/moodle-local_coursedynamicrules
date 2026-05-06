@@ -48,20 +48,41 @@ $PAGE->set_course($course);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
-echo $OUTPUT->header();
 
-if (!$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid])) {
-    throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
+$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid, 'courseid' => $courseid], '*', MUST_EXIST);
+
+// Process form submission BEFORE any output.
+$conditioninstance = null;
+if (!empty($type)) {
+    $conditionrecord = (object) [
+        'conditiontype' => $type,
+        'params' => json_encode([]),
+        'ruleid' => $ruleid,
+    ];
+    $conditioninstance = rule_component_loader::create_condition_instance($conditionrecord);
+
+    $customdata = [
+        'courseid' => $courseid,
+        'ruleid' => $ruleid,
+    ];
+    $conditioninstance->build_editform($url, $customdata, 'post', '', ['class' => 'card p-4']);
+
+    if ($conditioninstance->is_cancelled()) {
+        redirect($url);
+    } else if ($data = $conditioninstance->get_data()) {
+        $conditioninstance->save_condition($data);
+        redirect($url);
+    }
 }
 
 $conditions = $DB->get_records('local_coursedynamicrules_condition', ['ruleid' => $ruleid]);
 
 $conditionsfortemplate = [];
 foreach ($conditions as $condition) {
-    $conditioninstance = rule_component_loader::create_condition_instance($condition, $courseid);
+    $conditionitem = rule_component_loader::create_condition_instance($condition, $courseid);
 
-    $header = $conditioninstance->get_header();
-    $description = $conditioninstance->get_description();
+    $header = $conditionitem->get_header();
+    $description = $conditionitem->get_description();
 
     if (!empty($header) && !empty($description)) {
         $deleteurl = new moodle_url(
@@ -79,6 +100,9 @@ foreach ($conditions as $condition) {
 
 $conditionoptions = local_coursedynamicrules_load_condition_options();
 
+// Output starts here.
+echo $OUTPUT->header();
+
 // Render heading and branding using reusable renderable.
 $headerrow = new \local_coursedynamicrules\output\header_with_brand('conditions');
 echo $OUTPUT->render($headerrow);
@@ -87,27 +111,8 @@ echo html_writer::start_div('d-flex h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $conditionoptions]);
 echo html_writer::start_div('col-8 h-100');
 echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $conditionsfortemplate]);
-if (!empty($type)) {
-    $conditionrecord = (object) [
-        'conditiontype' => $type,
-        'params' => json_encode([]),
-    ];
-    $conditioninstance = rule_component_loader::create_condition_instance($conditionrecord);
-
-    $customdata = [
-        'courseid' => $courseid,
-        'ruleid' => $ruleid,
-    ];
-    $conditioninstance->build_editform($url, $customdata, 'post', '', ['class' => 'card p-4']);
-
-    if ($conditioninstance->is_cancelled()) {
-        redirect($url);
-    } else if ($data = $conditioninstance->get_data()) {
-        $conditioninstance->save_condition($data);
-        redirect($url);
-    } else {
-        $conditioninstance->show_editform();
-    }
+if ($conditioninstance !== null) {
+    $conditioninstance->show_editform();
 }
 
 echo html_writer::end_div();

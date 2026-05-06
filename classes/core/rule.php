@@ -258,6 +258,6 @@ class rule {
             ]
         );
 
-        return $record->cmid;
+        return $record ? $record->cmid : null;
     }
 }

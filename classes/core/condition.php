@@ -98,9 +98,9 @@ abstract class condition {
         $this->id = $record->id ?? null;
         $this->type = $record->conditiontype;
         $this->courseid = $courseid;
-        $this->ruleid = $record->ruleid;
+        $this->ruleid = $record->ruleid ?? null;
         $this->lastexecutiontime = $record->lastexecutiontime ?? null;
-        $this->params = json_decode($record->params);
+        $this->params = json_decode($record->params ?? '{}');
     }
 
     /**

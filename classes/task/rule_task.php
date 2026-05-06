@@ -55,6 +55,10 @@ class rule_task extends \core\task\adhoc_task {
             $conditiontypes = $customdata->conditiontypes;
 
             $user = $DB->get_record('user', ['id' => $userid]);
+            if (!$user) {
+                mtrace("local_coursedynamicrules: User {$userid} not found, skipping.");
+                return;
+            }
 
             // Make array to pass to rule class in second param.
             $users = [$user];
@@ -75,7 +79,7 @@ class rule_task extends \core\task\adhoc_task {
                 $ruleinstance = new rule($rule, $users, $conditiontypes, $additionaldata);
                 $ruleinstance->execute();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             mtrace($e);
         }
     }

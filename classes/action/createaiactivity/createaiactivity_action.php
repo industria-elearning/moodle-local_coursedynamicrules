@@ -18,6 +18,7 @@ namespace local_coursedynamicrules\action\createaiactivity;
 
 use aiprovider_datacurso\httpclient\ai_course_api;
 use core_availability\tree;
+use tool_tenant\tenancy;
 use local_coursedynamicrules\core\action;
 use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\form\actions\createaiactivity_form;
@@ -98,7 +99,8 @@ class createaiactivity_action extends action {
             raise_memory_limit(MEMORY_EXTRA);
             \core\session\manager::write_close();
 
-            $client = new ai_course_api();
+            $tenantid = tenancy::get_tenant_id($userid);
+            $client = new ai_course_api(null, $tenantid);
             $result = $client->request('POST', '/smartrules/create-mod', $payload);
             $result = payload_anonymizer::deanonymize_data($result, $replacements);
 
