@@ -34,4 +34,5 @@ $plugin->dependencies = [
     'aiprovider_datacurso' => 2025111300,
     'local_coursegen' => 2025112000,
     'availability_user' => 2024082101,
+    'tool_tenant' => 2024110500,
 ];
