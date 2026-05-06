@@ -36,33 +36,24 @@ require_capability('local/coursedynamicrules:updaterule', $context);
 $url = new moodle_url('/local/coursedynamicrules/editrule.php', ['courseid' => $courseid, 'id' => $ruleid]);
 $rulesurl = new moodle_url('/local/coursedynamicrules/rules.php', ['courseid' => $courseid]);
 
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_course($course);
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('incourse');
-
-echo $OUTPUT->header();
-
-$rule = new stdClass();
-$rule->id = 0;
-$rule->name = '';
-$rule->description = '';
-$rule->active = 0;
 if ($ruleid) {
     $pagetitle = get_string('editrule', 'local_coursedynamicrules');
-    $rule = $DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid]);
+    $rule = $DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid, 'courseid' => $courseid], '*', MUST_EXIST);
 } else {
     $pagetitle = get_string('createrule', 'local_coursedynamicrules');
+    $rule = new stdClass();
+    $rule->id = 0;
+    $rule->name = '';
+    $rule->description = '';
+    $rule->active = 0;
 }
 
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
-
-$headingkey = $ruleid ? 'editrule' : 'createrule';
-$headerrow = new \local_coursedynamicrules\output\header_with_brand($headingkey, 'local_coursedynamicrules', false);
-echo $OUTPUT->render($headerrow);
+$PAGE->set_course($course);
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
 
 $ruleform = new local_coursedynamicrules\form\rule_form($url, ['rule' => $rule, 'courseid' => $courseid]);
 
@@ -91,5 +82,9 @@ if ($ruleform->is_cancelled()) {
     }
 }
 
+echo $OUTPUT->header();
+$headingkey = $ruleid ? 'editrule' : 'createrule';
+$headerrow = new \local_coursedynamicrules\output\header_with_brand($headingkey, 'local_coursedynamicrules', false);
+echo $OUTPUT->render($headerrow);
 $ruleform->display();
 echo $OUTPUT->footer();

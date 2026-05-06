@@ -49,52 +49,15 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
 
-echo $OUTPUT->header();
+$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid, 'courseid' => $courseid], '*', MUST_EXIST);
 
-if (!$DB->get_record('local_coursedynamicrules_rule', ['id' => $ruleid])) {
-    throw new moodle_exception('invalidruleid', 'local_coursedynamicrules');
-}
-
-$actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $ruleid]);
-
-
-$actionsfortemplate = [];
-foreach ($actions as $action) {
-    $actioninstance = rule_component_loader::create_action_instance($action, $courseid);
-
-    $header = $actioninstance->get_header();
-    $description = $actioninstance->get_description();
-
-    $deleteurl = new moodle_url(
-        '/local/coursedynamicrules/deleteaction.php',
-        ['id' => $action->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
-    );
-
-    if (!empty($header) && !empty($description)) {
-        $actionsfortemplate[] = [
-            'id' => $action->id,
-            'header' => $actioninstance->get_header(),
-            'description' => $actioninstance->get_description(),
-            'deleteurl' => $deleteurl->out(false),
-        ];
-    }
-}
-
-$actionoptions = local_coursedynamicrules_load_action_options();
-
-
-// Render heading and branding using reusable renderable.
-$headerrow = new \local_coursedynamicrules\output\header_with_brand('actions');
-echo $OUTPUT->render($headerrow);
-echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
-echo html_writer::start_div('d-flex');
-echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $actionoptions]);
-echo html_writer::start_div('col-8');
-echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $actionsfortemplate]);
+// Process form submission BEFORE any output.
+$actioninstance = null;
 if (!empty($type)) {
     $actionrecord = (object) [
         'actiontype' => $type,
         'params' => json_encode([]),
+        'ruleid' => $ruleid,
     ];
     $actioninstance = rule_component_loader::create_action_instance($actionrecord);
     $customdata = [
@@ -108,9 +71,48 @@ if (!empty($type)) {
     } else if ($data = $actioninstance->get_data()) {
         $actioninstance->save_action($data);
         redirect($url);
-    } else {
-        $actioninstance->show_editform();
     }
+}
+
+$actions = $DB->get_records('local_coursedynamicrules_action', ['ruleid' => $ruleid]);
+
+$actionsfortemplate = [];
+foreach ($actions as $action) {
+    $actionitem = rule_component_loader::create_action_instance($action, $courseid);
+
+    $header = $actionitem->get_header();
+    $description = $actionitem->get_description();
+
+    $deleteurl = new moodle_url(
+        '/local/coursedynamicrules/deleteaction.php',
+        ['id' => $action->id, 'ruleid' => $ruleid, 'courseid' => $courseid]
+    );
+
+    if (!empty($header) && !empty($description)) {
+        $actionsfortemplate[] = [
+            'id' => $action->id,
+            'header' => $actionitem->get_header(),
+            'description' => $actionitem->get_description(),
+            'deleteurl' => $deleteurl->out(false),
+        ];
+    }
+}
+
+$actionoptions = local_coursedynamicrules_load_action_options();
+
+// Output starts here.
+echo $OUTPUT->header();
+
+// Render heading and branding using reusable renderable.
+$headerrow = new \local_coursedynamicrules\output\header_with_brand('actions');
+echo $OUTPUT->render($headerrow);
+echo html_writer::link($rulesurl, get_string('backtolistrules', 'local_coursedynamicrules'), ['class' => 'mb-3 d-block']);
+echo html_writer::start_div('d-flex');
+echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions_menu', ['options' => $actionoptions]);
+echo html_writer::start_div('col-8');
+echo $OUTPUT->render_from_template('local_coursedynamicrules/conditions', ['conditions' => $actionsfortemplate]);
+if ($actioninstance !== null) {
+    $actioninstance->show_editform();
 }
 
 echo html_writer::end_div();
