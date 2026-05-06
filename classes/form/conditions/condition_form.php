@@ -16,6 +16,10 @@
 
 namespace local_coursedynamicrules\form\conditions;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
+
 /**
  * Class condition_form
  *

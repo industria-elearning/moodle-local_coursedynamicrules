@@ -28,7 +28,6 @@ use local_coursedynamicrules\core\rule;
 use local_coursedynamicrules\helper\rule_component_loader;
 
 require('../../config.php');
-require_once($CFG->libdir . '/formslib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $ruleid = required_param('ruleid', PARAM_INT);

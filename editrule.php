@@ -23,7 +23,6 @@
  */
 
 require('../../config.php');
-require_once($CFG->libdir . '/formslib.php');
 
 $ruleid = optional_param('id', 0, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);

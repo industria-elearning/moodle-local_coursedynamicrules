@@ -16,6 +16,10 @@
 
 namespace local_coursedynamicrules\form;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
+
 /**
  * Class rule_form
  *
