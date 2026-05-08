@@ -14,7 +14,7 @@
 
 **Released on:** 2026-04-24
 
-**Compatibility note:** This version is compatible with **Moodle 4.5**.
+**Compatibility note:** This version is compatible only with **Moodle Workplace 4.5**.
 
 ## Changed
 - **Notification audience model clarified**
