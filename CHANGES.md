@@ -15,6 +15,8 @@
   Fixed cases where notification placeholders could be rendered with incorrect user data when different role combinations were selected.
 - **No-course-access delivery semantics**
   Notifications are now sent only when the matched user belongs to primary recipient roles, while copy recipients receive an observation message.
+- **TypeError in no_complete_activity condition when completion tracking is disabled**
+  Fixed a fatal `TypeError` thrown by the scheduled task when a user had visited an activity that has completion tracking disabled (`COMPLETION_TRACKING_NONE`). The Moodle `completion_info::get_data()` RIGHT JOIN returns `completionstate = NULL` in that scenario; the condition now guards against a null value and returns `false` early instead of crashing.
 
 ## Added
 - **Upgrade migration for legacy role params**
