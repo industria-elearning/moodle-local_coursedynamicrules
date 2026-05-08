@@ -122,6 +122,13 @@ class no_complete_activity_condition extends condition {
             $userid
         );
 
+        // If completionstate is null the activity has no completion tracking enabled
+        // (e.g. the user visited the activity but no completion record exists). We
+        // cannot determine whether the activity was completed, so bail out early.
+        if (!isset($completiondata->completionstate)) {
+            return false;
+        }
+
         // Return false if the user has completed the activity module because is not necessary execute the actions of the rule.
         if ($this->is_completed_state($completiondata->completionstate)) {
             return false;

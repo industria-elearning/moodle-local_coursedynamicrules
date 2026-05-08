@@ -1,8 +1,20 @@
-## 1.6.2
+## 1.6.3-wp
+
+**Released on:** 2026-05-08
+
+**Compatibility note:** This version is compatible only with **Moodle Workplace 4.5**.
+
+## Fixed
+- **TypeError in no_complete_activity condition when completion tracking is disabled**
+  Fixed a fatal `TypeError` thrown by the scheduled task when a user had visited an activity that has completion tracking disabled (`COMPLETION_TRACKING_NONE`). The Moodle `completion_info::get_data()` RIGHT JOIN returns `completionstate = NULL` in that scenario; the condition now guards against a null value and returns `false` early instead of crashing.
+
+---
+
+## 1.6.2-wp
 
 **Released on:** 2026-04-24
 
-**Compatibility note:** This version is compatible with **Moodle 4.5**.
+**Compatibility note:** This version is compatible only with **Moodle Workplace 4.5**.
 
 ## Changed
 - **Notification audience model clarified**
