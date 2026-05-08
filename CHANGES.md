@@ -2,7 +2,7 @@
 
 **Released on:** 2026-05-08
 
-**Compatibility note:** This version is compatible with **Moodle 4.5** and **Moodle Workplace 4.5**.
+**Compatibility note:** This version is compatible only with **Moodle Workplace 4.5**.
 
 ## Fixed
 - **TypeError in no_complete_activity condition when completion tracking is disabled**
